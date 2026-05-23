@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArogyaQ — Hospital Patient Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0B6E6E;--teal-light:#E0F5F2;--teal-mid:#1A9E9E;
+  --amber:#E87C2B;--amber-light:#FEF3E8;
+  --red:#D63B3B;--red-light:#FDEAEA;
+  --blue:#1A5FBF;--blue-light:#E8F0FB;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --surface:#F6FAF9;--white:#FFFFFF;
+  --text:#0F2027;--text-2:#476269;--text-3:#8AACB0;
+  --border:rgba(11,110,110,0.12);
+  --radius:18px;--radius-sm:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;}
+
+/* ══════════════════════════════════════
+   RESPONSIVE LAYOUT — same single file
+   Desktop (>1024px): full website with sidebar + main + right panel
+   Tablet (600-1024px): single column, no sidebars
+   Mobile (<600px): full width, no sidebars
+   ══════════════════════════════════════ */
+
+/* ── BASE (mobile-first) ── */
+html,body{min-height:100%;}
+body{background:var(--surface);}
+.page-wrap{display:block;width:100%;min-height:100vh;}
+.sidebar,.right-panel{display:none;}   /* hidden on mobile */
+
+/* App shell fills full width on mobile */
+.app-root{
+  width:100%;min-height:100vh;
+  background:var(--surface);
+  border-radius:0;overflow:hidden;
+  box-shadow:none;
+}
+
+/* ── TABLET (600px+) — still single column, slight breathing room ── */
+@media(min-width:600px){
+  body{background:#C8E8E4;display:flex;justify-content:center;}
+  .page-wrap{display:flex;justify-content:center;padding:28px 24px;}
+  .app-root{
+    width:420px;flex-shrink:0;min-height:90vh;
+    border-radius:28px;
+    box-shadow:0 0 0 1px rgba(11,110,110,0.1),0 24px 80px rgba(11,110,110,0.18);
+  }
+  .screen{min-height:90vh;}
+}
+
+/* ── DESKTOP (1024px+) — full website layout ── */
+@media(min-width:1024px){
+  body{background:#C8E8E4;align-items:flex-start;}
+  .page-wrap{
+    display:grid;
+    grid-template-columns:230px 1fr 240px;
+    grid-template-rows:auto;
+    gap:24px;
+    max-width:1280px;
+    margin:0 auto;
+    padding:28px 28px;
+    width:100%;
+    align-items:start;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    display:flex;flex-direction:column;gap:12px;
+    position:sticky;top:28px;
+    grid-column:1;
+  }
+
+  /* App shell — fills middle column, NOT a phone shell */
+  .app-root{
+    grid-column:2;
+    width:100%;min-height:auto;
+    border-radius:20px;
+    box-shadow:0 0 0 1px rgba(11,110,110,0.1),0 8px 40px rgba(11,110,110,0.12);
+  }
+
+  /* Right panel */
+  .right-panel{
+    display:flex;flex-direction:column;gap:12px;
+    position:sticky;top:28px;
+    grid-column:3;
+  }
+
+  /* On desktop, screens don't need full viewport height */
+  .screen{min-height:auto;}
+
+  /* Remove phone status bar on desktop */
+  .status-bar{display:none;}
+
+  /* Adjust inner header top padding (no status bar) */
+  .inner-header{padding-top:24px;}
+  .queue-hdr{padding-top:24px;}
+
+  /* Top header more spacious */
+  .top-header{padding-top:20px;}
+
+  /* Nav bar stays but looks more like a tab bar */
+  .nav-bar{border-radius:0 0 20px 20px;}
+
+  /* Scroll body expands naturally */
+  .scroll-body{padding-bottom:20px;}
+}
+
+/* ── Sidebar & right panel styles (shared) ── */
+.sb-brand{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal);letter-spacing:-0.5px;margin-bottom:4px;}
+.sb-brand span{color:var(--teal-mid);}
+.sb-tagline{font-size:12px;color:var(--text-2);margin-bottom:4px;}
+.sb-card{background:var(--white);border-radius:16px;padding:14px 16px;border:1px solid var(--border);}
+.sb-sec{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.sb-item{font-size:13px;color:var(--text-2);padding:7px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.15s;}
+.sb-item:hover{background:var(--teal-light);color:var(--teal);}
+.sb-item.active{background:var(--teal-light);color:var(--teal);font-weight:500;}
+.sb-item .si-icon{font-size:15px;}
+.sb-sdg{font-size:11px;color:var(--text-3);line-height:1.6;padding:8px 0 0;}
+.sb-sdg span{display:block;padding:2px 0;}
+.rp-card{background:var(--white);border-radius:16px;padding:16px;border:1px solid var(--border);}
+.rp-title{font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;}
+.rp-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text-2);}
+.rp-stat:last-child{border-bottom:none;}
+.rp-stat-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--teal);}
+.sdg-pill{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;margin:2px 2px 0 0;font-weight:500;}
+
+/* Desktop weather widget in sidebar */
+.sb-weather-live{background:var(--teal-light);border-radius:12px;padding:12px 14px;margin-top:4px;}
+.sbw-row{display:flex;align-items:center;gap:10px;}
+.sbw-icon{font-size:28px;}
+.sbw-temp{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal);}
+.sbw-desc{font-size:11px;color:var(--text-2);margin-top:1px;}
+.sbw-alert{font-size:11px;font-weight:600;color:var(--amber);margin-top:5px;}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn 0.22s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── LANG OVERLAY ── */
+.lang-overlay{position:fixed;inset:0;z-index:9999;background:var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;}
+.lang-overlay.hidden{display:none;}
+.lo-brand{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;color:white;letter-spacing:-1px;margin-bottom:4px;}
+.lo-brand span{color:#7FD9D0;}
+.lo-sub{font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:10px;}
+.lo-hospital{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:44px;}
+.lo-prompt{font-size:19px;font-weight:600;color:white;margin-bottom:6px;text-align:center;}
+.lo-prompt2{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:28px;text-align:center;}
+.lo-btn{width:100%;max-width:290px;padding:18px;border-radius:16px;border:none;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:transform 0.1s;}
+.lo-btn:active{transform:scale(0.97);}
+.lo-en{background:white;color:var(--teal);}
+.lo-te{background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.35)!important;}
+.lo-note{font-size:11px;color:rgba(255,255,255,0.45);margin-top:8px;text-align:center;}
+
+/* ── STATUS BAR ── */
+.status-bar{background:var(--teal);padding:14px 22px 10px;display:flex;justify-content:space-between;align-items:center;color:white;font-size:12px;font-weight:500;}
+
+/* ── TOP HEADER ── */
+.top-header{background:var(--teal);padding:0 22px 22px;color:white;}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start;}
+.app-brand{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;letter-spacing:-0.5px;}
+.app-brand span{color:#7FD9D0;}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.65);margin-top:1px;}
+.hdr-actions{display:flex;gap:7px;}
+.hdr-btn{width:35px;height:35px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:white;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.weather-chip{margin-top:12px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.2);border-radius:13px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;}
+.wc-left{display:flex;align-items:center;gap:9px;}
+.wc-temp{font-family:'Syne',sans-serif;font-size:21px;font-weight:700;color:white;}
+.wc-desc{font-size:12px;color:rgba(255,255,255,0.72);}
+.wc-city{font-size:10px;color:rgba(255,255,255,0.5);}
+.wc-feels{font-size:11px;color:rgba(255,255,255,0.55);}
+.wc-alert{font-size:11px;font-weight:600;color:#FFD580;margin-top:2px;}
+.token-chip{margin-top:9px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.2);border-radius:13px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.tc-label{font-size:10px;color:rgba(255,255,255,0.6);margin-bottom:1px;}
+.tc-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:white;}
+.tc-badge{background:#7FD9D0;color:var(--teal);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+
+/* ── SCROLL BODY ── */
+.scroll-body{flex:1;overflow-y:auto;padding:16px 16px 80px;}
+.scroll-body::-webkit-scrollbar{display:none;}
+.sec-label{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:9px;}
+
+/* ── FEATURE GRID ── */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;}
+.feat-card{background:var(--white);border-radius:var(--radius);padding:14px 12px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s;position:relative;overflow:hidden;}
+.feat-card:hover{transform:translateY(-1px);}
+.feat-card:active{transform:scale(0.97);}
+.feat-card .icon-wrap{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px;}
+.feat-card .feat-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.feat-card .feat-desc{font-size:10px;color:var(--text-2);margin-top:2px;line-height:1.4;}
+.feat-card .arr{position:absolute;top:11px;right:11px;font-size:11px;color:var(--text-3);}
+.feat-card.wide{grid-column:1/-1;display:flex;align-items:center;gap:11px;padding:13px 14px;}
+.feat-card.wide .icon-wrap{margin-bottom:0;flex-shrink:0;}
+.feat-card.wide .feat-text{flex:1;}
+.feat-card.wide .feat-title{font-size:13px;}
+.c-teal .icon-wrap{background:var(--teal-light);}
+.c-amber .icon-wrap{background:var(--amber-light);}
+.c-red .icon-wrap{background:var(--red-light);}
+.c-blue .icon-wrap{background:var(--blue-light);}
+.c-purple .icon-wrap{background:var(--purple-light);}
+
+/* ── HEALTH BANNER ── */
+.health-banner{background:linear-gradient(135deg,var(--amber) 0%,#F5A942 100%);border-radius:var(--radius);padding:14px;margin-bottom:16px;color:white;display:flex;gap:10px;align-items:center;cursor:pointer;}
+.hb-icon{font-size:26px;flex-shrink:0;}
+.hb-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+.hb-sub{font-size:11px;opacity:0.85;margin-top:1px;}
+.hb-btn{margin-top:6px;display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);color:white;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+
+/* ── NAV BAR ── */
+.nav-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:9px 0 14px;display:flex;justify-content:space-around;z-index:100;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:0 6px;}
+.nav-icon{font-size:19px;}
+.nav-label{font-size:9px;font-weight:500;color:var(--text-3);}
+.nav-item.active .nav-label{color:var(--teal);}
+
+/* ── INNER HEADER ── */
+.inner-header{background:var(--white);padding:48px 20px 16px;border-bottom:1px solid var(--border);}
+.back-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--teal);font-weight:500;cursor:pointer;margin-bottom:8px;background:none;border:none;}
+.inner-header h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);}
+.inner-header p{font-size:12px;color:var(--text-2);margin-top:2px;}
+
+/* ── FORMS ── */
+.form-body{padding:16px;flex:1;overflow-y:auto;}
+.form-body::-webkit-scrollbar{display:none;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:10px;font-weight:600;color:var(--text-2);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:4px;display:block;}
+.form-input,.form-select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus{border-color:var(--teal-mid);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.emg-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--red-light);border:1.5px solid rgba(214,59,59,0.2);border-radius:var(--radius-sm);padding:12px 13px;}
+.emg-label{font-size:13px;font-weight:500;color:var(--red);}
+.emg-sub{font-size:11px;color:#c07070;margin-top:1px;}
+.tog-sw{width:40px;height:21px;border-radius:11px;background:#ddd;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
+.tog-sw.on{background:var(--red);}
+.tog-knob{width:17px;height:17px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:left 0.2s;}
+.tog-sw.on .tog-knob{left:21px;}
+.submit-btn{width:100%;padding:14px;background:var(--teal);color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;margin-top:6px;transition:background 0.2s;}
+.submit-btn:hover{background:#0a5c5c;}
+.submit-btn:active{background:#085050;}
+.submit-btn.outline{background:var(--white);color:var(--teal);border:1.5px solid var(--teal);}
+
+/* ── TOKEN SUCCESS INLINE ── */
+.token-success{display:none;flex-direction:column;align-items:center;background:var(--teal-light);border-radius:var(--radius);padding:22px;margin-top:12px;text-align:center;}
+.big-token{font-family:'Syne',sans-serif;font-size:50px;font-weight:800;color:var(--teal);}
+.token-label{font-size:12px;color:var(--text-2);}
+.dept-chip{background:var(--teal);color:white;font-size:12px;font-weight:600;padding:4px 13px;border-radius:20px;margin-top:7px;}
+.tok-btns{display:flex;gap:9px;margin-top:14px;width:100%;}
+.tok-btns button{flex:1;margin-top:0;font-size:12px;}
+#token-history{display:none;margin-top:10px;}
+.th-row{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:5px;}
+.th-name{font-size:13px;font-weight:500;color:var(--text);}
+.th-dept{font-size:11px;color:var(--text-3);margin-top:1px;}
+.th-token{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--teal);}
+
+/* ── POPUP OVERLAY ── */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
+.popup-overlay.hidden{display:none;}
+.popup-sheet{background:var(--white);border-radius:24px 24px 0 0;padding:26px 22px 34px;width:100%;max-width:480px;animation:slideUp 0.28s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.popup-handle{width:34px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
+.popup-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.popup-sub{font-size:13px;color:var(--text-2);margin-bottom:16px;line-height:1.5;}
+.popup-token-big{font-family:'Syne',sans-serif;font-size:54px;font-weight:800;color:var(--teal);text-align:center;line-height:1;}
+.popup-dept{text-align:center;font-size:14px;color:var(--text-2);margin-top:3px;margin-bottom:16px;}
+.popup-info{background:var(--teal-light);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;color:var(--teal);margin-bottom:16px;line-height:1.6;}
+
+/* ── QUEUE ── */
+.queue-hdr{background:var(--teal);padding:48px 22px 18px;color:white;}
+.queue-hdr h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.queue-hdr p{font-size:12px;opacity:0.7;margin-top:2px;}
+.dept-tabs{display:flex;gap:6px;overflow-x:auto;margin-top:10px;}
+.dept-tabs::-webkit-scrollbar{display:none;}
+.dept-tab{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);transition:all 0.2s;}
+.dept-tab.active{background:white;color:var(--teal);}
+.queue-body{flex:1;overflow-y:auto;padding:16px;}
+.queue-body::-webkit-scrollbar{display:none;}
+.now-serving{background:var(--teal);border-radius:var(--radius);padding:20px;margin-bottom:12px;text-align:center;color:white;}
+.ns-label{font-size:10px;opacity:0.7;text-transform:uppercase;letter-spacing:0.07em;}
+.ns-token{font-family:'Syne',sans-serif;font-size:58px;font-weight:800;line-height:1;margin:4px 0;}
+.ns-name{font-size:12px;opacity:0.8;}
+.q-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;}
+.q-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px;text-align:center;}
+.q-stat .val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:var(--text);}
+.q-stat .lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+.q-row{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+.q-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--teal);width:32px;}
+.q-name{font-size:13px;font-weight:500;color:var(--text);}
+.q-dept{font-size:10px;color:var(--text-3);margin-top:1px;}
+.q-wait{font-size:11px;color:var(--text-2);font-weight:500;}
+.q-row.emg{background:var(--red-light);border-color:rgba(214,59,59,0.22);}
+.q-row.emg .q-num{color:var(--red);}
+.emg-tag{font-size:9px;background:var(--red);color:white;padding:2px 6px;border-radius:10px;font-weight:600;}
+.hydration-bar{background:linear-gradient(90deg,#0F7B7B,#1A9E9E);border-radius:var(--radius-sm);padding:9px 13px;display:flex;align-items:center;gap:8px;margin-bottom:12px;color:white;}
+.your-token-highlight{background:rgba(127,217,208,0.2);border:1.5px solid #7FD9D0;border-radius:var(--radius-sm);padding:9px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.yth-label{font-size:12px;color:var(--teal);font-weight:500;}
+.yth-val{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--teal);}
+
+/* ── AWARENESS ── */
+.awareness-body{flex:1;overflow-y:auto;padding:16px;}
+.awareness-body::-webkit-scrollbar{display:none;}
+.aw-card{border-radius:var(--radius);padding:14px;margin-bottom:9px;border:1px solid transparent;}
+.aw-card .aw-icon{font-size:24px;margin-bottom:6px;}
+.aw-card .aw-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px;}
+.aw-card .aw-body{font-size:12px;line-height:1.6;}
+.aw-card.heatwave{background:#FFF3E0;border-color:#FFCC80;}
+.aw-card.heatwave .aw-title{color:#E65100;}
+.aw-card.heatwave .aw-body{color:#7E4500;}
+.aw-card.water{background:var(--blue-light);border-color:#90CAF9;}
+.aw-card.water .aw-title{color:var(--blue);}
+.aw-card.water .aw-body{color:#1A3F7A;}
+.aw-card.hygiene{background:var(--teal-light);border-color:#80CBC4;}
+.aw-card.hygiene .aw-title{color:var(--teal);}
+.aw-card.hygiene .aw-body{color:#0B4E4E;}
+.tip-list{list-style:none;margin-top:6px;}
+.tip-list li{padding:2px 0;font-size:12px;display:flex;gap:6px;}
+.tip-list li::before{content:"→";font-weight:600;flex-shrink:0;}
+.aw-cat{font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-3);margin:12px 0 7px;}
+.lang-toggle-row{display:flex;gap:0;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;width:fit-content;margin-bottom:14px;}
+.lt-btn{padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;background:var(--white);color:var(--text-2);border:none;transition:all 0.2s;}
+.lt-btn.active{background:var(--teal);color:white;}
+
+/* ── FAQ ── */
+.faq-body{flex:1;overflow-y:auto;padding:16px;}
+.faq-body::-webkit-scrollbar{display:none;}
+.search-bar{display:flex;align-items:center;gap:9px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;}
+.search-bar input{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:none;flex:1;}
+.faq-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;overflow:hidden;}
+.faq-q{padding:13px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--text);}
+.faq-q .chev{font-size:12px;color:var(--text-3);transition:transform 0.2s;}
+.faq-q.open .chev{transform:rotate(180deg);}
+.faq-a{display:none;padding:12px 14px;font-size:12px;color:var(--text-2);line-height:1.6;border-top:1px solid var(--border);}
+.faq-a.open{display:block;}
+
+/* ── FEEDBACK ── */
+.feedback-body{flex:1;overflow-y:auto;padding:16px;}
+.feedback-body::-webkit-scrollbar{display:none;}
+.star-row{display:flex;gap:7px;justify-content:center;margin:14px 0;}
+.star{font-size:34px;cursor:pointer;transition:transform 0.1s;color:#ddd;}
+.star.filled{color:#F5A942;}
+.star:active{transform:scale(1.2);}
+.rating-label{text-align:center;font-size:13px;color:var(--text-2);margin-bottom:16px;min-height:18px;}
+.delay-options{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
+.delay-opt{padding:10px;border-radius:var(--radius-sm);text-align:center;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text-2);transition:all 0.2s;}
+.delay-opt.selected{border-color:var(--teal);background:var(--teal-light);color:var(--teal);}
+.feedback-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:none;height:90px;outline:none;transition:border-color 0.2s;}
+.feedback-textarea:focus{border-color:var(--teal-mid);}
+.feedback-success{display:none;flex-direction:column;align-items:center;padding:36px 16px;text-align:center;}
+.feedback-success .big-icon{font-size:56px;margin-bottom:10px;}
+.feedback-success h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--teal);margin-bottom:5px;}
+.feedback-success p{font-size:13px;color:var(--text-2);}
+
+/* ── DASHBOARD ── */
+.dash-body{flex:1;overflow-y:auto;padding:16px;}
+.dash-body::-webkit-scrollbar{display:none;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.s-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--teal);}
+.s-lbl{font-size:11px;color:var(--text-2);margin-top:1px;}
+.s-delta{font-size:10px;color:#2E9E5B;font-weight:500;margin-top:5px;}
+.chart-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
+.chart-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;}
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:70px;}
+.bar{flex:1;border-radius:5px 5px 0 0;transition:height 0.5s;}
+.bar-labels{display:flex;gap:5px;margin-top:5px;}
+.bar-lbl{flex:1;text-align:center;font-size:9px;color:var(--text-3);}
+.fb-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.fb-star{font-size:11px;color:var(--text-2);width:22px;text-align:right;}
+.fb-bg{flex:1;height:7px;background:var(--teal-light);border-radius:3px;overflow:hidden;}
+.fb-fill{height:100%;background:var(--teal);border-radius:3px;}
+.fb-pct{font-size:10px;color:var(--text-3);width:28px;}
+.dept-row{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:6px;}
+.dept-name{font-size:12px;font-weight:500;color:var(--text);}
+.dept-count{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--teal);}
+.dept-lbl{font-size:9px;color:var(--text-3);}
+
+/* ── MEDIVAULT (HEALTH RECORDS) ── */
+.rec-body{flex:1;overflow-y:auto;padding:16px;}
+.rec-body::-webkit-scrollbar{display:none;}
+.add-rec-btn{width:100%;padding:12px;background:var(--teal-light);color:var(--teal);border:1.5px dashed var(--teal-mid);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;}
+.add-rec-form{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;display:none;}
+.add-rec-form.visible{display:block;}
+.doc-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.doc-chip{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;background:var(--surface);border:1.5px solid var(--border);color:var(--text-2);transition:all 0.2s;}
+.doc-chip.sel{background:var(--purple-light);border-color:var(--purple);color:var(--purple);}
+.record-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:9px;transition:transform 0.15s;}
+.record-card:hover{transform:translateY(-1px);}
+.rc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.rc-date{font-size:11px;font-weight:600;color:var(--teal);}
+.rc-dept{font-size:10px;background:var(--teal-light);color:var(--teal);padding:2px 8px;border-radius:20px;font-weight:500;}
+.rc-doc{font-size:12px;font-weight:500;color:var(--text);}
+.rc-note{font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.5;}
+.rc-followup{display:flex;align-items:center;gap:5px;margin-top:7px;padding-top:7px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.rc-fu-label{font-size:10px;color:var(--text-3);}
+.rc-fu-date{font-size:11px;font-weight:600;color:var(--amber);}
+.rc-fu-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;}
+.fu-soon{background:var(--amber-light);color:var(--amber);}
+.fu-today{background:var(--red-light);color:var(--red);}
+.fu-overdue{background:var(--red-light);color:var(--red);}
+.fu-ok{background:var(--teal-light);color:var(--teal);}
+.followup-alert-banner{background:linear-gradient(135deg,#E87C2B,#F5A942);border-radius:var(--radius);padding:13px;color:white;cursor:pointer;}
+.fab-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;}
+.fab-sub{font-size:11px;opacity:0.88;}
+.alert-badge{display:inline-block;background:var(--red);color:white;font-size:9px;font-weight:700;padding:2px 5px;border-radius:10px;margin-left:5px;vertical-align:middle;}
+
+/* ── SETTINGS ── */
+.settings-body{flex:1;overflow-y:auto;padding:16px;}
+.settings-body::-webkit-scrollbar{display:none;}
+.set-section{margin-bottom:18px;}
+.set-sec-title{font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:9px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:6px;}
+.set-label{font-size:13px;font-weight:500;color:var(--text);}
+.set-sub{font-size:11px;color:var(--text-3);margin-top:1px;}
+.lang-opt-row{display:flex;gap:8px;margin-top:6px;}
+.lang-opt{flex:1;padding:11px;border-radius:var(--radius-sm);text-align:center;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text-2);transition:all 0.2s;}
+.lang-opt.active{border-color:var(--teal);background:var(--teal-light);color:var(--teal);}
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE ONBOARDING — shown only first time -->
+<div class="lang-overlay" id="lang-overlay">
+  <div class="lo-brand">Arogya<span>Q</span></div>
+  <div class="lo-sub">Hospital Patient Assistant</div>
+  <div class="lo-hospital">District General Hospital, Hyderabad</div>
+  <div class="lo-prompt" id="lo-p1">Choose your language</div>
+  <div class="lo-prompt2" id="lo-p2">You can change this anytime in Settings</div>
+  <button class="lo-btn lo-en" onclick="chooseLang('en')">🇬🇧 &nbsp;English</button>
+  <button class="lo-btn lo-te" onclick="chooseLang('te')">🇮🇳 &nbsp;తెలుగు (Telugu)</button>
+  <div class="lo-note" id="lo-note">This choice only appears once</div>
+</div>
+
+<!-- TOKEN SUCCESS POPUP -->
+<div class="popup-overlay hidden" id="token-popup">
+  <div class="popup-sheet">
+    <div class="popup-handle"></div>
+    <div class="popup-title" id="pp-title">Registration Successful!</div>
+    <div class="popup-sub" id="pp-sub">Your token has been issued. You are now in the queue.</div>
+    <div class="popup-token-big" id="pp-token">#041</div>
+    <div class="popup-dept" id="pp-dept-label">General OPD</div>
+    <div class="popup-info" id="pp-info">⏱ Estimated wait: ~18 minutes · Please stay nearby and listen for your number.</div>
+    <button class="submit-btn" id="pp-track-btn" onclick="goToMyDept()">📍 Track My Queue →</button>
+    <button class="submit-btn outline" style="margin-top:9px;" onclick="closePopup();resetRegForm();" id="pp-new-btn">+ Register Another Patient</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+<!-- DESKTOP SIDEBAR -->
+<div class="sidebar" id="desktop-sidebar">
+  <div class="sb-brand">Arogya<span>Q</span></div>
+  <div class="sb-tagline">District General Hospital</div>
+  <div class="sb-card">
+    <div class="sb-sec">Navigation</div>
+    <div class="sb-item active" id="sbn-home" onclick="goTo('screen-home')"><span class="si-icon">🏠</span><span id="sbn-home-t">Home</span></div>
+    <div class="sb-item" id="sbn-reg" onclick="goTo('screen-register')"><span class="si-icon">📋</span><span id="sbn-reg-t">Registration</span></div>
+    <div class="sb-item" id="sbn-queue" onclick="goTo('screen-queue')"><span class="si-icon">🔢</span><span id="sbn-queue-t">Queue Monitor</span></div>
+    <div class="sb-item" id="sbn-aware" onclick="goTo('screen-awareness')"><span class="si-icon">💊</span><span id="sbn-aware-t">Health Awareness</span></div>
+    <div class="sb-item" id="sbn-rec" onclick="goTo('screen-records')"><span class="si-icon">📁</span><span id="sbn-rec-t">MediVault</span></div>
+    <div class="sb-item" id="sbn-fb" onclick="goTo('screen-feedback')"><span class="si-icon">⭐</span><span id="sbn-fb-t">Feedback</span></div>
+    <div class="sb-item" id="sbn-dash" onclick="goTo('screen-dashboard')"><span class="si-icon">📊</span><span id="sbn-dash-t">Dashboard</span></div>
+  </div>
+  <div class="sb-card">
+    <div class="sb-sec">SDG Goals</div>
+    <div class="sb-sdg">
+      <span><span class="sdg-pill" style="background:#EAF3DE;color:#27500A;">SDG 3</span> Good Health</span>
+      <span><span class="sdg-pill" style="background:#FBEAF0;color:#72243E;">SDG 10</span> Reduced Inequalities</span>
+      <span><span class="sdg-pill" style="background:#E6F1FB;color:#0C447C;">SDG 16</span> Strong Institutions</span>
+      <span><span class="sdg-pill" style="background:#FEF3E8;color:#633806;">SDG 9</span> Innovation</span>
+      <span><span class="sdg-pill" style="background:#FAEEDA;color:#633806;">SDG 11</span> Sustainable Cities</span>
+    </div>
+  </div>
+  <div class="sb-card">
+    <div class="sb-sec">Live Weather — Hyderabad</div>
+    <div class="sb-weather-live">
+      <div class="sbw-row">
+        <span class="sbw-icon" id="sbw-icon-live">⏳</span>
+        <div>
+          <div class="sbw-temp" id="sbw-temp-live">--°C</div>
+          <div class="sbw-desc" id="sbw-desc-live">Loading…</div>
+        </div>
+      </div>
+      <div class="sbw-alert" id="sbw-alert-live"></div>
+    </div>
+  </div>
+  <div class="sb-card">
+    <div class="sb-sec">Live Stats</div>
+    <div class="rp-stat"><span>Today tokens</span><span class="rp-stat-val">127</span></div>
+    <div class="rp-stat"><span>Avg wait</span><span class="rp-stat-val">8m</span></div>
+    <div class="rp-stat"><span>Feedback score</span><span class="rp-stat-val">4.2★</span></div>
+    <div class="rp-stat" style="border-bottom:none"><span>Emergencies</span><span class="rp-stat-val" style="color:var(--amber)">3</span></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div class="app-root" id="app-root">
+
+<!-- ===== HOME ===== -->
+<div class="screen active" id="screen-home">
+  <div class="status-bar">
+    <span id="sb-time">9:41</span>
+    <div style="display:flex;gap:5px;align-items:center;font-size:11px;"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="top-header">
+    <div class="header-row">
+      <div>
+        <div class="app-brand">Arogya<span>Q</span></div>
+        <div class="header-sub" id="h-sub">District General Hospital</div>
+      </div>
+      <div class="hdr-actions">
+        <button class="hdr-btn" onclick="goTo('screen-settings')" title="Settings">⚙️</button>
+        <button class="hdr-btn" style="position:relative" onclick="goTo('screen-records')">🔔<span id="notif-dot" style="display:none;position:absolute;top:3px;right:3px;width:8px;height:8px;background:#F5A942;border-radius:50%;border:1.5px solid var(--teal);"></span></button>
+      </div>
+    </div>
+    <div class="weather-chip">
+      <div class="wc-left">
+        <div id="wc-icon" style="font-size:26px;">⏳</div>
+        <div>
+          <div class="wc-temp" id="wc-temp">--°C</div>
+          <div class="wc-desc" id="wc-desc" style="font-size:12px;color:rgba(255,255,255,0.7);">Loading…</div>
+          <div class="wc-city">Hyderabad, TS</div>
+        </div>
+      </div>
+      <div class="wc-right">
+        <div class="wc-feels" id="wc-feels">Feels like --°C</div>
+        <div class="wc-alert" id="wc-alert"></div>
+      </div>
+    </div>
+    <div class="token-chip">
+      <div><div class="tc-label" id="tc-lbl">Your token</div><div class="tc-val" id="tc-val">—</div></div>
+      <div style="text-align:right"><div class="tc-label" id="tc-dl">Department</div><div style="color:white;font-size:12px;font-weight:500;" id="tc-dept">—</div></div>
+      <div class="tc-badge" id="tc-badge">Register</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div id="followup-home-banner" style="display:none;margin-bottom:14px;"></div>
+    <div class="health-banner" onclick="goTo('screen-awareness')">
+      <div class="hb-icon">☀️</div>
+      <div>
+        <div class="hb-title" id="hb-title">Summer Health Alert</div>
+        <div class="hb-sub" id="hb-sub">Stay hydrated. Heat tips inside.</div>
+        <div class="hb-btn" id="hb-btn">Read tips →</div>
+      </div>
+    </div>
+    <div class="sec-label" id="sl-services">Services</div>
+    <div class="feature-grid">
+      <div class="feat-card c-teal" onclick="goTo('screen-register')">
+        <div class="arr">›</div><div class="icon-wrap">📋</div>
+        <div class="feat-title" id="fc-reg">Patient Registration</div>
+        <div class="feat-desc" id="fc-reg-s">Register &amp; get token</div>
+      </div>
+      <div class="feat-card c-blue" onclick="goTo('screen-queue')">
+        <div class="arr">›</div><div class="icon-wrap">🔢</div>
+        <div class="feat-title" id="fc-queue">Queue Monitor</div>
+        <div class="feat-desc" id="fc-queue-s">Live waiting status</div>
+      </div>
+      <div class="feat-card c-amber" onclick="goTo('screen-awareness')">
+        <div class="arr">›</div><div class="icon-wrap">💊</div>
+        <div class="feat-title" id="fc-aware">Health Awareness</div>
+        <div class="feat-desc" id="fc-aware-s">Tips &amp; alerts</div>
+      </div>
+      <div class="feat-card c-teal" onclick="goTo('screen-faq')">
+        <div class="arr">›</div><div class="icon-wrap">❓</div>
+        <div class="feat-title" id="fc-faq">Help &amp; FAQ</div>
+        <div class="feat-desc" id="fc-faq-s">Common questions</div>
+      </div>
+      <div class="feat-card wide c-purple" onclick="goTo('screen-records')">
+        <div class="icon-wrap">📁</div>
+        <div class="feat-text">
+          <div class="feat-title" id="fc-mv">MediVault</div>
+          <div class="feat-desc" id="fc-mv-s">Prescriptions, reports &amp; follow-ups<span id="rec-badge" class="alert-badge" style="display:none;">!</span></div>
+        </div>
+        <span style="font-size:18px;color:var(--purple)">›</span>
+      </div>
+      <div class="feat-card wide c-red" onclick="goTo('screen-feedback')">
+        <div class="icon-wrap">⭐</div>
+        <div class="feat-text">
+          <div class="feat-title" id="fc-fb">Feedback &amp; Report</div>
+          <div class="feat-desc" id="fc-fb-s">Rate your experience</div>
+        </div>
+        <span style="font-size:18px;color:var(--red)">›</span>
+      </div>
+      <div class="feat-card wide c-blue" onclick="goTo('screen-dashboard')">
+        <div class="icon-wrap">📊</div>
+        <div class="feat-text">
+          <div class="feat-title" id="fc-dash">Analytics Dashboard</div>
+          <div class="feat-desc" id="fc-dash-s">Token trends &amp; stats</div>
+        </div>
+        <span style="font-size:18px;color:var(--blue)">›</span>
+      </div>
+    </div>
+    <div class="sec-label" id="sl-info">Hospital Info</div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:12px;color:var(--text-2);line-height:1.9;">
+      <div style="display:flex;justify-content:space-between;"><span id="hi-opd">🕗 OPD Hours</span><span style="font-weight:600;color:var(--text)">8:00 AM – 2:00 PM</span></div>
+      <div style="display:flex;justify-content:space-between;"><span id="hi-emg">📞 Emergency</span><span style="font-weight:600;color:var(--red)">108</span></div>
+      <div style="display:flex;justify-content:space-between;"><span id="hi-loc">📍 Location</span><span style="color:var(--teal)">Hyderabad, TS</span></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="nav-item active" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label" id="nb-home" style="color:var(--teal)">Home</div></div>
+    <div class="nav-item" onclick="goTo('screen-queue')"><div class="nav-icon">🔢</div><div class="nav-label" id="nb-queue">Queue</div></div>
+    <div class="nav-item" onclick="goTo('screen-register')"><div class="nav-icon">📋</div><div class="nav-label" id="nb-reg">Register</div></div>
+    <div class="nav-item" onclick="goTo('screen-records')"><div class="nav-icon">📁</div><div class="nav-label" id="nb-mv">MediVault</div></div>
+    <div class="nav-item" onclick="goTo('screen-faq')"><div class="nav-icon">❓</div><div class="nav-label" id="nb-help">Help</div></div>
+  </div>
+</div>
+
+<!-- ===== REGISTRATION ===== -->
+<div class="screen" id="screen-register">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-home">Back</span></button>
+    <h1 id="rh-title">Patient Registration</h1>
+    <p id="rh-sub">Fill details to get your token number</p>
+  </div>
+  <div class="form-body">
+    <div id="reg-form">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" id="fl-fname">First Name</label><input class="form-input" type="text" id="fname" placeholder="Ravi"></div>
+        <div class="form-group"><label class="form-label" id="fl-lname">Last Name</label><input class="form-input" type="text" id="lname" placeholder="Kumar"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" id="fl-age">Age</label><input class="form-input" type="number" id="age" placeholder="35"></div>
+        <div class="form-group"><label class="form-label" id="fl-gender">Gender</label>
+          <select class="form-select" id="gender">
+            <option value="" id="g0">Select</option>
+            <option id="g1">Male</option><option id="g2">Female</option><option id="g3">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label" id="fl-phone">Phone</label><input class="form-input" type="tel" id="phone" placeholder="98765 43210"></div>
+      <div class="form-group"><label class="form-label" id="fl-dept">Department</label>
+        <select class="form-select" id="dept">
+          <option value="" id="d0">Select department</option>
+          <option>General OPD</option><option>Cardiology</option><option>Orthopaedics</option>
+          <option>Gynaecology</option><option>Paediatrics</option><option>ENT</option><option>Dermatology</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="emg-toggle" onclick="toggleEmg()">
+          <div><div class="emg-label" id="fl-emg">🚨 Emergency Case</div><div class="emg-sub" id="fl-emg-s">Jumps to top of queue</div></div>
+          <div class="tog-sw" id="emg-toggle"><div class="tog-knob"></div></div>
+        </div>
+      </div>
+      <button class="submit-btn" id="reg-submit-btn" onclick="submitReg()">Get Token Number →</button>
+    </div>
+    <div class="token-success" id="token-success">
+      <div style="font-size:34px;margin-bottom:7px">🎉</div>
+      <div class="token-label" id="ts-label">Your Token Number</div>
+      <div class="big-token" id="gen-token">#047</div>
+      <div class="dept-chip" id="gen-dept">General OPD</div>
+      <div style="font-size:12px;color:var(--text-2);margin-top:12px;line-height:1.6;" id="ts-wait">Estimated wait: <strong>~18 minutes</strong><br>Stay nearby and listen for your number.</div>
+      <div class="tok-btns">
+        <button class="submit-btn outline" onclick="resetRegForm()" id="ts-new-btn">+ New Patient</button>
+        <button class="submit-btn" onclick="goToMyDept()" id="ts-track-btn">Track Queue</button>
+      </div>
+    </div>
+    <div id="token-history" style="display:none;margin-top:10px;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;" id="th-label">Registered this session</div>
+      <div id="th-rows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUEUE ===== -->
+<div class="screen" id="screen-queue">
+  <div class="queue-hdr">
+    <button class="back-btn" style="color:rgba(255,255,255,0.8);margin-bottom:6px;" onclick="goTo('screen-home')">‹ <span id="bk-home-q">Back</span></button>
+    <h1 id="qh-title">Live Queue Monitor</h1>
+    <p id="qh-sub">Updated every 2 minutes</p>
+    <div class="dept-tabs" id="dept-tabs">
+      <div class="dept-tab active" onclick="setDept(this,'General OPD')">General OPD</div>
+      <div class="dept-tab" onclick="setDept(this,'Cardiology')">Cardiology</div>
+      <div class="dept-tab" onclick="setDept(this,'Orthopaedics')">Ortho</div>
+      <div class="dept-tab" onclick="setDept(this,'Paediatrics')">Paediatrics</div>
+      <div class="dept-tab" onclick="setDept(this,'ENT')">ENT</div>
+    </div>
+  </div>
+  <div class="queue-body">
+    <div class="hydration-bar"><div class="icon">💧</div><div class="text" id="q-hydration-tip">Reminder: Drink water while you wait. Stay cool.</div></div>
+    <div class="your-token-highlight" id="your-token-bar" style="display:none;">
+      <div class="yth-label" id="yt-label">Your token</div>
+      <div class="yth-val" id="yt-val">—</div>
+    </div>
+    <div class="now-serving">
+      <div class="ns-label" id="ns-label">Now Serving</div>
+      <div class="ns-token" id="now-token">035</div>
+      <div class="ns-name" id="now-dept-label">General OPD — Dr. Priya Sharma</div>
+    </div>
+    <div class="q-stats">
+      <div class="q-stat"><div class="val" id="q-waiting">12</div><div class="lbl" id="ql-waiting">Waiting</div></div>
+      <div class="q-stat"><div class="val" id="q-served">34</div><div class="lbl" id="ql-served">Served</div></div>
+      <div class="q-stat"><div class="val" id="q-avg">8m</div><div class="lbl" id="ql-avg">Avg Wait</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:9px;" id="ql-next">Up next</div>
+    <div id="queue-list">
+      <div class="q-row emg"><div class="q-num">036</div><div style="flex:1"><div class="q-name">Lakshmi D. <span class="emg-tag">EMG</span></div><div class="q-dept">General OPD</div></div><div class="q-wait">Now</div></div>
+      <div class="q-row"><div class="q-num">037</div><div style="flex:1"><div class="q-name">Suresh R.</div><div class="q-dept">General OPD</div></div><div class="q-wait">~4m</div></div>
+      <div class="q-row"><div class="q-num">038</div><div style="flex:1"><div class="q-name">Anita M.</div><div class="q-dept">General OPD</div></div><div class="q-wait">~8m</div></div>
+      <div class="q-row"><div class="q-num">039</div><div style="flex:1"><div class="q-name">Raju P.</div><div class="q-dept">General OPD</div></div><div class="q-wait">~12m</div></div>
+      <div class="q-row"><div class="q-num">040</div><div style="flex:1"><div class="q-name">Kavitha S.</div><div class="q-dept">General OPD</div></div><div class="q-wait">~16m</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEALTH AWARENESS ===== -->
+<div class="screen" id="screen-awareness">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-aware">Back</span></button>
+    <h1 id="awh-title">Health Awareness</h1>
+    <p id="awh-sub">Seasonal tips, safety &amp; hygiene</p>
+  </div>
+  <div class="awareness-body">
+    <div id="aw-cat1" class="aw-cat">Seasonal Alert</div>
+    <div class="aw-card heatwave">
+      <div class="aw-icon">☀️</div>
+      <div class="aw-title" id="aw1-title">Heatwave Safety — Summer 2025</div>
+      <div class="aw-body" id="aw1-body">Hyderabad is experiencing extreme heat. Protect yourself:</div>
+      <ul class="tip-list" id="aw1-tips">
+        <li>Drink at least 3–4 litres of water daily</li>
+        <li>Avoid going out between 12 PM – 4 PM</li>
+        <li>Wear light, loose, light-coloured clothing</li>
+        <li>If dizzy or nauseous, sit in shade and drink ORS</li>
+        <li>Never leave children or elderly in parked vehicles</li>
+      </ul>
+    </div>
+    <div id="aw-cat2" class="aw-cat">Hydration Tips</div>
+    <div class="aw-card water">
+      <div class="aw-icon">💧</div>
+      <div class="aw-title" id="aw2-title">Stay Hydrated</div>
+      <div class="aw-body" id="aw2-body">Signs of dehydration to watch for:</div>
+      <ul class="tip-list" id="aw2-tips">
+        <li>Dark yellow urine — drink more water immediately</li>
+        <li>Headache &amp; dizziness — sign of early dehydration</li>
+        <li>ORS sachets available free at hospital pharmacy</li>
+        <li>Avoid sugary drinks &amp; alcohol in heat</li>
+      </ul>
+    </div>
+    <div id="aw-cat3" class="aw-cat">Hygiene &amp; Prevention</div>
+    <div class="aw-card hygiene">
+      <div class="aw-icon">🧼</div>
+      <div class="aw-title" id="aw3-title">Hygiene Practices</div>
+      <div class="aw-body" id="aw3-body">Simple habits that prevent most diseases:</div>
+      <ul class="tip-list" id="aw3-tips">
+        <li>Wash hands before eating and after toilet</li>
+        <li>Drink only boiled or filtered water</li>
+        <li>Cover mouth while coughing or sneezing</li>
+        <li>Do not self-medicate — consult a doctor</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ ===== -->
+<div class="screen" id="screen-faq">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-faq">Back</span></button>
+    <h1 id="faqh-title">Help &amp; FAQ</h1>
+    <p id="faqh-sub">Answers to common questions</p>
+  </div>
+  <div class="faq-body">
+    <div class="search-bar"><span style="font-size:15px;">🔍</span><input type="text" id="faq-search" oninput="filterFAQ(this.value)"></div>
+    <div id="faq-list"></div>
+  </div>
+</div>
+
+<!-- ===== FEEDBACK ===== -->
+<div class="screen" id="screen-feedback">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-fb">Back</span></button>
+    <h1 id="fbh-title">Feedback &amp; Report</h1>
+    <p id="fbh-sub">Help us improve your experience</p>
+  </div>
+  <div class="feedback-body">
+    <div id="feedback-form">
+      <div style="font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.06em;" id="fb-rate-label">Rate your visit</div>
+      <div class="star-row" id="stars">
+        <span class="star" onclick="rateStar(1)">★</span><span class="star" onclick="rateStar(2)">★</span>
+        <span class="star" onclick="rateStar(3)">★</span><span class="star" onclick="rateStar(4)">★</span>
+        <span class="star" onclick="rateStar(5)">★</span>
+      </div>
+      <div class="rating-label" id="rating-text">Tap to rate</div>
+      <div style="font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:9px;" id="fb-delay-label">Was there a delay?</div>
+      <div class="delay-options">
+        <div class="delay-opt" onclick="selDelay(this,'No delay')" id="d-opt1">✅ No delay</div>
+        <div class="delay-opt" onclick="selDelay(this,'Minor delay')" id="d-opt2">⏳ Minor delay</div>
+        <div class="delay-opt" onclick="selDelay(this,'Long wait')" id="d-opt3">⚠️ Long wait</div>
+        <div class="delay-opt" onclick="selDelay(this,'Very delayed')" id="d-opt4">🚨 Very delayed</div>
+      </div>
+      <div style="font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:9px;" id="fb-comment-label">Comments</div>
+      <textarea class="feedback-textarea" id="feedback-text"></textarea>
+      <button class="submit-btn" style="margin-top:14px;" id="fb-submit-btn" onclick="submitFeedback()">Submit Feedback →</button>
+    </div>
+    <div class="feedback-success" id="feedback-success">
+      <div class="big-icon">🙏</div>
+      <h2 id="fbs-title">Thank you!</h2>
+      <p id="fbs-sub">Your feedback has been recorded and sent to hospital administration.</p>
+      <button class="submit-btn" style="margin-top:22px;width:auto;padding:13px 28px;" onclick="goTo('screen-home')" id="fbs-home-btn">Back to Home →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MEDIVAULT ===== -->
+<div class="screen" id="screen-records">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-mv">Back</span></button>
+    <h1 id="mvh-title">MediVault</h1>
+    <p id="mvh-sub">Your prescriptions, reports &amp; follow-ups</p>
+  </div>
+  <div class="rec-body">
+    <div id="followup-alert-area"></div>
+    <button class="add-rec-btn" id="add-rec-btn-label" onclick="toggleAddForm()">+ Add Visit Record</button>
+    <div class="add-rec-form" id="add-record-form">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" id="rl-date">Visit Date</label><input class="form-input" type="date" id="rec-date"></div>
+        <div class="form-group"><label class="form-label" id="rl-dept">Department</label>
+          <select class="form-select" id="rec-dept">
+            <option value="">Select</option>
+            <option>General OPD</option><option>Cardiology</option><option>Orthopaedics</option>
+            <option>Gynaecology</option><option>Paediatrics</option><option>ENT</option><option>Dermatology</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label" id="rl-doc">Doctor Name</label><input class="form-input" type="text" id="rec-doc" placeholder="Dr. Priya Sharma"></div>
+      <div class="form-group"><label class="form-label" id="rl-diag">Diagnosis / Notes</label><textarea class="feedback-textarea" id="rec-diag" placeholder="e.g. Hypertension check, prescribed medication..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label" id="rl-docs">Documents Attached</label>
+        <div class="doc-chips">
+          <div class="doc-chip" data-type="Prescription" onclick="toggleChip(this)" id="dc1">📄 Prescription</div>
+          <div class="doc-chip" data-type="Lab Report" onclick="toggleChip(this)" id="dc2">🔬 Lab Report</div>
+          <div class="doc-chip" data-type="Scan/X-Ray" onclick="toggleChip(this)" id="dc3">🖼️ Scan/X-Ray</div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label" id="rl-followup">Follow-up Date (optional)</label><input class="form-input" type="date" id="rec-followup"></div>
+      <button class="submit-btn" id="rec-save-btn" onclick="saveRecord()">Save Record →</button>
+    </div>
+    <div id="records-list"></div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="screen" id="screen-dashboard">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-dash">Back</span></button>
+    <h1 id="dsh-title">Analytics Dashboard</h1>
+    <p id="dsh-sub">Today's hospital activity summary</p>
+  </div>
+  <div class="dash-body">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="s-val">127</div><div class="s-lbl" id="ds-total">Total tokens today</div><div class="s-delta">↑ 14% from yesterday</div></div>
+      <div class="stat-card"><div class="s-val">4.2</div><div class="s-lbl" id="ds-score">Avg feedback score</div><div class="s-delta">↑ 0.3 this week</div></div>
+      <div class="stat-card"><div class="s-val" style="color:var(--amber)">3</div><div class="s-lbl" id="ds-emg">Emergencies today</div><div class="s-delta" style="color:var(--text-3)">— same as yesterday</div></div>
+      <div class="stat-card"><div class="s-val">8m</div><div class="s-lbl" id="ds-wait">Avg wait time</div><div class="s-delta">↓ 2 min improved</div></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title" id="ds-tokens7">Tokens issued — last 7 days</div>
+      <div class="bar-chart" id="bar-chart"></div>
+      <div class="bar-labels" id="bar-labels"></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title" id="ds-ratings">Feedback ratings breakdown</div>
+      <div id="feedback-chart">
+        <div class="fb-row"><div class="fb-star">5★</div><div class="fb-bg"><div class="fb-fill" style="width:62%"></div></div><div class="fb-pct">62%</div></div>
+        <div class="fb-row"><div class="fb-star">4★</div><div class="fb-bg"><div class="fb-fill" style="width:22%"></div></div><div class="fb-pct">22%</div></div>
+        <div class="fb-row"><div class="fb-star">3★</div><div class="fb-bg"><div class="fb-fill" style="width:10%"></div></div><div class="fb-pct">10%</div></div>
+        <div class="fb-row"><div class="fb-star">2★</div><div class="fb-bg"><div class="fb-fill" style="width:4%"></div></div><div class="fb-pct">4%</div></div>
+        <div class="fb-row"><div class="fb-star">1★</div><div class="fb-bg"><div class="fb-fill" style="width:2%"></div></div><div class="fb-pct">2%</div></div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title" id="ds-bydept">Tokens by department today</div>
+      <div class="dept-row"><div class="dept-name">General OPD</div><div style="text-align:right"><div class="dept-count">48</div><div class="dept-lbl">tokens</div></div></div>
+      <div class="dept-row"><div class="dept-name">Cardiology</div><div style="text-align:right"><div class="dept-count">22</div><div class="dept-lbl">tokens</div></div></div>
+      <div class="dept-row"><div class="dept-name">Paediatrics</div><div style="text-align:right"><div class="dept-count">19</div><div class="dept-lbl">tokens</div></div></div>
+      <div class="dept-row"><div class="dept-name">Orthopaedics</div><div style="text-align:right"><div class="dept-count">18</div><div class="dept-lbl">tokens</div></div></div>
+      <div class="dept-row"><div class="dept-name">ENT</div><div style="text-align:right"><div class="dept-count">11</div><div class="dept-lbl">tokens</div></div></div>
+      <div class="dept-row" style="margin-bottom:0"><div class="dept-name">Dermatology</div><div style="text-align:right"><div class="dept-count">9</div><div class="dept-lbl">tokens</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="screen" id="screen-settings">
+  <div class="inner-header">
+    <button class="back-btn" onclick="goTo('screen-home')">‹ <span id="bk-set">Back</span></button>
+    <h1 id="seth-title">Settings</h1>
+    <p id="seth-sub">Language &amp; preferences</p>
+  </div>
+  <div class="settings-body">
+    <div class="set-section">
+      <div class="set-sec-title" id="set-lang-title">Language / భాష</div>
+      <div class="lang-opt-row">
+        <div class="lang-opt active" id="lo-en-opt" onclick="setLangFromSettings('en')">🇬🇧 English</div>
+        <div class="lang-opt" id="lo-te-opt" onclick="setLangFromSettings('te')">🇮🇳 తెలుగు</div>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-sec-title" id="set-hosp-title">Hospital</div>
+      <div class="set-row">
+        <div><div class="set-label">District General Hospital</div><div class="set-sub">Hyderabad, Telangana</div></div>
+        <span style="font-size:18px;">🏥</span>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-sec-title" id="set-about-title">About</div>
+      <div class="set-row"><div><div class="set-label">ArogyaQ</div><div class="set-sub">v1.0 · CSP Project 2025</div></div><span style="font-size:18px;">ℹ️</span></div>
+      <div class="set-row" style="margin-top:6px;"><div><div class="set-label" id="set-sdg-label">SDG Goals Addressed</div><div class="set-sub">SDG 3, 9, 10, 11, 16</div></div><span style="font-size:18px;">🌍</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end app-root -->
+
+<!-- RIGHT PANEL desktop only -->
+<div class="right-panel" id="right-panel">
+  <div class="rp-card">
+    <div class="rp-title">Quick Stats</div>
+    <div class="rp-stat"><span>Today tokens</span><span class="rp-stat-val">127</span></div>
+    <div class="rp-stat"><span>Avg wait time</span><span class="rp-stat-val">8 min</span></div>
+    <div class="rp-stat"><span>Feedback score</span><span class="rp-stat-val">4.2 ★</span></div>
+    <div class="rp-stat" style="border-bottom:none"><span>Emergencies</span><span class="rp-stat-val" style="color:var(--amber)">3</span></div>
+  </div>
+  <div class="rp-card">
+    <div class="rp-title">Department Load</div>
+    <div class="rp-stat"><span>General OPD</span><span class="rp-stat-val">48</span></div>
+    <div class="rp-stat"><span>Cardiology</span><span class="rp-stat-val">22</span></div>
+    <div class="rp-stat"><span>Paediatrics</span><span class="rp-stat-val">19</span></div>
+    <div class="rp-stat" style="border-bottom:none"><span>Orthopaedics</span><span class="rp-stat-val">18</span></div>
+  </div>
+  <div class="rp-card">
+    <div class="rp-title">SDG Mapping</div>
+    <div style="font-size:12px;color:var(--text-2);line-height:1.8;">
+      <div><span class="sdg-pill" style="background:#EAF3DE;color:#27500A;font-size:10px;">SDG 3</span> Good Health &amp; Wellbeing</div>
+      <div><span class="sdg-pill" style="background:#FBEAF0;color:#72243E;font-size:10px;">SDG 10</span> Reduced Inequalities</div>
+      <div><span class="sdg-pill" style="background:#E6F1FB;color:#0C447C;font-size:10px;">SDG 16</span> Strong Institutions</div>
+      <div><span class="sdg-pill" style="background:#FEF3E8;color:#633806;font-size:10px;">SDG 9</span> Innovation</div>
+      <div><span class="sdg-pill" style="background:#FAEEDA;color:#633806;font-size:10px;">SDG 11</span> Sustainable Cities</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page-wrap -->
+
+<script>
+// ── STATE ──
+let currentLang = 'en';
+let emergencyOn = false;
+let tokenCounter = 40;
+let tokenHistory = [];
+let currentToken = null;
+let currentDept = null;
+let healthRecords = [];
+let selectedChips = [];
+let currentRating = 0;
+let selectedDelay = '';
+
+// ── TRANSLATIONS ──
+const T = {
+  en: {
+    'lo-p1':'Choose your language','lo-p2':'You can change this anytime in Settings','lo-note':'This choice only appears once',
+    'h-sub':'District General Hospital',
+    'hb-title':'Summer Health Alert','hb-sub':'Stay hydrated. Heat tips inside.','hb-btn':'Read tips →',
+    'sl-services':'Services','sl-info':'Hospital Info',
+    'fc-reg':'Patient Registration','fc-reg-s':'Register & get token',
+    'fc-queue':'Queue Monitor','fc-queue-s':'Live waiting status',
+    'fc-aware':'Health Awareness','fc-aware-s':'Tips & alerts',
+    'fc-faq':'Help & FAQ','fc-faq-s':'Common questions',
+    'fc-mv':'MediVault','fc-mv-s':'Prescriptions, reports & follow-ups',
+    'fc-fb':'Feedback & Report','fc-fb-s':'Rate your experience',
+    'fc-dash':'Analytics Dashboard','fc-dash-s':'Token trends & stats',
+    'hi-opd':'🕗 OPD Hours','hi-emg':'📞 Emergency','hi-loc':'📍 Location',
+    'nb-home':'Home','nb-queue':'Queue','nb-reg':'Register','nb-mv':'MediVault','nb-help':'Help',
+    'rh-title':'Patient Registration','rh-sub':'Fill details to get your token number',
+    'fl-fname':'First Name','fl-lname':'Last Name','fl-age':'Age','fl-gender':'Gender',
+    'fl-phone':'Phone','fl-dept':'Department',
+    'fl-emg':'🚨 Emergency Case','fl-emg-s':'Jumps to top of queue',
+    'g0':'Select','g1':'Male','g2':'Female','g3':'Other',
+    'd0':'Select department',
+    'reg-submit-btn':'Get Token Number →',
+    'ts-label':'Your Token Number','ts-wait':'Stay nearby and listen for your number.',
+    'ts-new-btn':'+ New Patient','ts-track-btn':'Track Queue',
+    'th-label':'Registered this session',
+    'pp-title':'Registration Successful!','pp-sub':'Your token has been issued. You are now in the queue.',
+    'pp-info':'⏱ Stay nearby and listen for your number.',
+    'pp-track-btn':'📍 Track My Queue →','pp-new-btn':'+ Register Another Patient',
+    'qh-title':'Live Queue Monitor','qh-sub':'Updated every 2 minutes',
+    'q-hydration-tip':'Reminder: Drink water while you wait. Stay cool.',
+    'yt-label':'Your token',
+    'ns-label':'Now Serving','ql-waiting':'Waiting','ql-served':'Served','ql-avg':'Avg Wait','ql-next':'Up next',
+    'awh-title':'Health Awareness','awh-sub':'Seasonal tips, safety & hygiene',
+    'aw-cat1':'Seasonal Alert','aw-cat2':'Hydration Tips','aw-cat3':'Hygiene & Prevention',
+    'aw1-title':'Heatwave Safety — Summer 2025','aw1-body':'Hyderabad is experiencing extreme heat. Protect yourself:',
+    'aw1-tips':['Drink at least 3–4 litres of water daily','Avoid going out between 12 PM – 4 PM','Wear light, loose, light-coloured clothing','If dizzy or nauseous, sit in shade and drink ORS','Never leave children or elderly in parked vehicles'],
+    'aw2-title':'Stay Hydrated','aw2-body':'Signs of dehydration to watch for:',
+    'aw2-tips':['Dark yellow urine — drink more water immediately','Headache & dizziness — sign of early dehydration','ORS sachets available free at hospital pharmacy','Avoid sugary drinks & alcohol in heat'],
+    'aw3-title':'Hygiene Practices','aw3-body':'Simple habits that prevent most diseases:',
+    'aw3-tips':['Wash hands before eating and after toilet','Drink only boiled or filtered water','Cover mouth while coughing or sneezing','Do not self-medicate — consult a doctor'],
+    'faqh-title':'Help & FAQ','faqh-sub':'Answers to common questions',
+    'faq-search-ph':'Search questions…',
+    'fbh-title':'Feedback & Report','fbh-sub':'Help us improve your experience',
+    'fb-rate-label':'Rate your visit','fb-delay-label':'Was there a delay?','fb-comment-label':'Comments',
+    'd-opt1':'✅ No delay','d-opt2':'⏳ Minor delay','d-opt3':'⚠️ Long wait','d-opt4':'🚨 Very delayed',
+    'fb-submit-btn':'Submit Feedback →',
+    'fbs-title':'Thank you!','fbs-sub':'Your feedback has been recorded.','fbs-home-btn':'Back to Home →',
+    'rating-text':'Tap to rate',
+    'ratingLabels':['','Poor','Fair','Good','Very good','Excellent'],
+    'delayLabels':{'No delay':'No delay','Minor delay':'Minor delay','Long wait':'Long wait','Very delayed':'Very delayed'},
+    'mvh-title':'MediVault','mvh-sub':'Your prescriptions, reports & follow-ups',
+    'add-rec-btn-label':'+ Add Visit Record',
+    'rl-date':'Visit Date','rl-dept':'Department','rl-doc':'Doctor Name','rl-diag':'Diagnosis / Notes','rl-docs':'Documents Attached','rl-followup':'Follow-up Date (optional)',
+    'dc1':'📄 Prescription','dc2':'🔬 Lab Report','dc3':'🖼️ Scan/X-Ray',
+    'rec-save-btn':'Save Record →',
+    'rec-empty':'No records yet. Add your first visit above.',
+    'rc-overdue':'Overdue','rc-today':'Today!','rc-tomorrow':'Tomorrow!','rc-days':'days',
+    'rc-followup-lbl':'Follow-up',
+    'fab-tmr-title':'Tomorrow Follow-up Reminder','fab-home-title':'📅 Follow-up visit tomorrow','fab-tap':'Tap to view records',
+    'dsh-title':'Analytics Dashboard','dsh-sub':'Today\'s hospital activity summary',
+    'ds-total':'Total tokens today','ds-score':'Avg feedback score','ds-emg':'Emergencies today','ds-wait':'Avg wait time',
+    'ds-tokens7':'Tokens issued — last 7 days','ds-ratings':'Feedback ratings breakdown','ds-bydept':'Tokens by department today',
+    'seth-title':'Settings','seth-sub':'Language & preferences',
+    'set-lang-title':'Language / భాష','set-hosp-title':'Hospital','set-about-title':'About',
+    'set-sdg-label':'SDG Goals Addressed',
+    'bk-home':'Back','bk-home-q':'Back','bk-aware':'Back','bk-faq':'Back','bk-fb':'Back','bk-mv':'Back','bk-dash':'Back','bk-set':'Back',
+    'sbn-home-t':'Home','sbn-reg-t':'Registration','sbn-queue-t':'Queue Monitor','sbn-aware-t':'Health Awareness','sbn-rec-t':'MediVault','sbn-fb-t':'Feedback','sbn-dash-t':'Dashboard',
+    'faqs':[
+      {q:'What are OPD timings?',a:'OPD is open Monday to Saturday, 8:00 AM to 2:00 PM. Emergency services are available 24 hours.'},
+      {q:'How do I get a token number?',a:'Use the Patient Registration screen in this app or visit the hospital reception counter. Tokens are issued from 8 AM daily.'},
+      {q:'Which documents do I need?',a:'Bring your Aadhaar card or any government ID, previous prescriptions (if any), and health insurance card if applicable.'},
+      {q:'Is treatment free for all patients?',a:'Yes. This is a government hospital. OPD consultation, basic medicines, and essential diagnostics are provided free of cost.'},
+      {q:'How do I find a specific department?',a:'Cardiology — Block B, Floor 2. Orthopaedics — Block C, Floor 1. Paediatrics — Block A, Ground Floor.'},
+      {q:'What is the emergency number?',a:'Call 108 for free ambulance service. Hospital emergency helpline: 040-2345-6789. Emergency ward is open 24/7.'},
+      {q:'How can I report a delay?',a:'Use the Feedback screen in this app. You can report treatment delays and rate your experience.'},
+      {q:'Where is the pharmacy?',a:'Hospital pharmacy is in Block A, Ground Floor, near the main entrance. Open 8 AM – 8 PM.'},
+    ]
+  },
+  te: {
+    'lo-p1':'మీ భాషను ఎంచుకోండి','lo-p2':'సెట్టింగ్‌లలో మీరు మార్చవచ్చు','lo-note':'ఇది ఒకే ఒక్కసారి అడుగుతుంది',
+    'h-sub':'జిల్లా సాధారణ ఆసుపత్రి',
+    'hb-title':'వేసవి ఆరోగ్య హెచ్చరిక','hb-sub':'నీళ్ళు తాగండి. చిట్కాలు చదవండి.','hb-btn':'చదవండి →',
+    'sl-services':'సేవలు','sl-info':'ఆసుపత్రి సమాచారం',
+    'fc-reg':'రోగి నమోదు','fc-reg-s':'నమోదు చేసి టోకెన్ తీసుకోండి',
+    'fc-queue':'క్యూ మానిటర్','fc-queue-s':'లైవ్ వేచి ఉండే స్థితి',
+    'fc-aware':'ఆరోగ్య అవగాహన','fc-aware-s':'చిట్కాలు & హెచ్చరికలు',
+    'fc-faq':'సహాయం & FAQ','fc-faq-s':'సాధారణ ప్రశ్నలు',
+    'fc-mv':'మెడివాల్ట్','fc-mv-s':'ప్రిస్క్రిప్షన్లు, నివేదికలు & ఫాలో-అప్',
+    'fc-fb':'ఫీడ్‌బ్యాక్ & నివేదిక','fc-fb-s':'మీ అనుభవాన్ని రేట్ చేయండి',
+    'fc-dash':'అనలిటిక్స్ డాష్‌బోర్డ్','fc-dash-s':'టోకెన్ ట్రెండ్లు & గణాంకాలు',
+    'hi-opd':'🕗 OPD సమయాలు','hi-emg':'📞 అత్యవసర','hi-loc':'📍 స్థానం',
+    'nb-home':'హోమ్','nb-queue':'క్యూ','nb-reg':'నమోదు','nb-mv':'మెడివాల్ట్','nb-help':'సహాయం',
+    'rh-title':'రోగి నమోదు','rh-sub':'టోకెన్ నంబర్ పొందడానికి వివరాలు నమోదు చేయండి',
+    'fl-fname':'మొదటి పేరు','fl-lname':'చివరి పేరు','fl-age':'వయసు','fl-gender':'లింగం',
+    'fl-phone':'ఫోన్','fl-dept':'విభాగం',
+    'fl-emg':'🚨 అత్యవసర కేసు','fl-emg-s':'క్యూ పైకి వెళ్తుంది',
+    'g0':'ఎంచుకోండి','g1':'పురుషుడు','g2':'స్త్రీ','g3':'ఇతర',
+    'd0':'విభాగాన్ని ఎంచుకోండి',
+    'reg-submit-btn':'టోకెన్ నంబర్ పొందండి →',
+    'ts-label':'మీ టోకెన్ నంబర్','ts-wait':'దయచేసి దగ్గరలో ఉండి మీ నంబర్ వినండి.',
+    'ts-new-btn':'+ కొత్త రోగి','ts-track-btn':'క్యూ ట్రాక్',
+    'th-label':'ఈ సెషన్‌లో నమోదైన రోగులు',
+    'pp-title':'నమోదు విజయవంతమైంది!','pp-sub':'మీ టోకెన్ జారీ చేయబడింది. మీరు ఇప్పుడు క్యూలో ఉన్నారు.',
+    'pp-info':'⏱ దయచేసి దగ్గరలో ఉండి మీ నంబర్ వినండి.',
+    'pp-track-btn':'📍 నా క్యూ చూడండి →','pp-new-btn':'+ మరో రోగిని నమోదు చేయండి',
+    'qh-title':'లైవ్ క్యూ మానిటర్','qh-sub':'ప్రతి 2 నిమిషాలకు అప్‌డేట్',
+    'q-hydration-tip':'రిమైండర్: వేచి ఉండే సమయంలో నీళ్ళు తాగండి.',
+    'yt-label':'మీ టోకెన్',
+    'ns-label':'ఇప్పుడు సేవ','ql-waiting':'వేచి ఉన్నారు','ql-served':'సేవ పొందారు','ql-avg':'సగటు వేచి','ql-next':'తర్వాత వారు',
+    'awh-title':'ఆరోగ్య అవగాహన','awh-sub':'కాలానుగుణ చిట్కాలు, భద్రత & పరిశుభ్రత',
+    'aw-cat1':'కాలానుగుణ హెచ్చరిక','aw-cat2':'నీటి చిట్కాలు','aw-cat3':'పరిశుభ్రత & నివారణ',
+    'aw1-title':'వేడి సురక్షత — వేసవి 2025','aw1-body':'హైదరాబాద్‌లో అధిక వేడిమి ఉంది. మిమ్మల్ని మీరు రక్షించుకోండి:',
+    'aw1-tips':['రోజూ కనీసం 3–4 లీటర్ల నీళ్ళు తాగండి','మధ్యాహ్నం 12–4 గం మధ్య బయటకు వెళ్ళకండి','తేలికైన, వదులైన, తెలుపు రంగు దుస్తులు ధరించండి','తలతిరుగుతే నీడలో కూర్చుని ORS తాగండి','పార్క్ చేసిన వాహనాల్లో పిల్లలను వదలకండి'],
+    'aw2-title':'నీరు తాగుతూ ఉండండి','aw2-body':'డీహైడ్రేషన్ లక్షణాలు గమనించండి:',
+    'aw2-tips':['ముదురు పసుపు మూత్రం — వెంటనే నీళ్ళు తాగండి','తలనొప్పి & తలతిరుగుట — మొదటి దశ లక్షణాలు','ORS సాచెట్లు ఆసుపత్రి ఫార్మసీలో ఉచితంగా లభిస్తాయి','వేసవిలో చక్కెర పానీయాలు & మద్యం మానుకోండి'],
+    'aw3-title':'పరిశుభ్రత అలవాట్లు','aw3-body':'చాలా వ్యాధులను నివారించే సాధారణ అలవాట్లు:',
+    'aw3-tips':['తినడానికి ముందు మరియు మరుగుదొడ్డి తర్వాత చేతులు కడగండి','మరిగించిన లేదా శుద్ధి చేసిన నీళ్ళు మాత్రమే తాగండి','దగ్గు లేదా తుమ్మేటప్పుడు నోరు కప్పుకోండి','స్వయంగా మందులు వాడకండి — వైద్యుడిని సంప్రదించండి'],
+    'faqh-title':'సహాయం & FAQ','faqh-sub':'సాధారణ ప్రశ్నలకు సమాధానాలు',
+    'faq-search-ph':'ప్రశ్నలు వెతకండి…',
+    'fbh-title':'ఫీడ్‌బ్యాక్ & నివేదిక','fbh-sub':'మీ అనుభవాన్ని మాకు చెప్పండి',
+    'fb-rate-label':'మీ సందర్శనను రేట్ చేయండి','fb-delay-label':'ఆలస్యం జరిగిందా?','fb-comment-label':'వ్యాఖ్యలు',
+    'd-opt1':'✅ ఆలస్యం లేదు','d-opt2':'⏳ తక్కువ ఆలస్యం','d-opt3':'⚠️ చాలా వేచారు','d-opt4':'🚨 చాలా ఆలస్యం',
+    'fb-submit-btn':'ఫీడ్‌బ్యాక్ సమర్పించండి →',
+    'fbs-title':'ధన్యవాదాలు!','fbs-sub':'మీ ఫీడ్‌బ్యాక్ నమోదు చేయబడింది.','fbs-home-btn':'హోమ్‌కి వెళ్ళండి →',
+    'rating-text':'రేట్ చేయడానికి నొక్కండి',
+    'ratingLabels':['','చాలా చెడు','సరిగా లేదు','మంచిది','చాలా మంచిది','అద్భుతం'],
+    'delayLabels':{'No delay':'ఆలస్యం లేదు','Minor delay':'తక్కువ ఆలస్యం','Long wait':'చాలా వేచారు','Very delayed':'చాలా ఆలస్యం'},
+    'mvh-title':'మెడివాల్ట్','mvh-sub':'మీ ప్రిస్క్రిప్షన్లు, నివేదికలు & ఫాలో-అప్',
+    'add-rec-btn-label':'+ సందర్శన రికార్డు జోడించండి',
+    'rl-date':'సందర్శన తేదీ','rl-dept':'విభాగం','rl-doc':'వైద్యుని పేరు','rl-diag':'రోగ నిర్ధారణ / గమనికలు','rl-docs':'జత చేసిన పత్రాలు','rl-followup':'ఫాలో-అప్ తేదీ (ఐచ్ఛికం)',
+    'dc1':'📄 ప్రిస్క్రిప్షన్','dc2':'🔬 ల్యాబ్ నివేదిక','dc3':'🖼️ స్కాన్/X-రే',
+    'rec-save-btn':'రికార్డు సేవ్ చేయండి →',
+    'rec-empty':'ఇంకా రికార్డులు లేవు. మీ మొదటి సందర్శన జోడించండి.',
+    'rc-overdue':'గడిచిపోయింది','rc-today':'ఈరోజు!','rc-tomorrow':'రేపు!','rc-days':'రోజుల్లో',
+    'rc-followup-lbl':'ఫాలో-అప్',
+    'fab-tmr-title':'రేపటి ఫాలో-అప్ రిమైండర్','fab-home-title':'📅 రేపు ఫాలో-అప్ ఉంది','fab-tap':'రికార్డులు చూడండి',
+    'dsh-title':'అనలిటిక్స్ డాష్‌బోర్డ్','dsh-sub':'ఈరోజు ఆసుపత్రి కార్యకలాపాల సారాంశం',
+    'ds-total':'ఈరోజు మొత్తం టోకెన్లు','ds-score':'సగటు ఫీడ్‌బ్యాక్ స్కోర్','ds-emg':'ఈరోజు అత్యవసరాలు','ds-wait':'సగటు వేచే సమయం',
+    'ds-tokens7':'గత 7 రోజుల్లో టోకెన్లు','ds-ratings':'ఫీడ్‌బ్యాక్ రేటింగ్ వివరాలు','ds-bydept':'ఈరోజు విభాగాల వారీగా టోకెన్లు',
+    'seth-title':'సెట్టింగ్‌లు','seth-sub':'భాష & ప్రాధాన్యతలు',
+    'set-lang-title':'Language / భాష','set-hosp-title':'ఆసుపత్రి','set-about-title':'గురించి',
+    'set-sdg-label':'SDG లక్ష్యాలు',
+    'bk-home':'వెనక','bk-home-q':'వెనక','bk-aware':'వెనక','bk-faq':'వెనక','bk-fb':'వెనక','bk-mv':'వెనక','bk-dash':'వెనక','bk-set':'వెనక',
+    'sbn-home-t':'హోమ్','sbn-reg-t':'నమోదు','sbn-queue-t':'క్యూ మానిటర్','sbn-aware-t':'ఆరోగ్య అవగాహన','sbn-rec-t':'మెడివాల్ట్','sbn-fb-t':'ఫీడ్‌బ్యాక్','sbn-dash-t':'డాష్‌బోర్డ్',
+    'faqs':[
+      {q:'OPD సమయాలు ఏమిటి?',a:'OPD సోమవారం నుండి శనివారం వరకు, ఉదయం 8:00 నుండి మధ్యాహ్నం 2:00 వరకు ఉంటుంది. అత్యవసర సేవలు 24 గంటలూ అందుబాటులో ఉంటాయి.'},
+      {q:'టోకెన్ నంబర్ ఎలా పొందాలి?',a:'ఈ యాప్‌లో రోగి నమోదు స్క్రీన్ ఉపయోగించండి లేదా ఆసుపత్రి రిసెప్షన్ కౌంటర్‌కు వెళ్ళండి.'},
+      {q:'ఏ పత్రాలు అవసరం?',a:'ఆధార్ కార్డు లేదా ఏదైనా ప్రభుత్వ ID, మునుపటి ప్రిస్క్రిప్షన్లు (ఉంటే) తీసుకురండి.'},
+      {q:'చికిత్స అందరికీ ఉచితమేనా?',a:'అవును. ఇది ప్రభుత్వ ఆసుపత్రి. OPD సంప్రదింపులు, ప్రాథమిక మందులు మరియు అవసరమైన పరీక్షలు ఉచితంగా అందించబడతాయి.'},
+      {q:'నిర్దిష్ట విభాగాన్ని ఎలా కనుగొనాలి?',a:'కార్డియాలజీ — Block B, Floor 2. ఆర్థోపెడిక్స్ — Block C, Floor 1. పీడియాట్రిక్స్ — Block A, గ్రౌండ్ ఫ్లోర్.'},
+      {q:'అత్యవసర నంబర్ ఏమిటి?',a:'ఉచిత అంబులెన్స్ సేవ కోసం 108 కు కాల్ చేయండి. ఆసుపత్రి అత్యవసర హెల్ప్‌లైన్: 040-2345-6789.'},
+      {q:'ఆలస్యాన్ని ఎలా నివేదించాలి?',a:'ఈ యాప్‌లో ఫీడ్‌బ్యాక్ స్క్రీన్ ఉపయోగించండి. మీరు ఆలస్యాలను నివేదించి మీ అనుభవాన్ని రేట్ చేయవచ్చు.'},
+      {q:'ఫార్మసీ ఎక్కడ ఉంది?',a:'ఆసుపత్రి ఫార్మసీ Block A, గ్రౌండ్ ఫ్లోర్, ప్రధాన ప్రవేశద్వారం దగ్గర ఉంది. ఉదయం 8 – రాత్రి 8 వరకు తెరిచి ఉంటుంది.'},
+    ]
+  }
+};
+
+function t(key){ return T[currentLang][key] || T['en'][key] || key; }
+
+// ── APPLY LANGUAGE ──
+function applyLang() {
+  const ids = ['lo-p1','lo-p2','lo-note','h-sub','hb-title','hb-sub','hb-btn',
+    'sl-services','sl-info','fc-reg','fc-reg-s','fc-queue','fc-queue-s','fc-aware','fc-aware-s',
+    'fc-faq','fc-faq-s','fc-mv','fc-mv-s','fc-fb','fc-fb-s','fc-dash','fc-dash-s',
+    'hi-opd','hi-emg','hi-loc','nb-home','nb-queue','nb-reg','nb-mv','nb-help',
+    'rh-title','rh-sub','fl-fname','fl-lname','fl-age','fl-gender','fl-phone','fl-dept',
+    'fl-emg','fl-emg-s','g0','g1','g2','g3','d0','reg-submit-btn',
+    'ts-label','ts-new-btn','ts-track-btn','th-label',
+    'pp-title','pp-sub','pp-track-btn','pp-new-btn',
+    'qh-title','qh-sub','q-hydration-tip','yt-label','ns-label','ql-waiting','ql-served','ql-avg','ql-next',
+    'awh-title','awh-sub','aw-cat1','aw-cat2','aw-cat3',
+    'aw1-title','aw1-body','aw2-title','aw2-body','aw3-title','aw3-body',
+    'faqh-title','faqh-sub','fbh-title','fbh-sub',
+    'fb-rate-label','fb-delay-label','fb-comment-label',
+    'd-opt1','d-opt2','d-opt3','d-opt4','fb-submit-btn',
+    'fbs-title','fbs-sub','fbs-home-btn','rating-text',
+    'mvh-title','mvh-sub','add-rec-btn-label','rl-date','rl-dept','rl-doc','rl-diag','rl-docs','rl-followup',
+    'dc1','dc2','dc3','rec-save-btn',
+    'dsh-title','dsh-sub','ds-total','ds-score','ds-emg','ds-wait','ds-tokens7','ds-ratings','ds-bydept',
+    'seth-title','seth-sub','set-lang-title','set-hosp-title','set-about-title','set-sdg-label',
+    'bk-home','bk-home-q','bk-aware','bk-faq','bk-fb','bk-mv','bk-dash','bk-set',
+    'sbn-home-t','sbn-reg-t','sbn-queue-t','sbn-aware-t','sbn-rec-t','sbn-fb-t','sbn-dash-t'
+  ];
+  ids.forEach(id => { const el = document.getElementById(id); if(el) el.textContent = t(id); });
+
+  // tip lists
+  ['aw1-tips','aw2-tips','aw3-tips'].forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    const tips = t(id);
+    if(Array.isArray(tips)) el.innerHTML = tips.map(tp=>`<li>${tp}</li>`).join('');
+  });
+
+  // placeholders
+  const fs = document.getElementById('faq-search'); if(fs) fs.placeholder = t('faq-search-ph');
+  const ft = document.getElementById('feedback-text'); if(ft) ft.placeholder = currentLang==='te'?'మీ అభిప్రాయాన్ని పంచుకోండి…':'Tell us what went well or could be better…';
+
+  // pp-info dynamic
+  if(currentToken) updatePopupInfo();
+
+  // ts-wait
+  const tw = document.getElementById('ts-wait'); if(tw) tw.innerHTML = currentLang==='te'?'దయచేసి దగ్గరలో ఉండి మీ నంబర్ వినండి.':'Stay nearby and listen for your number.';
+
+  // rebuild FAQ
+  buildFAQ();
+  renderRecords();
+  checkFollowupAlerts();
+
+  // settings lang opts
+  document.getElementById('lo-en-opt').classList.toggle('active', currentLang==='en');
+  document.getElementById('lo-te-opt').classList.toggle('active', currentLang==='te');
+}
+
+// ── LANG OVERLAY ──
+function initLangOverlay() {
+  const saved = localStorage.getItem('arogyaq-lang');
+  if(saved){ currentLang=saved; document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); }
+}
+function chooseLang(lang){ currentLang=lang; localStorage.setItem('arogyaq-lang',lang); document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); }
+function setLangFromSettings(lang){ currentLang=lang; localStorage.setItem('arogyaq-lang',lang); applyLang(); }
+
+// ── NAVIGATION ──
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('app-root').scrollTop=0;
+  if(id==='screen-register') resetRegForm();
+  if(id==='screen-feedback') resetFeedback();
+  if(id==='screen-records') renderRecords();
+  // update sidebar active
+  const map={'screen-home':'sbn-home','screen-register':'sbn-reg','screen-queue':'sbn-queue','screen-awareness':'sbn-aware','screen-records':'sbn-rec','screen-feedback':'sbn-fb','screen-dashboard':'sbn-dash'};
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  if(map[id]){ const el=document.getElementById(map[id]); if(el) el.classList.add('active'); }
+}
+
+// ── WEATHER — Open-Meteo (free, no API key, CORS-enabled) ──
+const WMO={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
+  45:'Foggy',48:'Icy fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',
+  61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',
+  80:'Rain showers',81:'Showers',82:'Heavy showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+const WMO_TE={0:'స్పష్టమైన ఆకాశం',1:'ప్రధానంగా స్పష్టం',2:'పాక్షికంగా మేఘావృతం',
+  3:'మేఘావృతం',45:'పొగమంచు',61:'తేలికపాటి వర్షం',63:'వర్షం',
+  65:'భారీ వర్షం',80:'వర్షపు జల్లులు',95:'ఉరుముతో వర్షం'};
+const WMO_ICONS={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',
+  51:'🌦️',53:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',
+  80:'🌦️',81:'🌧️',95:'⛈️'};
+
+function applyWeatherUI(temp, feels, code){
+  const isTe = currentLang==='te';
+  const desc = isTe ? (WMO_TE[code]||WMO[code]||'Clear') : (WMO[code]||'Clear');
+  const icon = WMO_ICONS[code]||'🌡️';
+
+  // Main weather chip in header
+  const elTemp=document.getElementById('wc-temp');
+  const elDesc=document.getElementById('wc-desc');
+  const elIcon=document.getElementById('wc-icon');
+  const elFeels=document.getElementById('wc-feels');
+  const elAlert=document.getElementById('wc-alert');
+  const elSbW=document.getElementById('sb-weather');
+  const elHbSub=document.getElementById('hb-sub');
+  // Sidebar desktop weather
+  const elSbIcon=document.getElementById('sbw-icon-live');
+  const elSbTemp=document.getElementById('sbw-temp-live');
+  const elSbDesc=document.getElementById('sbw-desc-live');
+  const elSbAlert=document.getElementById('sbw-alert-live');
+
+  if(elTemp) elTemp.textContent=temp+'°C';
+  if(elDesc) elDesc.textContent=desc;
+  if(elIcon) elIcon.textContent=icon;
+  if(elFeels) elFeels.textContent=(isTe?'అనిపించే వేడి: ':'Feels like ')+feels+'°C';
+  if(elSbW) elSbW.textContent=temp+'°C';
+  if(elSbIcon) elSbIcon.textContent=icon;
+  if(elSbTemp) elSbTemp.textContent=temp+'°C';
+  if(elSbDesc) elSbDesc.textContent=desc+(feels!==null?' · '+(isTe?'అనిపించే వేడి ':'Feels ')+feels+'°C':'');
+
+  let alertMsg='';
+  if(temp>=40) alertMsg=isTe?'🔥 అత్యధిక వేడిమి హెచ్చరిక':'🔥 Extreme heat — stay indoors';
+  else if(temp>=36) alertMsg=isTe?'☀️ వేసవి జాగ్రత్తలు':'☀️ Take heat precautions';
+  else if(code>=61&&code<=65) alertMsg=isTe?'🌧️ వర్షం సాధ్యం':'🌧️ Rain likely — carry umbrella';
+
+  if(elAlert) elAlert.textContent=alertMsg;
+  if(elSbAlert) elSbAlert.textContent=alertMsg;
+  if(elHbSub) elHbSub.textContent=isTe
+    ?`హైదరాబాద్: ${temp}°C. ${alertMsg||'నీళ్ళు తాగండి.'}`
+    :`Hyderabad: ${temp}°C today. ${alertMsg||'Stay hydrated.'}`;
+}
+
+async function fetchWeather(){
+  // Set loading state
+  const elDesc=document.getElementById('wc-desc');
+  if(elDesc) elDesc.textContent=currentLang==='te'?'వాతావరణ లోడ్ అవుతోంది…':'Loading weather…';
+
+  // Try Open-Meteo first (free, no key, CORS-safe)
+  try{
+    const url='https://api.open-meteo.com/v1/forecast?latitude=17.3850&longitude=78.4867'
+      +'&current=temperature_2m,apparent_temperature,weathercode'
+      +'&timezone=Asia%2FKolkata&forecast_days=1';
+    const res=await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    const cur=data.current;
+    if(!cur||cur.temperature_2m===undefined) throw new Error('no data');
+    const temp=Math.round(cur.temperature_2m);
+    const feels=Math.round(cur.apparent_temperature);
+    const code=cur.weathercode??0;
+    applyWeatherUI(temp, feels, code);
+    return;
+  } catch(e1){
+    console.warn('Open-Meteo failed:', e1.message);
+  }
+
+  // Fallback: use a seasonal estimate for Hyderabad (May–June = 38–43°C)
+  const month=new Date().getMonth(); // 0=Jan
+  let est=32;
+  if(month>=3&&month<=5) est=40;    // Apr-Jun: peak summer
+  else if(month>=6&&month<=8) est=31; // Jul-Sep: monsoon
+  else if(month>=10||month<=1) est=26; // Nov-Feb: cool
+  else est=34;
+  applyWeatherUI(est, est-2, 1);
+  const note=document.getElementById('wc-desc');
+  if(note) note.textContent+=(currentLang==='te'?' (అంచనా)':' (estimated)');
+}
+
+// ── CLOCK ──
+function updateClock(){ const n=new Date(); document.getElementById('sb-time').textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0'); }
+
+// ── REGISTRATION ──
+function resetRegForm(){
+  emergencyOn=false;
+  document.getElementById('emg-toggle').classList.remove('on');
+  ['fname','lname','age','phone'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('gender').value='';
+  document.getElementById('dept').value='';
+  document.getElementById('reg-form').style.display='block';
+  document.getElementById('token-success').style.display='none';
+  renderTokenHistory();
+}
+function toggleEmg(){ emergencyOn=!emergencyOn; document.getElementById('emg-toggle').classList.toggle('on',emergencyOn); }
+
+function submitReg(){
+  const fname=document.getElementById('fname').value.trim();
+  const dept=document.getElementById('dept').value;
+  if(!fname||!dept){ alert(currentLang==='te'?'పేరు మరియు విభాగం నమోదు చేయండి.':'Please fill in name and department.'); return; }
+  tokenCounter++;
+  const token='#0'+tokenCounter;
+  const lname=document.getElementById('lname').value.trim();
+  const fullName=fname+(lname?' '+lname:'');
+  currentToken=token; currentDept=dept;
+  tokenHistory.unshift({name:fullName,dept,token,emg:emergencyOn});
+  // update home token chip
+  document.getElementById('tc-val').textContent=token;
+  document.getElementById('tc-dept').textContent=dept;
+  document.getElementById('tc-badge').textContent=currentLang==='te'?'~18 నిమి':'~18 min';
+  // show your token bar on queue screen
+  document.getElementById('your-token-bar').style.display='flex';
+  document.getElementById('yt-val').textContent=token;
+  // show popup
+  document.getElementById('pp-token').textContent=token;
+  document.getElementById('pp-dept-label').textContent=dept;
+  document.getElementById('pp-title').textContent=t('pp-title');
+  document.getElementById('pp-sub').textContent=t('pp-sub');
+  document.getElementById('pp-track-btn').textContent=t('pp-track-btn');
+  document.getElementById('pp-new-btn').textContent=t('pp-new-btn');
+  updatePopupInfo();
+  document.getElementById('token-popup').classList.remove('hidden');
+  // also update inline token success
+  document.getElementById('gen-token').textContent=token;
+  document.getElementById('gen-dept').textContent=dept;
+  document.getElementById('reg-form').style.display='none';
+  document.getElementById('token-success').style.display='flex';
+  renderTokenHistory();
+}
+function updatePopupInfo(){
+  document.getElementById('pp-info').innerHTML=(currentLang==='te'?`⏱ అంచనా వేచే సమయం: ~18 నిమిషాలు`:`⏱ Estimated wait: ~18 minutes`)+`<br>${t('pp-info')||''}`;
+}
+function closePopup(){ document.getElementById('token-popup').classList.add('hidden'); }
+function goToMyDept(){
+  closePopup();
+  // switch to queue screen and activate correct dept tab
+  goTo('screen-queue');
+  const tabs=document.querySelectorAll('.dept-tab');
+  tabs.forEach(tab=>{
+    if(tab.textContent.trim()===currentDept || currentDept.startsWith(tab.textContent.trim())){
+      setDept(tab, currentDept);
+    }
+  });
+}
+function renderTokenHistory(){
+  const wrap=document.getElementById('token-history');
+  const rows=document.getElementById('th-rows');
+  if(!wrap||!rows) return;
+  if(tokenHistory.length===0){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  rows.innerHTML=tokenHistory.map(th=>`
+    <div class="th-row">
+      <div><div class="th-name">${th.name}${th.emg?` <span style="font-size:9px;background:var(--red);color:white;padding:1px 5px;border-radius:8px;">${currentLang==='te'?'అత্যవ':' EMG'}</span>`:''}</div><div class="th-dept">${th.dept}</div></div>
+      <div class="th-token">${th.token}</div>
+    </div>`).join('');
+}
+
+// ── QUEUE ──
+const deptData={
+  'General OPD':{now:'035',doc:'Dr. Priya Sharma',waiting:12,served:34,avg:'8m'},
+  'Cardiology':{now:'018',doc:'Dr. Ramesh Gupta',waiting:6,served:17,avg:'12m'},
+  'Orthopaedics':{now:'009',doc:'Dr. Sneha Iyer',waiting:4,served:9,avg:'10m'},
+  'Paediatrics':{now:'022',doc:'Dr. Arjun Rao',waiting:8,served:21,avg:'7m'},
+  'ENT':{now:'011',doc:'Dr. Meena Pillai',waiting:3,served:10,avg:'6m'},
+};
+function setDept(el,dept){
+  document.querySelectorAll('.dept-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const d=deptData[dept]||deptData['General OPD'];
+  document.getElementById('now-token').textContent=d.now;
+  document.getElementById('now-dept-label').textContent=dept+' — '+d.doc;
+  document.getElementById('q-waiting').textContent=d.waiting;
+  document.getElementById('q-served').textContent=d.served;
+  document.getElementById('q-avg').textContent=d.avg;
+}
+
+// ── FEEDBACK ──
+const ratingLabels={en:['','Poor','Fair','Good','Very good','Excellent'],te:['','చాలా చెడు','సరిగా లేదు','మంచిది','చాలా మంచిది','అద్భుతం']};
+function rateStar(n){
+  currentRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('filled',i<n));
+  document.getElementById('rating-text').textContent=ratingLabels[currentLang][n]||ratingLabels['en'][n];
+}
+function selDelay(el,val){ document.querySelectorAll('.delay-opt').forEach(d=>d.classList.remove('selected')); el.classList.add('selected'); selectedDelay=val; }
+function submitFeedback(){
+  document.getElementById('feedback-form').style.display='none';
+  document.getElementById('feedback-success').style.display='flex';
+}
+function resetFeedback(){
+  currentRating=0; selectedDelay='';
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('filled'));
+  document.getElementById('rating-text').textContent=t('rating-text');
+  document.querySelectorAll('.delay-opt').forEach(d=>d.classList.remove('selected'));
+  const ft=document.getElementById('feedback-text'); if(ft) ft.value='';
+  document.getElementById('feedback-form').style.display='block';
+  document.getElementById('feedback-success').style.display='none';
+}
+
+// ── FAQ ──
+function buildFAQ(){
+  const faqs=t('faqs');
+  const container=document.getElementById('faq-list'); if(!container) return;
+  container.innerHTML=faqs.map((f,i)=>`
+    <div class="faq-item" data-q="${f.q.toLowerCase()}">
+      <div class="faq-q" onclick="toggleFAQ(this)"><span>${f.q}</span><span class="chev">▾</span></div>
+      <div class="faq-a">${f.a}</div>
+    </div>`).join('');
+}
+function toggleFAQ(el){ const a=el.nextElementSibling; const open=a.classList.contains('open'); document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open')); document.querySelectorAll('.faq-q').forEach(x=>x.classList.remove('open')); if(!open){a.classList.add('open');el.classList.add('open');} }
+function filterFAQ(val){ document.querySelectorAll('.faq-item').forEach(item=>{ item.style.display=item.dataset.q.includes(val.toLowerCase())?'':'none'; }); }
+
+// ── MEDIVAULT ──
+function toggleChip(el){ el.classList.toggle('sel'); const t=el.dataset.type; if(el.classList.contains('sel')){if(!selectedChips.includes(t))selectedChips.push(t);} else{selectedChips=selectedChips.filter(x=>x!==t);} }
+function toggleAddForm(){ const f=document.getElementById('add-record-form'); f.classList.toggle('visible'); if(f.classList.contains('visible')){ document.getElementById('rec-date').value=new Date().toISOString().split('T')[0]; } }
+function saveRecord(){
+  const date=document.getElementById('rec-date').value;
+  const dept=document.getElementById('rec-dept').value;
+  const diag=document.getElementById('rec-diag').value.trim();
+  if(!date||!dept||!diag){alert(currentLang==='te'?'తేదీ, విభాగం మరియు రోగ నిర్ధారణ నమోదు చేయండి.':'Please fill date, department, and diagnosis.'); return;}
+  const doc=document.getElementById('rec-doc').value.trim()||'Doctor';
+  const followup=document.getElementById('rec-followup').value;
+  healthRecords.unshift({date,dept,doc,diag,followup,types:[...selectedChips],id:Date.now()});
+  ['rec-date','rec-dept','rec-doc','rec-diag','rec-followup'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.querySelectorAll('.doc-chip').forEach(c=>c.classList.remove('sel')); selectedChips=[];
+  document.getElementById('add-record-form').classList.remove('visible');
+  renderRecords(); checkFollowupAlerts();
+}
+function renderRecords(){
+  const list=document.getElementById('records-list'); if(!list) return;
+  if(healthRecords.length===0){list.innerHTML=`<div style="text-align:center;padding:36px 16px;color:var(--text-3);font-size:13px;">${t('rec-empty')}</div>`;return;}
+  const today=new Date(); today.setHours(0,0,0,0);
+  const tomorrow=new Date(today); tomorrow.setDate(today.getDate()+1);
+  list.innerHTML=healthRecords.map(r=>{
+    let fuBadge='';
+    if(r.followup){
+      const fu=new Date(r.followup); fu.setHours(0,0,0,0);
+      const diff=Math.round((fu-today)/86400000);
+      if(diff<0) fuBadge=`<span class="rc-fu-badge fu-overdue">${t('rc-overdue')}</span>`;
+      else if(diff===0) fuBadge=`<span class="rc-fu-badge fu-today">${t('rc-today')}</span>`;
+      else if(diff===1) fuBadge=`<span class="rc-fu-badge fu-soon">${t('rc-tomorrow')}</span>`;
+      else fuBadge=`<span class="rc-fu-badge fu-ok">${diff} ${t('rc-days')}</span>`;
+    }
+    const typeIcons=r.types.map(t=>t==='Prescription'?'📄':t==='Lab Report'?'🔬':'🖼️').join(' ');
+    return `<div class="record-card">
+      <div class="rc-header"><div class="rc-date">${fmtDate(r.date)}</div><div class="rc-dept">${r.dept}</div></div>
+      <div class="rc-doc">👨‍⚕️ ${r.doc}${typeIcons?' &nbsp;'+typeIcons:''}</div>
+      <div class="rc-note">${r.diag}</div>
+      ${r.followup?`<div class="rc-followup"><span class="rc-fu-label">${t('rc-followup-lbl')}:</span><span class="rc-fu-date">${fmtDate(r.followup)}</span>${fuBadge}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function fmtDate(d){ if(!d)return''; return new Date(d).toLocaleDateString(currentLang==='te'?'te-IN':'en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+function checkFollowupAlerts(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const tomorrow=new Date(today); tomorrow.setDate(today.getDate()+1);
+  const alerts=healthRecords.filter(r=>{if(!r.followup)return false; const fu=new Date(r.followup); fu.setHours(0,0,0,0); return fu.getTime()===tomorrow.getTime();});
+  const dot=document.getElementById('notif-dot');
+  const badge=document.getElementById('rec-badge');
+  const area=document.getElementById('followup-alert-area');
+  const homeBanner=document.getElementById('followup-home-banner');
+  if(alerts.length>0){
+    if(dot) dot.style.display='block';
+    if(badge) badge.style.display='inline';
+    const depts=alerts.map(a=>a.dept).join(', ');
+    if(area) area.innerHTML=`<div class="followup-alert-banner" style="margin-bottom:12px;"><div class="fab-title">${t('fab-tmr-title')}</div><div class="fab-sub">${depts} — ${fmtDate(alerts[0].followup)}</div></div>`;
+    if(homeBanner){homeBanner.style.display='block';homeBanner.innerHTML=`<div class="followup-alert-banner" onclick="goTo('screen-records')"><div class="fab-title">${t('fab-home-title')}</div><div class="fab-sub">${depts} — ${t('fab-tap')}</div></div>`;}
+  } else {
+    if(dot) dot.style.display='none';
+    if(badge) badge.style.display='none';
+    if(area) area.innerHTML='';
+    if(homeBanner) homeBanner.style.display='none';
+  }
+}
+
+// ── BAR CHART ──
+function initChart(){
+  const days=currentLang==='te'?['సోమ','మంగళ','బుధ','గురు','శుక్ర','శని','ఈరోజు']:['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
+  const vals=[98,112,89,134,121,108,127];
+  const max=Math.max(...vals);
+  const bc=document.getElementById('bar-chart');
+  const bl=document.getElementById('bar-labels');
+  if(!bc||!bl)return;
+  bc.innerHTML=''; bl.innerHTML='';
+  days.forEach((d,i)=>{
+    const bar=document.createElement('div'); bar.className='bar';
+    bar.style.height=Math.round((vals[i]/max)*68)+'px';
+    bar.style.background=i===6?'#0B6E6E':'#9FE1CB';
+    bc.appendChild(bar);
+    const lbl=document.createElement('div'); lbl.className='bar-lbl'; lbl.textContent=d;
+    bl.appendChild(lbl);
+  });
+}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  initLangOverlay();
+  fetchWeather();
+  initChart();
+  updateClock();
+  setInterval(updateClock,30000);
+  setInterval(fetchWeather,600000); // refresh weather every 10 min
+  // Demo records
+  const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  healthRecords.push({date:new Date(Date.now()-7*86400000).toISOString().split('T')[0],dept:'Cardiology',doc:'Dr. Ramesh Gupta',diag:'Hypertension check. BP: 140/90. Prescribed Amlodipine 5mg for 30 days.',followup:tomorrow.toISOString().split('T')[0],types:['Prescription'],id:1});
+  healthRecords.push({date:new Date(Date.now()-14*86400000).toISOString().split('T')[0],dept:'General OPD',doc:'Dr. Priya Sharma',diag:'Seasonal flu. Paracetamol 500mg, rest for 3 days. Full recovery.',followup:'',types:['Prescription'],id:2});
+  buildFAQ();
+  checkFollowupAlerts();
+});
+</script>
+</body>
+</html>
