@@ -1,0 +1,4037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartHeal — Doctor Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       DESIGN TOKENS — SmartHeal design system (self-contained)
+       Previously loaded from css/design-system.css
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      /* Brand colours */
+      --teal: #765568;
+      --teal-light: #E0F5F2;
+      --teal-mid: #1051f6;
+      --amber: #db87c5;
+      --amber-light: #FEF3E8;
+      --red: #b856a3;
+      --red-light: #FDEAEA;
+      --blue: #1A5FBF;
+      --blue-light: #E8F0FB;
+      --purple: #534AB7;
+      --purple-light: #EEEDFE;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+
+      /* Surfaces */
+      --surface: #1A1625;
+      --card: #211a2e;
+      --card-2: #262134;
+
+      /* Typography */
+      --text: #F0EBF5;
+      --text-2: #9B8EA9;
+      --text-3: #C88553;
+
+      /* Borders & effects */
+      --border: rgba(200, 180, 220, 0.13);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+      /* Radii */
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+    }
+  </style>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+
+    /* ═══════════════════════════════════════
+       TOP NAV BAR
+    ═══════════════════════════════════════ */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      height: 60px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .topbar-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    .topbar-brand span {
+      color: var(--amber);
+    }
+
+    .topbar-badge {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--teal-light);
+      color: var(--teal);
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .topbar-clock {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .topbar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      border: 2px solid var(--border);
+    }
+
+    .topbar-notif-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .topbar-notif-btn:hover {
+      background: var(--border);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 14px;
+      height: 14px;
+      background: var(--red);
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--card);
+    }
+
+    .topbar-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-2);
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .topbar-link-btn:hover {
+      background: var(--teal-light);
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .topbar-search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 280px;
+      min-width: 120px;
+    }
+
+    .topbar-search {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .topbar-search::placeholder {
+      color: var(--text-2);
+    }
+
+    .topbar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .topbar-notif-wrap {
+      position: relative;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: min(340px, calc(100vw - 28px));
+      max-height: 360px;
+      overflow-y: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 300;
+      padding: 12px;
+    }
+
+    .notif-dropdown.open {
+      display: block;
+    }
+
+    .notif-dropdown-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .notif-dismiss {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 2px 6px;
+      border: none;
+      background: transparent;
+    }
+
+    .notif-dismiss:hover {
+      color: var(--text);
+    }
+
+    .po-contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .po-contact-row span {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .po-allergies {
+      color: var(--red);
+      border-color: rgba(184, 86, 163, 0.35) !important;
+    }
+
+    .queue-mobile-cards {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .q-mob-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .q-mob-card.selected {
+      border-color: var(--teal);
+      background: rgba(118, 85, 104, 0.15);
+    }
+
+    .q-mob-card.emg {
+      border-color: var(--red);
+    }
+
+    .q-mob-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .q-mob-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .status-btn.btn-waiting {
+      background: rgba(219, 135, 197, 0.12);
+      color: var(--amber);
+      border: 1px solid rgba(219, 135, 197, 0.3);
+    }
+
+    .status-btn.btn-emg-mark {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+      border: 1px solid var(--red);
+    }
+
+    .emg-panel.hidden {
+      display: none !important;
+    }
+
+    /* ═══════════════════════════════════════
+       PAGE LAYOUT
+    ═══════════════════════════════════════ */
+    .page-wrap {
+      padding-top: 60px;
+      /* offset topbar */
+      display: grid;
+      grid-template-columns: 270px 1fr 380px;
+      height: 100vh;
+    }
+
+    /* Left Sidebar */
+    .left-sidebar {
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Middle Main */
+    .main-content {
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-panel.hidden {
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════
+       SHARED CARD STYLES
+    ═══════════════════════════════════════ */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 0;
+    }
+
+    /* ═══════════════════════════════════════
+       LEFT SIDEBAR — Doctor Profile
+    ═══════════════════════════════════════ */
+    .profile-card {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Avatar + name side by side */
+    .profile-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .profile-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .profile-name-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .profile-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.3;
+      word-break: break-word;
+      margin-bottom: 2px;
+    }
+
+    .profile-spec {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.4;
+    }
+
+    .profile-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 10px;
+    }
+
+    .profile-status:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .profile-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 0;
+    }
+
+    .profile-meta-row:last-of-type {
+      border-bottom: none;
+      margin-bottom: 10px;
+    }
+
+    .profile-meta-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      flex-shrink: 0;
+    }
+
+    .profile-meta-val {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 120px;
+    }
+
+    .profile-id-chip {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 10px;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.04em;
+      color: white;
+    }
+
+    .profile-email-val {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* Tighten profile-name margin when meta rows present */
+    .profile-card .profile-name {
+      margin-bottom: 10px;
+    }
+
+    /* ── Profile card clickable ── */
+    .profile-card {
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .profile-card:hover .profile-avatar {
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .profile-view-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 10px;
+      padding: 6px 0 2px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.04em;
+      pointer-events: none;
+      transition: color 0.18s;
+    }
+
+    .profile-card:hover .profile-view-hint {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    /* ── Profile Detail Modal ── */
+    .profile-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .profile-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .profile-modal {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .profile-modal-overlay.open .profile-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Modal hero banner */
+    .pm-hero {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+      padding: 28px 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pm-hero::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .pm-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: -20px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .pm-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    .pm-close:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .pm-avatar-lg {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pm-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pm-spec {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.72);
+      position: relative;
+      z-index: 1;
+    }
+
+    .pm-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pm-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ADE80;
+    }
+
+    .pm-status-dot.break {
+      background: #FFD580;
+    }
+
+    /* Modal body */
+    .pm-body {
+      padding: 20px 24px 24px;
+    }
+
+    .pm-section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }
+
+    .pm-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .pm-row:hover {
+      border-color: rgba(200, 180, 220, 0.28);
+    }
+
+    .pm-row-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .pm-row-icon.teal {
+      background: rgba(16, 81, 246, 0.15);
+    }
+
+    .pm-row-icon.amber {
+      background: rgba(219, 135, 197, 0.15);
+    }
+
+    .pm-row-icon.green {
+      background: rgba(46, 204, 138, 0.12);
+    }
+
+    .pm-row-icon.purple {
+      background: rgba(83, 74, 183, 0.15);
+    }
+
+    .pm-row-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+
+
+    .pm-row-value.chip {
+      display: inline-block;
+      background: rgba(16, 81, 246, 0.15);
+      border: 1px solid rgba(16, 81, 246, 0.25);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .pm-copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .pm-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border-color: rgba(200, 180, 220, 0.3);
+    }
+
+    .pm-copy-btn.copied {
+      color: #4ADE80;
+      border-color: rgba(74, 222, 128, 0.35);
+    }
+
+    .pm-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0 14px;
+    }
+
+    .pm-footer-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pm-action-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: 11px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .pm-action-btn.status-toggle {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .pm-action-btn.status-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .pm-action-btn.logout {
+      background: rgba(184, 86, 163, 0.12);
+      border: 1px solid rgba(184, 86, 163, 0.25);
+      color: var(--red);
+    }
+
+    .pm-action-btn.logout:hover {
+      background: rgba(184, 86, 163, 0.22);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ADE80;
+      animation: pulse-dot 2s infinite;
+    }
+
+    .status-dot.break {
+      background: #FFD580;
+      animation: none;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* Sidebar Nav */
+    .sb-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sb-nav-item:hover {
+      background: var(--card-2);
+      color: var(--text);
+    }
+
+    .sb-nav-item.active {
+      background: var(--teal-light);
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    .sb-nav-icon {
+      font-size: 15px;
+    }
+
+    .sb-nav-badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 700;
+      background: var(--red);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    /* Overview metrics in sidebar */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .metric-card {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .metric-lbl {
+      font-size: 9px;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .metric-card.emg .metric-val {
+      color: var(--red);
+    }
+
+    .metric-card.done .metric-val {
+      color: var(--green);
+    }
+
+    .metric-card.pending .metric-val {
+      color: var(--amber);
+    }
+
+    /* ═══════════════════════════════════════
+       EMERGENCY PANEL
+    ═══════════════════════════════════════ */
+    .emg-panel {
+      background: linear-gradient(90deg, rgba(184, 86, 163, 0.18) 0%, rgba(184, 86, 163, 0.04) 100%);
+      border: 1.5px solid var(--red);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .emg-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      animation: emg-pulse 1.2s infinite;
+    }
+
+    @keyframes emg-pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+      }
+    }
+
+    .emg-text {
+      flex: 1;
+    }
+
+    .emg-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 2px;
+    }
+
+    .emg-sub {
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .emg-btn {
+      background: var(--red);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .emg-btn:hover {
+      opacity: 0.85;
+    }
+
+    /* ═══════════════════════════════════════
+       QUEUE TABLE
+    ═══════════════════════════════════════ */
+    .queue-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .queue-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      flex: 1;
+    }
+
+    .dept-filter-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .dept-filter-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dept-tab {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--card-2);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .dept-tab.active {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
+    }
+
+    .queue-table-wrap {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: var(--card-2);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--card-2);
+    }
+
+    tbody tr.selected {
+      background: rgba(118, 85, 104, 0.18);
+    }
+
+    tbody tr.emg-row {
+      background: rgba(184, 86, 163, 0.08);
+    }
+
+    tbody tr.emg-row:hover {
+      background: rgba(184, 86, 163, 0.15);
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .token-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .emg-row .token-num {
+      color: var(--red);
+    }
+
+    .patient-name {
+      font-weight: 500;
+    }
+
+    .patient-info {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    .status-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .pill-waiting {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+    }
+
+    .pill-serving {
+      background: rgba(46, 158, 91, 0.15);
+      color: var(--green);
+    }
+
+    .pill-emg {
+      background: rgba(184, 86, 163, 0.18);
+      color: var(--red);
+    }
+
+    .pill-done {
+      background: rgba(46, 158, 91, 0.12);
+      color: var(--green);
+    }
+
+    .pill-noshow {
+      background: var(--card-2);
+      color: var(--text-2);
+    }
+
+    .wait-time {
+      font-size: 12px;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════
+       ANALYTICS CHARTS
+    ═══════════════════════════════════════ */
+    .analytics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .chart-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .chart-sub {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+
+    .bar-chart-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 80px;
+    }
+
+    .bc-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .bc-bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      background: var(--teal);
+      transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .bc-bar.emg {
+      background: var(--red);
+    }
+
+    .bc-bar.done {
+      background: var(--green);
+    }
+
+    .bc-lbl {
+      font-size: 9px;
+      color: var(--text-2);
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--text-2);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Donut chart (pure CSS) */
+    .donut-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 12px;
+    }
+
+    .donut-svg {
+      transform: rotate(-90deg);
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .donut-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .donut-lbl {
+      font-size: 9px;
+      color: var(--text-2);
+    }
+
+    .dept-load-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dept-load-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-load-name {
+      font-size: 11px;
+      color: var(--text-2);
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .dept-load-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--card-2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .dept-load-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s;
+    }
+
+    .dept-load-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      width: 24px;
+      text-align: right;
+    }
+
+    /* Line chart (SVG) */
+    .line-chart-wrap {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .line-chart-wrap svg {
+      width: 100%;
+    }
+
+    /* ═══════════════════════════════════════
+       RIGHT PANEL — Patient Details Workspace
+    ═══════════════════════════════════════ */
+    .rp-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .rp-empty-icon {
+      font-size: 48px;
+      opacity: 0.4;
+    }
+
+    .rp-empty-text {
+      font-size: 14px;
+      color: var(--text-2);
+    }
+
+    .rp-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .rp-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .rp-tab {
+      flex-shrink: 0;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .rp-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--teal);
+    }
+
+    .rp-tab:hover {
+      color: var(--text);
+    }
+
+    .rp-body {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .rp-section {
+      padding: 16px;
+      display: none;
+    }
+
+    .rp-section.active {
+      display: block;
+    }
+
+    /* Patient overview */
+    .patient-overview-card {
+      background: linear-gradient(135deg, var(--card-2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .po-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .po-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+      font-family: 'Syne', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .po-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .po-meta {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .po-token {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .vital-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      text-align: center;
+    }
+
+    .vital-icon {
+      font-size: 16px;
+    }
+
+    .vital-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .vital-lbl {
+      font-size: 9px;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .vital-card.abnormal .vital-val {
+      color: var(--red);
+    }
+
+    /* Status controls */
+    .status-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .status-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.15s;
+      flex: 1;
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    .btn-serve {
+      background: rgba(46, 158, 91, 0.12);
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .btn-serve:hover {
+      background: rgba(46, 158, 91, 0.25);
+    }
+
+    .btn-complete {
+      background: rgba(26, 95, 191, 0.12);
+      color: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .btn-complete:hover {
+      background: rgba(26, 95, 191, 0.25);
+    }
+
+    .btn-noshow {
+      background: var(--card-2);
+      color: var(--text-2);
+      border-color: var(--border);
+    }
+
+    .btn-noshow:hover {
+      background: var(--border);
+    }
+
+    .btn-call {
+      background: rgba(219, 135, 197, 0.12);
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .btn-call:hover {
+      background: rgba(219, 135, 197, 0.25);
+    }
+
+    /* MediVault */
+    .vault-files {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .vault-file {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .vault-file:hover {
+      border-color: var(--teal);
+    }
+
+    .vault-file-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .vault-file-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .vault-file-meta {
+      font-size: 10px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    .vault-file-badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    .badge-lab {
+      background: rgba(26, 95, 191, 0.15);
+      color: var(--blue);
+    }
+
+    .badge-xray {
+      background: rgba(83, 74, 183, 0.15);
+      color: var(--purple);
+    }
+
+    .badge-ecg {
+      background: rgba(46, 158, 91, 0.15);
+      color: var(--green);
+    }
+
+    .badge-rx {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+    }
+
+    /* Notes */
+    .notes-templates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .note-tpl {
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--card-2);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .note-tpl:hover {
+      background: var(--teal-light);
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .notes-area {
+      width: 100%;
+      background: var(--card-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 12px;
+      resize: none;
+      outline: none;
+      min-height: 120px;
+      transition: border-color 0.2s;
+    }
+
+    .notes-area:focus {
+      border-color: var(--teal-mid);
+    }
+
+    .notes-char-count {
+      font-size: 10px;
+      color: var(--text-2);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .save-notes-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--teal);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-top: 10px;
+      transition: opacity 0.2s;
+    }
+
+    .save-notes-btn:hover {
+      opacity: 0.85;
+    }
+
+    /* Prescription */
+    .rx-drugs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .rx-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 110px;
+      gap: 6px;
+      align-items: center;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      position: relative;
+    }
+
+    .rx-drug-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .rx-dosage {
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .rx-freq {
+      font-size: 11px;
+      color: var(--amber);
+    }
+
+    .rx-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .rx-row:hover .rx-remove {
+      opacity: 1;
+    }
+
+    .rx-add-form {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .rx-add-form.visible {
+      display: flex;
+    }
+
+    .rx-input {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .rx-input:focus {
+      border-color: var(--teal-mid);
+    }
+
+    .rx-row-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .rx-add-btn-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .rx-add-btn {
+      flex: 1;
+      padding: 8px;
+      background: var(--teal);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .rx-add-btn:hover {
+      opacity: 0.85;
+    }
+
+    .rx-cancel-btn {
+      padding: 8px 12px;
+      background: var(--card);
+      color: var(--text-2);
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .add-drug-row-btn {
+      width: 100%;
+      padding: 8px;
+      background: transparent;
+      color: var(--teal-mid);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1.5px dashed var(--teal-mid);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.15s;
+    }
+
+    .add-drug-row-btn:hover {
+      background: rgba(16, 81, 246, 0.08);
+    }
+
+    .print-rx-btn {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .print-rx-btn:hover {
+      opacity: 0.85;
+    }
+
+    /* Follow-up Scheduler */
+    .followup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: var(--card-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--teal-mid);
+    }
+
+    .form-select {
+      cursor: pointer;
+    }
+
+    .form-textarea {
+      resize: none;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .schedule-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--green);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .schedule-btn:hover {
+      opacity: 0.85;
+    }
+
+    .followup-scheduled {
+      display: none;
+      background: rgba(46, 158, 91, 0.12);
+      border: 1px solid var(--green);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* Notifications sidebar */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 9px 10px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .notif-item.unread {
+      border-color: var(--teal);
+    }
+
+    .notif-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .notif-text {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .notif-time {
+      font-size: 10px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .notif-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--teal-mid);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      animation: modal-in 0.2s ease;
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      flex: 1;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .rx-print-preview {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-bottom: 14px;
+      color: #333;
+    }
+
+    .rx-print-hosp {
+      font-size: 16px;
+      font-weight: 700;
+      color: #765568;
+      margin-bottom: 2px;
+    }
+
+    .rx-print-sub {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .rx-print-divider {
+      height: 1px;
+      background: #eee;
+      margin: 10px 0;
+    }
+
+    .rx-print-patient {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .rx-print-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .rx-print-drug {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px dashed #eee;
+      font-size: 12px;
+    }
+
+    .rx-print-drug-name {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .rx-print-footer {
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .modal-btn.primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .modal-btn.primary:hover {
+      opacity: 0.85;
+    }
+
+    .modal-btn.secondary {
+      background: var(--card-2);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+
+    /* Vault Modal */
+    .vault-modal-content {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .vault-modal-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+    }
+
+    .vault-modal-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .vault-modal-meta {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-bottom: 16px;
+    }
+
+    .vault-modal-data {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 12px;
+      color: var(--text-2);
+      text-align: left;
+      line-height: 2;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 600;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      font-weight: 500;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s;
+      max-width: 320px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      font-size: 18px;
+    }
+
+    /* Mobile tab bar (hidden on desktop) */
+    .mobile-tabs {
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media(max-width:1200px) {
+      .page-wrap {
+        grid-template-columns: 240px 1fr 340px;
+      }
+    }
+
+    @media(max-width:1024px) {
+      .page-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .left-sidebar {
+        display: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .left-sidebar.mobile-visible {
+        display: flex;
+      }
+
+      .right-panel {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: 480px;
+      }
+
+      .analytics-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width:600px) {
+      .topbar {
+        padding: 0 14px;
+        gap: 10px;
+      }
+
+      .topbar-brand {
+        font-size: 17px;
+      }
+
+      .topbar-link-btn {
+        display: none;
+      }
+
+      .topbar-search-wrap {
+        max-width: none;
+      }
+
+      .queue-table-wrap {
+        display: none;
+      }
+
+      .queue-mobile-cards {
+        display: flex;
+      }
+
+      .main-content {
+        padding: 14px;
+      }
+
+      .analytics-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .vitals-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mobile-tabs {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        padding: 8px 0 12px;
+      }
+
+      .mob-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        font-size: 9px;
+        font-weight: 500;
+        color: var(--text-2);
+        cursor: pointer;
+      }
+
+      .mob-tab.active {
+        color: var(--teal);
+      }
+
+      .mob-tab-icon {
+        font-size: 18px;
+      }
+
+      .page-wrap {
+        padding-bottom: 56px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ═══════════════════════════════
+       TOP NAV BAR
+  ═══════════════════════════════ -->
+  <header class="topbar">
+    <div class="topbar-brand">Smart<span>Heal</span></div>
+    <div class="topbar-search-wrap">
+      <span class="topbar-search-icon">🔍</span>
+      <input type="search" class="topbar-search" id="queue-search" placeholder="Search patient or token…"
+        oninput="filterQueueSearch(this.value)" aria-label="Search patients">
+    </div>
+    <div class="topbar-clock" id="topbar-clock">9:41 AM</div>
+    <div class="topbar-notif-wrap">
+      <button class="topbar-notif-btn" onclick="toggleTopbarNotif(event)" title="Notifications" aria-expanded="false"
+        id="topbar-notif-btn">
+        🔔
+        <span class="notif-badge" id="notif-count">3</span>
+      </button>
+      <div class="notif-dropdown" id="topbar-notif-dropdown">
+        <div class="notif-dropdown-title">Notifications</div>
+        <div class="notif-list" id="topbar-notif-list"></div>
+      </div>
+    </div>
+    <div class="topbar-avatar" id="topbar-avatar" title="Doctor">??</div>
+  </header>
+
+  <!-- ═══════════════════════════════
+       PAGE LAYOUT
+  ═══════════════════════════════ -->
+  <div class="page-wrap" id="page-wrap">
+
+    <!-- ═══════════ LEFT SIDEBAR ═══════════ -->
+    <aside class="left-sidebar" id="left-sidebar">
+
+      <!-- Doctor Profile Card — populated dynamically from localStorage.currentDoctor -->
+      <div class="profile-card" id="profile-card" onclick="openProfileModal()" title="View profile details"
+        role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openProfileModal()">
+        <div class="profile-top">
+          <div class="profile-avatar" id="profile-avatar">??</div>
+          <div class="profile-name-block">
+            <div class="profile-name" id="profile-name">Loading…</div>
+            <div class="profile-spec" id="profile-spec">—</div>
+          </div>
+        </div>
+        <div class="profile-status" onclick="event.stopPropagation();toggleStatus(this)">
+          <div class="status-dot" id="status-dot"></div>
+          <span id="status-text">Active</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">Doctor ID</span>
+          <span class="profile-meta-val profile-id-chip" id="profile-docid">—</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">Email</span>
+          <span class="profile-meta-val profile-email-val" id="profile-email">—</span>
+        </div>
+        <div class="profile-view-hint">👆 Click to view full profile</div>
+      </div>
+
+      <!-- Overview Metrics -->
+      <div>
+        <div class="card-title">Today's Overview</div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-val" id="count-total">18</div>
+            <div class="metric-lbl">Patients Today</div>
+          </div>
+          <div class="metric-card pending">
+            <div class="metric-val" id="count-pending">7</div>
+            <div class="metric-lbl">Pending Consultations</div>
+          </div>
+          <div class="metric-card emg">
+            <div class="metric-val" id="count-emg">2</div>
+            <div class="metric-lbl">Emergency</div>
+          </div>
+          <div class="metric-card done">
+            <div class="metric-val" id="count-done">9</div>
+            <div class="metric-lbl">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Navigation -->
+      <div>
+        <div class="card-title">Navigation</div>
+        <div class="sb-nav-item active" onclick="scrollToSection('queue')">
+          <span class="sb-nav-icon">📋</span> Patient Queue
+        </div>
+        <div class="sb-nav-item" onclick="scrollToSection('analytics')">
+          <span class="sb-nav-icon">📊</span> Analytics
+        </div>
+        <div class="sb-nav-item" onclick="openRPTab('notes')">
+          <span class="sb-nav-icon">📝</span> Consultation Notes
+        </div>
+        <div class="sb-nav-item" onclick="openRPTab('prescription')">
+          <span class="sb-nav-icon">💊</span> Prescriptions
+        </div>
+        <div class="sb-nav-item" onclick="openRPTab('followup')">
+          <span class="sb-nav-icon">📅</span> Follow-up Scheduler
+        </div>
+        <div class="sb-nav-item" onclick="openRPTab('vault')">
+          <span class="sb-nav-icon">📁</span> MediVault
+        </div>
+        <div class="sb-nav-item" onclick="toggleNotifPanel()">
+          <span class="sb-nav-icon">🔔</span> Notifications
+          <span class="sb-nav-badge" id="sb-notif-badge">3</span>
+        </div>
+      </div>
+
+      <!-- Notifications (sidebar panel) -->
+      <div id="sb-notif-panel" style="display:none;">
+        <div class="card-title" style="margin-bottom:10px;">🔔 Notifications</div>
+        <div class="notif-list" id="notif-list"></div>
+      </div>
+
+    </aside>
+
+    <!-- ═══════════ MIDDLE MAIN ═══════════ -->
+    <main class="main-content" id="main-content">
+
+      <!-- Emergency Alert Banner -->
+      <div class="emg-panel" id="emg-panel">
+        <div class="emg-icon">🚨</div>
+        <div class="emg-text">
+          <div class="emg-title">2 Emergency Cases in Queue</div>
+          <div class="emg-sub">Lakshmi D. (Chest Pain) — Token #036 · Ravi K. (Breathing Difficulty) — Token #038</div>
+        </div>
+        <button class="emg-btn" onclick="serveEmergency()">Attend Now</button>
+      </div>
+
+      <!-- Queue Table -->
+      <div id="queue-section">
+        <div class="queue-header">
+          <div class="queue-title">Today's Patient Queue</div>
+          <div class="dept-filter-tabs" id="dept-tabs">
+            <div class="dept-tab active" onclick="filterDept(this,'All')">All</div>
+            <div class="dept-tab" onclick="filterDept(this,'General OPD')">General OPD</div>
+            <div class="dept-tab" onclick="filterDept(this,'Cardiology')">Cardiology</div>
+            <div class="dept-tab" onclick="filterDept(this,'Paediatrics')">Paediatrics</div>
+            <div class="dept-tab" onclick="filterDept(this,'ENT')">ENT</div>
+          </div>
+        </div>
+        <div class="queue-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Patient</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Wait</th>
+              </tr>
+            </thead>
+            <tbody id="queue-tbody"></tbody>
+          </table>
+        </div>
+        <div class="queue-mobile-cards" id="queue-mobile-cards"></div>
+      </div>
+
+      <!-- Daily Summary Analytics -->
+      <div id="analytics">
+        <div style="display:flex;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;flex:1;">Daily Summary Analytics
+          </div>
+          <div id="analytics-summary-line" style="font-size:12px;color:var(--text-2);"></div>
+        </div>
+        <div class="analytics-row">
+          <!-- Hourly Patient Flow -->
+          <div class="card">
+            <div class="chart-label">Hourly Patient Flow</div>
+            <div class="chart-sub">Today's patient distribution by hour</div>
+            <div class="bar-chart-area" id="hourly-chart"></div>
+            <div style="display:flex;gap:4px;margin-top:6px;" id="hourly-labels"></div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--teal);"></div>Regular
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--red);"></div>Emergency
+              </div>
+            </div>
+          </div>
+          <!-- Dept Load -->
+          <div class="card">
+            <div class="chart-label">Department Load</div>
+            <div class="chart-sub">Patients seen today by department</div>
+            <div class="dept-load-list" id="dept-load-list"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ═══════════ RIGHT PANEL ═══════════ -->
+    <aside class="right-panel" id="right-panel">
+      <!-- Empty state -->
+      <div class="rp-empty" id="rp-empty">
+        <div class="rp-empty-icon">🩺</div>
+        <div class="rp-empty-text">Select a patient from the queue<br>to view details & manage consultation</div>
+      </div>
+
+      <!-- Patient Details Workspace (hidden until patient selected) -->
+      <div id="rp-workspace" style="display:none; flex-direction:column; height:100%;">
+        <!-- Tabs -->
+        <div class="rp-tabs" id="rp-tabs">
+          <div class="rp-tab active" onclick="switchRPTab('overview')">Overview</div>
+          <div class="rp-tab" onclick="switchRPTab('vault')">MediVault</div>
+          <div class="rp-tab" onclick="switchRPTab('notes')">Notes</div>
+          <div class="rp-tab" onclick="switchRPTab('prescription')">Rx</div>
+          <div class="rp-tab" onclick="switchRPTab('followup')">Follow-up</div>
+        </div>
+
+        <!-- Tab Body -->
+        <div class="rp-body">
+
+          <!-- Overview Tab -->
+          <div class="rp-section active" id="tab-overview">
+            <div class="patient-overview-card" id="patient-overview-card">
+              <div class="po-header">
+                <div class="po-avatar" id="po-avatar">?</div>
+                <div>
+                  <div class="po-name" id="po-name">Patient Name</div>
+                  <div class="po-meta" id="po-meta">Age / Gender · Dept</div>
+                  <div class="po-token" id="po-token">#000</div>
+                </div>
+              </div>
+              <div class="po-contact-row">
+                <span id="po-phone">📞 —</span>
+                <span id="po-allergies" class="po-allergies">⚠️ Allergies: —</span>
+              </div>
+              <div class="vitals-grid" id="vitals-grid">
+                <div class="vital-card">
+                  <div class="vital-icon">❤️</div>
+                  <div class="vital-val" id="vital-bp">120/80</div>
+                  <div class="vital-lbl">Blood Pressure</div>
+                </div>
+                <div class="vital-card">
+                  <div class="vital-icon">🌡️</div>
+                  <div class="vital-val" id="vital-temp">98.6°F</div>
+                  <div class="vital-lbl">Temperature</div>
+                </div>
+                <div class="vital-card">
+                  <div class="vital-icon">💓</div>
+                  <div class="vital-val" id="vital-pulse">72 bpm</div>
+                  <div class="vital-lbl">Pulse Rate</div>
+                </div>
+                <div class="vital-card">
+                  <div class="vital-icon">🩸</div>
+                  <div class="vital-val" id="vital-spo2">98%</div>
+                  <div class="vital-lbl">SpO2</div>
+                </div>
+                <div class="vital-card">
+                  <div class="vital-icon">⚖️</div>
+                  <div class="vital-val" id="vital-weight">68 kg</div>
+                  <div class="vital-lbl">Weight</div>
+                </div>
+                <div class="vital-card">
+                  <div class="vital-icon">🩺</div>
+                  <div class="vital-val" id="vital-rr">16/min</div>
+                  <div class="vital-lbl">Resp. Rate</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Status Controls -->
+            <div class="card-title" style="margin-bottom:8px;">Appointment Controls</div>
+            <div class="status-controls">
+              <button class="status-btn btn-serve" onclick="updatePatientStatus('Serving')">✅ Serve Now</button>
+              <button class="status-btn btn-call" onclick="updatePatientStatus('Calling')">📣 Call Patient</button>
+              <button class="status-btn btn-waiting" onclick="updatePatientStatus('Waiting')">⏳ Waiting</button>
+              <button class="status-btn btn-complete" onclick="updatePatientStatus('Completed')">🏁 Complete</button>
+              <button class="status-btn btn-noshow" onclick="updatePatientStatus('No-Show')">🚫 No-Show</button>
+              <button class="status-btn btn-emg-mark" onclick="markPatientEmergency()">🚨 Mark Emergency</button>
+            </div>
+
+            <!-- Symptoms / Chief Complaint -->
+            <div class="card-title" style="margin-bottom:6px;">Chief Complaint</div>
+            <div
+              style="background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:14px;"
+              id="chief-complaint">
+              —
+            </div>
+
+            <!-- Recent History -->
+            <div class="card-title" style="margin-bottom:6px;">Recent Visit History</div>
+            <div id="recent-history" style="display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+
+          <!-- MediVault Tab -->
+          <div class="rp-section" id="tab-vault">
+            <div class="card-title" style="margin-bottom:10px;">Medical Documents</div>
+            <div class="vault-files" id="vault-files"></div>
+          </div>
+
+          <!-- Notes Tab -->
+          <div class="rp-section" id="tab-notes">
+            <div class="card-title" style="margin-bottom:8px;">Consultation Notes</div>
+            <div class="notes-templates">
+              <div class="note-tpl" onclick="insertTemplate('general')">📝 General Checkup</div>
+              <div class="note-tpl" onclick="insertTemplate('chest')">💛 Chest Pain</div>
+              <div class="note-tpl" onclick="insertTemplate('followup')">🔁 Follow-up Visit</div>
+              <div class="note-tpl" onclick="insertTemplate('fever')">🌡️ Fever / Infection</div>
+            </div>
+            <textarea class="notes-area" id="notes-area" placeholder="Start typing your consultation notes here…"
+              oninput="updateCharCount(); debounceSaveNotes()"></textarea>
+            <div class="notes-char-count"><span id="char-count">0</span>/1000 characters</div>
+            <button class="save-notes-btn" onclick="saveNotes()">💾 Save Notes</button>
+          </div>
+
+          <!-- Prescription Tab -->
+          <div class="rp-section" id="tab-prescription">
+            <div class="card-title" style="margin-bottom:10px;">Prescription Management</div>
+            <div class="rx-drugs" id="rx-drugs"></div>
+
+            <div class="rx-add-form" id="rx-add-form">
+              <input class="rx-input" id="rx-drug-name" placeholder="Drug name (e.g. Amoxicillin 500mg)">
+              <div class="rx-row-inputs">
+                <input class="rx-input" id="rx-dosage" placeholder="Dosage (e.g. 1 tablet)">
+                <input class="rx-input" id="rx-freq" placeholder="Frequency (e.g. TDS)">
+              </div>
+              <input class="rx-input" id="rx-duration" placeholder="Duration (e.g. 5 days)">
+              <div class="rx-add-btn-row">
+                <button class="rx-add-btn" onclick="addDrug()">Add Drug</button>
+                <button class="rx-cancel-btn" onclick="toggleRxForm(false)">Cancel</button>
+              </div>
+            </div>
+
+            <button class="add-drug-row-btn" onclick="toggleRxForm(true)">+ Add Drug</button>
+            <button class="print-rx-btn" onclick="printPrescription()">🖨️ Generate & Print Prescription</button>
+          </div>
+
+          <!-- Follow-up Tab -->
+          <div class="rp-section" id="tab-followup">
+            <div class="card-title" style="margin-bottom:10px;">Follow-up Scheduler</div>
+            <div class="followup-form">
+              <div>
+                <label class="form-label">Follow-up Date</label>
+                <input class="form-input" type="date" id="fu-date">
+              </div>
+              <div>
+                <label class="form-label">Preferred Time Slot</label>
+                <select class="form-select" id="fu-time">
+                  <option value="">Select time</option>
+                  <option>8:00 AM – 9:00 AM</option>
+                  <option>9:00 AM – 10:00 AM</option>
+                  <option>10:00 AM – 11:00 AM</option>
+                  <option>11:00 AM – 12:00 PM</option>
+                  <option>12:00 PM – 1:00 PM</option>
+                  <option>1:00 PM – 2:00 PM</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Reason for Follow-up</label>
+                <select class="form-select" id="fu-reason">
+                  <option value="">Select reason</option>
+                  <option>Post-treatment check</option>
+                  <option>Lab results review</option>
+                  <option>Medication review</option>
+                  <option>Chronic disease monitoring</option>
+                  <option>Post-surgery follow-up</option>
+                  <option>General follow-up</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Instructions to Patient</label>
+                <textarea class="form-textarea" id="fu-instructions"
+                  placeholder="e.g. Bring previous blood reports, fasting required…"></textarea>
+              </div>
+              <button class="schedule-btn" onclick="scheduleFollowup()">📅 Schedule Follow-up</button>
+              <div class="followup-scheduled" id="followup-scheduled">
+                ✅ Follow-up scheduled successfully!
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /rp-body -->
+      </div><!-- /rp-workspace -->
+    </aside>
+
+  </div><!-- /page-wrap -->
+
+  <!-- Mobile bottom tabs -->
+  <div class="mobile-tabs">
+    <div class="mob-tab active" onclick="mobileSwitchTab('queue')">
+      <span class="mob-tab-icon">📋</span> Queue
+    </div>
+    <div class="mob-tab" onclick="mobileSwitchTab('consult')">
+      <span class="mob-tab-icon">🩺</span> Consult
+    </div>
+    <div class="mob-tab" onclick="mobileSwitchTab('stats')">
+      <span class="mob-tab-icon">📊</span> Stats
+    </div>
+    <div class="mob-tab" onclick="mobileSwitchTab('notif')">
+      <span class="mob-tab-icon">🔔</span> Alerts
+    </div>
+  </div>
+
+  <!-- Print Prescription Modal -->
+  <div class="modal-overlay hidden" id="rx-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">🖨️ Prescription Preview</div>
+        <button class="modal-close" onclick="closeModal('rx-modal')">×</button>
+      </div>
+      <div class="rx-print-preview" id="rx-print-preview"></div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeModal('rx-modal')">Close</button>
+        <button class="modal-btn primary" onclick="simulatePrint()">🖨️ Print</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vault File Viewer Modal -->
+  <div class="modal-overlay hidden" id="vault-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="vault-modal-title">Document Viewer</div>
+        <button class="modal-close" onclick="closeModal('vault-modal')">×</button>
+      </div>
+      <div class="vault-modal-content" id="vault-modal-content"></div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeModal('vault-modal')">Close</button>
+        <button class="modal-btn primary" onclick="downloadVaultFile()">⬇️ Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toast-icon">✅</span>
+    <span id="toast-msg">Action completed.</span>
+  </div>
+
+  <script src="js/smart-heal-sync.js"></script>
+  <!-- ═══════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════ -->
+  <script src="smart-heal-sync.js"></script>
+  <script>
+    /* ════════════ SAMPLE DATA ════════════ */
+    const PATIENTS = [
+      {
+        id: 1, token: '#036', name: 'Lakshmi D.', age: 52, gender: 'F',
+        dept: 'Cardiology', status: 'Emergency', wait: 'Now',
+        phone: '98765-43210', complaint: 'Severe chest pain radiating to left arm, shortness of breath.',
+        bp: '160/100', temp: '99.2°F', pulse: '102 bpm', spo2: '94%', weight: '72 kg', rr: '22/min',
+        initials: 'LD', emg: true, allergies: 'Penicillin, Aspirin',
+        vault: [
+          { name: 'ECG Report', date: '30 May 2026', type: 'ecg', badge: 'badge-ecg', icon: '📈', data: 'Sinus tachycardia. ST elevation in V1–V3. QRS: 0.10s. QT: 0.38s.' },
+          { name: 'Troponin I Test', date: '30 May 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'Troponin I: 2.4 ng/mL (High >0.4) | CK-MB: 28 U/L | WBC: 11,200 | Hgb: 12.8' },
+          { name: 'Chest X-Ray', date: '29 May 2026', type: 'xray', badge: 'badge-xray', icon: '🔬', data: 'Mild cardiomegaly. No pneumothorax. Bilateral clear fields.' },
+        ],
+        history: [{ date: '12 Apr 2026', note: 'Routine BP checkup. BP 145/92. Amlodipine 5mg prescribed.' },
+        { date: '15 Feb 2026', note: 'Follow-up — Hypertension. BP controlled. Continue medications.' }],
+        drugs: [{ name: 'Aspirin 75mg', dosage: '1 tablet', freq: 'OD', duration: 'Indefinite' },
+        { name: 'Atorvastatin 40mg', dosage: '1 tablet', freq: 'HS', duration: 'Ongoing' }]
+      },
+      {
+        id: 2, token: '#037', name: 'Suresh R.', age: 35, gender: 'M',
+        dept: 'General OPD', status: 'Waiting', wait: '~4m',
+        phone: '87654-32100', complaint: 'Persistent fever for 4 days (101°F–103°F), body aches, mild cough.',
+        bp: '118/76', temp: '101.8°F', pulse: '88 bpm', spo2: '97%', weight: '74 kg', rr: '18/min',
+        initials: 'SR', emg: false, allergies: 'None known',
+        vault: [
+          { name: 'CBC Report', date: '01 Jun 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'WBC: 14,200 (High) | RBC: 4.8 | Hgb: 13.9 | Platelets: 1,82,000 | ESR: 35mm/hr' },
+          { name: 'Chest X-Ray', date: '01 Jun 2026', type: 'xray', badge: 'badge-xray', icon: '🔬', data: 'Clear lung fields. No consolidation or effusion.' },
+        ],
+        history: [{ date: '10 Jan 2026', note: 'Cold & cough. Azithromycin 500mg for 5 days.' }],
+        drugs: []
+      },
+      {
+        id: 3, token: '#038', name: 'Ravi K.', age: 44, gender: 'M',
+        dept: 'Cardiology', status: 'Emergency', wait: 'Now',
+        phone: '76543-21009', complaint: 'Sudden onset breathing difficulty, cannot lie flat, bilateral leg swelling.',
+        bp: '155/95', temp: '98.8°F', pulse: '116 bpm', spo2: '88%', weight: '90 kg', rr: '28/min',
+        initials: 'RK', emg: true, allergies: 'Sulfa drugs',
+        vault: [
+          { name: 'Echo Report', date: '02 Jun 2026', type: 'ecg', badge: 'badge-ecg', icon: '📈', data: 'EF: 35%. Global hypokinesia. Mild MR. Dilated LV (5.8cm).' },
+          { name: 'BNP Level', date: '02 Jun 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'BNP: 892 pg/mL (Critical). Na: 132. K: 3.8. Creatinine: 1.6.' },
+        ],
+        history: [{ date: '20 Mar 2026', note: 'Diagnosed CHF. Started Carvedilol 6.25mg, Furosemide 40mg.' },
+        { date: '05 Jan 2026', note: 'Breathlessness follow-up. Mild decompensation. Dose adjusted.' }],
+        drugs: [{ name: 'Furosemide 40mg', dosage: '1 tablet', freq: 'BD', duration: 'Ongoing' },
+        { name: 'Carvedilol 6.25mg', dosage: '1 tablet', freq: 'BD', duration: 'Ongoing' }]
+      },
+      {
+        id: 4, token: '#039', name: 'Anita M.', age: 28, gender: 'F',
+        dept: 'Paediatrics', status: 'Waiting', wait: '~8m',
+        phone: '65432-10998', complaint: 'Child (son, 5 yrs) — high fever, throat pain, difficulty swallowing for 2 days.',
+        bp: '—', temp: '102.4°F', pulse: '96 bpm', spo2: '99%', weight: '18 kg', rr: '24/min',
+        initials: 'AM', emg: false, allergies: 'None known',
+        vault: [
+          { name: 'Throat Swab Culture', date: '03 Jun 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'Streptococcus pyogenes positive. Sensitivity: Amoxicillin, Penicillin.' },
+        ],
+        history: [],
+        drugs: []
+      },
+      {
+        id: 5, token: '#040', name: 'Kavitha S.', age: 60, gender: 'F',
+        dept: 'General OPD', status: 'Waiting', wait: '~12m',
+        phone: '54321-09876', complaint: 'Knee pain, difficulty walking, pain worsens on stair climbing.',
+        bp: '130/84', temp: '98.4°F', pulse: '74 bpm', spo2: '97%', weight: '82 kg', rr: '16/min',
+        initials: 'KS', emg: false, allergies: 'NSAIDs (mild rash)',
+        vault: [
+          { name: 'Knee X-Ray (R)', date: '28 May 2026', type: 'xray', badge: 'badge-xray', icon: '🔬', data: 'Grade III osteoarthritis right knee. Joint space narrowing. Osteophytes present.' },
+          { name: 'Vitamin D & B12', date: '28 May 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'Vit D: 18 ng/mL (Deficient). B12: 210 pg/mL (Low). Uric Acid: 6.2 mg/dL.' },
+        ],
+        history: [{ date: '15 Apr 2026', note: 'Knee pain — physiotherapy advised. Diclofenac gel + Calcium.' }],
+        drugs: [{ name: 'Calcium Carbonate 500mg', dosage: '1 tablet', freq: 'BD', duration: '3 months' },
+        { name: 'Vitamin D3 60000 IU', dosage: '1 sachet', freq: 'Weekly', duration: '8 weeks' }]
+      },
+      {
+        id: 6, token: '#041', name: 'Venkat B.', age: 40, gender: 'M',
+        dept: 'ENT', status: 'Waiting', wait: '~16m',
+        phone: '43210-98765', complaint: 'Hearing loss in right ear for 2 weeks, tinnitus, occasional vertigo.',
+        bp: '122/80', temp: '98.2°F', pulse: '70 bpm', spo2: '99%', weight: '78 kg', rr: '15/min',
+        initials: 'VB', emg: false, allergies: 'None known',
+        vault: [
+          { name: 'Audiogram', date: '02 Jun 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'Mild sensorineural hearing loss right ear 30–40 dB at 2000–4000 Hz.' },
+        ],
+        history: [],
+        drugs: []
+      },
+      {
+        id: 7, token: '#042', name: 'Meena T.', age: 33, gender: 'F',
+        dept: 'General OPD', status: 'Completed', wait: 'Done',
+        phone: '32109-87654', complaint: 'Migraine headache, nausea, light sensitivity.',
+        bp: '116/74', temp: '98.0°F', pulse: '68 bpm', spo2: '98%', weight: '62 kg', rr: '14/min',
+        initials: 'MT', emg: false, allergies: 'Codeine',
+        vault: [
+          { name: 'Prescription (Mar)', date: '12 Mar 2026', type: 'rx', badge: 'badge-rx', icon: '💊', data: 'Sumatriptan 50mg — SOS. Domperidone 10mg — TDS.' },
+        ],
+        history: [{ date: '12 Mar 2026', note: 'Migraine attack. Sumatriptan 50mg prescribed. Lifestyle advice.' }],
+        drugs: [{ name: 'Sumatriptan 50mg', dosage: '1 tablet', freq: 'SOS', duration: 'PRN' },
+        { name: 'Domperidone 10mg', dosage: '1 tablet', freq: 'TDS', duration: '5 days' }]
+      },
+      {
+        id: 8, token: '#043', name: 'Arjun P.', age: 55, gender: 'M',
+        dept: 'Cardiology', status: 'Waiting', wait: '~20m',
+        phone: '21098-76543', complaint: 'Routine diabetes and hypertension follow-up. No new symptoms.',
+        bp: '136/88', temp: '98.4°F', pulse: '76 bpm', spo2: '98%', weight: '86 kg', rr: '16/min',
+        initials: 'AP', emg: false, allergies: 'None known',
+        vault: [
+          { name: 'HbA1c & Lipid Profile', date: '01 Jun 2026', type: 'lab', badge: 'badge-lab', icon: '🧪', data: 'HbA1c: 7.8%. FBS: 148 mg/dL. Total Cholesterol: 198. LDL: 118. HDL: 42.' },
+          { name: 'ECG (Routine)', date: '01 Jun 2026', type: 'ecg', badge: 'badge-ecg', icon: '📈', data: 'Normal sinus rhythm. No ST changes. HR 76/min.' },
+        ],
+        history: [{ date: '05 May 2026', note: 'DM + HTN review. Metformin 1g BD, Telmisartan 40mg OD. HbA1c: 8.1%.' },
+        { date: '10 Mar 2026', note: 'Good compliance. BP 128/82. Glipizide added.' }],
+        drugs: [{ name: 'Metformin 1000mg', dosage: '1 tablet', freq: 'BD', duration: 'Ongoing' },
+        { name: 'Telmisartan 40mg', dosage: '1 tablet', freq: 'OD', duration: 'Ongoing' },
+        { name: 'Glipizide 5mg', dosage: '1 tablet', freq: 'OD', duration: 'Ongoing' }]
+      },
+    ];
+
+    const NOTIFICATIONS = [
+      { id: 1, icon: '🚨', text: 'Emergency: Ravi K. (Token #038) reported breathing difficulty.', time: 'Just now', unread: true },
+      { id: 2, icon: '👤', text: 'Arjun P. (Token #043) has checked in for scheduled appointment.', time: '2 min ago', unread: true },
+      { id: 3, icon: '✅', text: 'Consultation completed for Meena T. (Token #042).', time: '12 min ago', unread: true },
+      { id: 4, icon: '📅', text: 'Follow-up reminder: Kavitha S. follow-up due tomorrow.', time: '1 hr ago', unread: false },
+      { id: 5, icon: '💊', text: 'Prescription printed for Suresh R. (Token #037).', time: '30 min ago', unread: false },
+    ];
+    let notifIdSeq = 10;
+
+    const NOTE_TEMPLATES = {
+      general: `Chief Complaint: Patient presents with [complaint].\n\nHistory: [relevant history]\n\nExamination:\n- General: Conscious, oriented, well-built\n- Vitals: BP [BP], Pulse [pulse], Temp [temp]\n- CVS/RS: Normal\n\nDiagnosis: [diagnosis]\n\nPlan: [management plan]\n\nAdvice: Rest, adequate hydration, follow-up in 1 week.`,
+      chest: `Chief Complaint: Chest pain since [duration].\n\nCharacter: [sharp/dull/pressure-like]\nRadiation: [to arm/jaw/back]\nAssociated: Sweating / Nausea / SOB\n\nExamination:\n- BP: [BP], Pulse: [pulse]\n- Auscultation: [normal/abnormal]\n\nECG: [findings]\n\nDiagnosis: [ACS/GERD/Musculoskeletal]\n\nPlan:\n- ECG, Troponin, Echo\n- [medications]\n- Cardiology referral if required`,
+      followup: `Follow-up Visit\n\nPrevious diagnosis: [diagnosis]\nCurrent medications: [medications]\n\nPatient reports: [improvement/same/worse]\n\nExamination today:\n- Vitals stable\n- [specific findings]\n\nAssessment: Condition [improving/stable/deteriorating]\n\nPlan: Continue current medications. Next review in [duration].`,
+      fever: `Chief Complaint: Fever since [duration] days.\n\nTemperature: [temp] | Character: [continuous/intermittent/remittent]\n\nAssociated Symptoms:\n- Chills: [yes/no]\n- Body aches: [yes/no]\n- Cough/Sore throat: [yes/no]\n\nExamination:\n- Throat: [congested/clear]\n- Lymph nodes: [palpable/not]\n\nInvestigations: CBC, Malaria Antigen, Dengue NS1\n\nDiagnosis: [diagnosis]\n\nPlan: Antipyretics, hydration, [antibiotics if indicated].`
+    };
+
+    /* ════════════ STATE ════════════ */
+    let PATIENTS_LIVE = JSON.parse(JSON.stringify(PATIENTS));
+    let selectedPatientId = null;
+    let currentRPTab = 'overview';
+    let patientStatuses = {};
+    let patientDrugs = {};
+    let patientNotes = {};
+    let patientFollowups = {};
+    let toastTimer = null;
+    let notesSaveTimer = null;
+    let notifPanelOpen = false;
+    let topbarNotifOpen = false;
+    let currentDeptFilter = 'All';
+    let queueSearchQuery = '';
+    let lastVaultFile = null;
+
+    const SH = () => window.SmartHealSync;
+
+    function loadPersistedState() {
+      if (!SH()) return;
+      const st = SH().getDoctorState();
+      patientStatuses = st.patientStatuses || {};
+      patientNotes = st.patientNotes || {};
+      patientDrugs = st.patientDrugs || {};
+      patientFollowups = st.patientFollowups || {};
+    }
+
+    function persistDoctorState() {
+      if (!SH()) return;
+      SH().saveDoctorState({ patientStatuses, patientNotes, patientDrugs, patientFollowups });
+      exportSharedQueue();
+    }
+
+    function patientStatus(p) {
+      return patientStatuses[p.id] || p.status;
+    }
+
+    function isActiveEmergency(p) {
+      const s = patientStatus(p);
+      return (p.emg || s === 'Emergency') && s !== 'Completed' && s !== 'No-Show';
+    }
+
+    function mergePatientQueue() {
+      if (!SH()) return;
+      const reg = SH().getQueue();
+      const tokens = new Set(PATIENTS_LIVE.map(p => SH().tokenToNum(p.token)));
+      reg.forEach(entry => {
+        const num = entry.tokenNum || SH().tokenToNum(entry.token);
+        if (!num || tokens.has(num)) return;
+        tokens.add(num);
+        const g = entry.gender || 'M';
+        const names = (entry.name || 'Patient').split(' ');
+        PATIENTS_LIVE.push({
+          id: 'q-' + num,
+          token: entry.token || SH().formatToken(num),
+          name: entry.name || 'Registered Patient',
+          age: entry.age || '—',
+          gender: g,
+          dept: entry.dept || 'General OPD',
+          status: entry.emg ? 'Emergency' : 'Waiting',
+          wait: '~5m',
+          phone: entry.phone || '—',
+          complaint: entry.complaint || 'Registered via Smart Heal patient app.',
+          bp: '—', temp: '—', pulse: '—', spo2: '—', weight: '—', rr: '—',
+          initials: (names[0][0] || 'P') + (names[1] ? names[1][0] : ''),
+          emg: !!entry.emg,
+          allergies: entry.allergies || 'Not recorded',
+          vault: [], history: [], drugs: [],
+          source: 'patient'
+        });
+      });
+      PATIENTS_LIVE.sort((a, b) => SH().tokenToNum(a.token) - SH().tokenToNum(b.token));
+    }
+
+    function exportSharedQueue() {
+      if (!SH()) return;
+      const list = PATIENTS_LIVE.map(p => ({
+        tokenNum: SH().tokenToNum(p.token),
+        token: p.token,
+        name: p.name,
+        dept: p.dept,
+        emg: !!p.emg,
+        status: patientStatus(p),
+        age: p.age,
+        gender: p.gender,
+        phone: p.phone
+      }));
+      SH().setQueue(list);
+    }
+
+    function getFilteredPatients() {
+      let list = PATIENTS_LIVE;
+      if (currentDeptFilter !== 'All') list = list.filter(p => p.dept === currentDeptFilter);
+      const q = queueSearchQuery.trim().toLowerCase();
+      if (q) {
+        list = list.filter(p =>
+          p.name.toLowerCase().includes(q) ||
+          p.token.toLowerCase().includes(q) ||
+          String(p.phone).includes(q)
+        );
+      }
+      return list;
+    }
+
+    function computeWaitLabel(p, idx, activeList) {
+      const s = patientStatus(p);
+      if (s === 'Completed') return 'Done';
+      if (s === 'Serving' || s === 'Calling') return 'Now';
+      if (s === 'No-Show') return '—';
+      const ahead = activeList.slice(0, idx).filter(x => {
+        const st = patientStatus(x);
+        return st === 'Waiting' || st === 'Emergency' || st === 'Calling';
+      }).length;
+      const mins = Math.max(4, ahead * 6 + (p.emg ? 0 : 4));
+      return idx === 0 && !p.emg ? 'Next' : '~' + mins + 'm';
+    }
+
+    function updateEmergencyPanel() {
+      const panel = document.getElementById('emg-panel');
+      if (!panel) return;
+      const emgList = PATIENTS_LIVE.filter(isActiveEmergency);
+      if (emgList.length === 0) {
+        panel.classList.add('hidden');
+        return;
+      }
+      panel.classList.remove('hidden');
+      const sub = emgList.map(p => `${p.name} (${p.token})`).join(' · ');
+      panel.querySelector('.emg-title').textContent = emgList.length + ' Emergency Case' + (emgList.length > 1 ? 's' : '') + ' in Queue';
+      panel.querySelector('.emg-sub').textContent = sub;
+    }
+
+    /* ════════════ INIT ════════════ */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDoctorProfile();
+      loadPersistedState();
+      mergePatientQueue();
+      updateClock();
+      setInterval(updateClock, 1000);
+      renderQueue();
+      renderNotifications();
+      renderCharts();
+      syncFromPatientAssistant();
+      setInterval(syncFromPatientAssistant, 5000);
+      document.addEventListener('click', e => {
+        const dd = document.getElementById('topbar-notif-dropdown');
+        const btn = document.getElementById('topbar-notif-btn');
+        if (topbarNotifOpen && dd && !dd.contains(e.target) && btn && !btn.contains(e.target)) {
+          topbarNotifOpen = false;
+          dd.classList.remove('open');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    /* ════════════ DOCTOR PROFILE ════════════ */
+    // currentDoctorProfile holds the logged-in doctor's data for the whole session
+    let currentDoctorProfile = {};
+
+    function loadDoctorProfile() {
+      // Source: localStorage.currentDoctor (set by loginn_fixed.html on successful login)
+      try {
+        const stored = localStorage.getItem('currentDoctor');
+        if (stored) currentDoctorProfile = JSON.parse(stored);
+      } catch (_) { currentDoctorProfile = {}; }
+
+      // Fallbacks for demo mode (doctor logged in via hard-coded credentials)
+      const name = currentDoctorProfile.name || 'Demo Doctor';
+      const doctorId = currentDoctorProfile.doctorId || currentDoctorProfile.uid || 'DEMO';
+      const email = currentDoctorProfile.email || 'doctor@smartheal.gov.in';
+      const spec = currentDoctorProfile.specialization || 'General Medicine';
+      const phone = currentDoctorProfile.phone || '+91 98765 43210';
+      const license = currentDoctorProfile.licenseNumber || 'MCI-2024-DEMO';
+
+      // Persist fallbacks back so openProfileModal can read them
+      currentDoctorProfile.name = name;
+      currentDoctorProfile.doctorId = doctorId;
+      currentDoctorProfile.email = email;
+      currentDoctorProfile.specialization = spec;
+      currentDoctorProfile.phone = phone;
+      currentDoctorProfile.licenseNumber = license;
+
+      // Initials for avatar (up to 2 letters)
+      const initials = name.split(' ')
+        .filter(Boolean)
+        .map(w => w[0].toUpperCase())
+        .slice(0, 2)
+        .join('');
+
+      // ── Sidebar profile card ──
+      const avatarEl = document.getElementById('profile-avatar');
+      const nameEl = document.getElementById('profile-name');
+      const specEl = document.getElementById('profile-spec');
+      const docIdEl = document.getElementById('profile-docid');
+      const emailEl = document.getElementById('profile-email');
+      const topbarAvEl = document.getElementById('topbar-avatar');
+
+      if (avatarEl) avatarEl.textContent = initials || '??';
+      if (nameEl) nameEl.textContent = name.startsWith('Dr') ? name : 'Dr. ' + name;
+      if (specEl) specEl.textContent = spec;
+      if (docIdEl) docIdEl.textContent = doctorId;
+      if (emailEl) emailEl.textContent = email;
+      if (topbarAvEl) {
+        topbarAvEl.textContent = initials || '??';
+        topbarAvEl.title = name;
+      }
+    }
+
+    /* ════════════ CLOCK ════════════ */
+    function updateClock() {
+      const n = new Date();
+      const h = n.getHours().toString().padStart(2, '0');
+      const m = n.getMinutes().toString().padStart(2, '0');
+      const ampm = n.getHours() >= 12 ? 'PM' : 'AM';
+      const h12 = (n.getHours() % 12 || 12).toString().padStart(2, '0');
+      document.getElementById('topbar-clock').textContent = `${h12}:${m} ${ampm}`;
+    }
+
+    /* ════════════ QUEUE RENDERING ════════════ */
+    function renderQueue() {
+      const tbody = document.getElementById('queue-tbody');
+      const mob = document.getElementById('queue-mobile-cards');
+      const filtered = getFilteredPatients();
+      const activeWait = filtered.filter(p => {
+        const s = patientStatus(p);
+        return s === 'Waiting' || s === 'Emergency' || s === 'Calling' || s === 'Serving';
+      });
+
+      tbody.innerHTML = filtered.map((p, idx) => {
+        const status = patientStatus(p);
+        const isEmg = isActiveEmergency(p);
+        const isSelected = selectedPatientId === p.id;
+        const wait = computeWaitLabel(p, activeWait.indexOf(p) >= 0 ? activeWait.indexOf(p) : idx, activeWait);
+        const sel = typeof p.id === 'string' ? `'${p.id}'` : p.id;
+        return `<tr class="${isEmg ? 'emg-row' : ''} ${isSelected ? 'selected' : ''}"
+                    onclick="selectPatient(${sel})">
+          <td><div class="token-num">${p.token}</div></td>
+          <td>
+            <div class="patient-name">${p.name}</div>
+            <div class="patient-info">${p.age}y / ${p.gender} · ${isEmg ? '🚨 Emergency' : p.dept}</div>
+          </td>
+          <td style="font-size:12px;color:var(--text-2);">${p.dept}</td>
+          <td>${statusPill(status, isEmg)}</td>
+          <td><div class="wait-time">${wait}</div></td>
+        </tr>`;
+      }).join('');
+
+      if (mob) {
+        mob.innerHTML = filtered.map((p, idx) => {
+          const status = patientStatus(p);
+          const isEmg = isActiveEmergency(p);
+          const isSelected = selectedPatientId === p.id;
+          const wait = computeWaitLabel(p, activeWait.indexOf(p) >= 0 ? activeWait.indexOf(p) : idx, activeWait);
+          const sel = typeof p.id === 'string' ? `'${p.id}'` : p.id;
+          return `<div class="q-mob-card ${isEmg ? 'emg' : ''} ${isSelected ? 'selected' : ''}" onclick="selectPatient(${sel})">
+            <div class="q-mob-top">
+              <div><div class="token-num">${p.token}</div><div class="q-mob-name">${p.name}</div></div>
+              ${statusPill(status, isEmg)}
+            </div>
+            <div style="font-size:11px;color:var(--text-2);">${p.dept} · ${wait}</div>
+          </div>`;
+        }).join('');
+      }
+
+      updateMetrics();
+      updateEmergencyPanel();
+    }
+
+    function filterQueueSearch(val) {
+      queueSearchQuery = val || '';
+      renderQueue();
+    }
+
+    function statusPill(status, emg) {
+      if (emg && (status === 'Emergency' || status === 'Waiting')) return `<span class="status-pill pill-emg">🚨 Emergency</span>`;
+      if (status === 'Serving' || status === 'Calling') return `<span class="status-pill pill-serving">● Serving</span>`;
+      if (status === 'Completed') return `<span class="status-pill pill-done">✓ Done</span>`;
+      if (status === 'No-Show') return `<span class="status-pill pill-noshow">✗ No-Show</span>`;
+      return `<span class="status-pill pill-waiting">⏳ Waiting</span>`;
+    }
+
+    function filterDept(el, dept) {
+      document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      currentDeptFilter = dept;
+      renderQueue();
+    }
+
+    function updateMetrics() {
+      const total = PATIENTS_LIVE.length;
+      const emg = PATIENTS_LIVE.filter(isActiveEmergency).length;
+      const done = PATIENTS_LIVE.filter(p => patientStatus(p) === 'Completed').length;
+      const pending = PATIENTS_LIVE.filter(p => {
+        const s = patientStatus(p);
+        return s === 'Waiting' || s === 'Emergency' || s === 'Calling' || s === 'Serving';
+      }).length;
+      document.getElementById('count-total').textContent = total;
+      document.getElementById('count-emg').textContent = emg;
+      document.getElementById('count-done').textContent = done;
+      document.getElementById('count-pending').textContent = pending;
+    }
+
+    /* ════════════ PATIENT SELECTION ════════════ */
+    function selectPatient(id) {
+      selectedPatientId = id;
+      const p = PATIENTS_LIVE.find(x => x.id === id);
+      if (!p) return;
+
+      // Show workspace
+      document.getElementById('rp-empty').style.display = 'none';
+      document.getElementById('rp-workspace').style.display = 'flex';
+
+      // Populate overview
+      document.getElementById('po-avatar').textContent = p.initials;
+      document.getElementById('po-name').textContent = p.name;
+      document.getElementById('po-meta').textContent = `${p.age} years / ${p.gender === 'M' ? 'Male' : 'Female'} · ${p.dept}`;
+      document.getElementById('po-token').textContent = p.token;
+      document.getElementById('chief-complaint').textContent = p.complaint;
+      document.getElementById('po-phone').textContent = '📞 ' + (p.phone || '—');
+      document.getElementById('po-allergies').textContent = '⚠️ Allergies: ' + (p.allergies || 'Not recorded');
+
+      // Vitals
+      document.getElementById('vital-bp').textContent = p.bp;
+      document.getElementById('vital-temp').textContent = p.temp;
+      document.getElementById('vital-pulse').textContent = p.pulse;
+      document.getElementById('vital-spo2').textContent = p.spo2;
+      document.getElementById('vital-weight').textContent = p.weight;
+      document.getElementById('vital-rr').textContent = p.rr;
+
+      // Highlight abnormals
+      const spo2Val = parseFloat(p.spo2);
+      document.getElementById('vital-spo2').closest('.vital-card').className = 'vital-card' + (spo2Val < 95 ? ' abnormal' : '');
+      const bpSys = parseInt(p.bp.split('/')[0]);
+      document.getElementById('vital-bp').closest('.vital-card').className = 'vital-card' + (bpSys > 140 ? ' abnormal' : '');
+      const rr = parseInt(p.rr);
+      document.getElementById('vital-rr').closest('.vital-card').className = 'vital-card' + (rr > 20 ? ' abnormal' : '');
+
+      // Visit history
+      const histContainer = document.getElementById('recent-history');
+      if (p.history.length === 0) {
+        histContainer.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0;">No previous visit records.</div>`;
+      } else {
+        histContainer.innerHTML = p.history.map(h => `
+          <div style="background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;">
+            <div style="font-size:10px;font-weight:600;color:var(--teal);margin-bottom:3px;">${h.date}</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.6;">${h.note}</div>
+          </div>`).join('');
+      }
+
+      // MediVault (+ shared records from patient app)
+      const vaultContainer = document.getElementById('vault-files');
+      let vaultList = [...p.vault];
+      if (SH()) {
+        SH().getHealthRecords().forEach((r, ri) => {
+          if (r.token === p.token || (r.patientName && r.patientName === p.name)) {
+            vaultList.push({
+              name: 'Visit record — ' + (r.dept || 'OPD'),
+              date: r.date,
+              type: 'visit',
+              badge: 'badge-lab',
+              icon: '📋',
+              data: r.diag || r.diagnosis || 'No details',
+              sharedIdx: 's-' + ri
+            });
+          }
+        });
+      }
+      p._displayVault = vaultList;
+      if (vaultList.length === 0) {
+        vaultContainer.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0;">No medical documents on file.</div>`;
+      } else {
+        vaultContainer.innerHTML = vaultList.map((f, i) => `
+          <div class="vault-file" onclick='openVaultFile(${JSON.stringify(f.name)},${JSON.stringify(f.icon)},${JSON.stringify(f.date)},${JSON.stringify(f.type)},${JSON.stringify(p.id)},${i})'>
+            <div class="vault-file-icon">${f.icon}</div>
+            <div>
+              <div class="vault-file-name">${f.name}</div>
+              <div class="vault-file-meta">${f.date}</div>
+            </div>
+            <span class="vault-file-badge ${f.badge}">${f.type.toUpperCase()}</span>
+          </div>`).join('');
+      }
+
+      // Prescription drugs
+      if (!patientDrugs[id]) patientDrugs[id] = [...p.drugs];
+      renderDrugs(id);
+
+      // Notes
+      if (patientNotes[id]) {
+        document.getElementById('notes-area').value = patientNotes[id];
+      } else {
+        document.getElementById('notes-area').value = '';
+      }
+      updateCharCount();
+
+      const fu = patientFollowups[id];
+      const fuBox = document.getElementById('followup-scheduled');
+      if (fu) {
+        fuBox.style.display = 'block';
+        fuBox.textContent = `✅ Scheduled: ${fu.dateStr || fu.date}, ${fu.time}${fu.reason ? ' — ' + fu.reason : ''}`;
+        document.getElementById('fu-date').value = fu.date || '';
+        document.getElementById('fu-time').value = fu.time || '';
+        document.getElementById('fu-reason').value = fu.reason || '';
+        document.getElementById('fu-instructions').value = fu.instructions || '';
+      } else {
+        fuBox.style.display = 'none';
+        document.getElementById('fu-date').value = '';
+        document.getElementById('fu-time').value = '';
+        document.getElementById('fu-reason').value = '';
+        document.getElementById('fu-instructions').value = '';
+      }
+
+      // Switch to overview tab
+      switchRPTab('overview');
+
+      // Re-render queue to show selection
+      renderQueue();
+    }
+
+    /* ════════════ STATUS CONTROLS ════════════ */
+    function updatePatientStatus(status) {
+      if (!selectedPatientId) return;
+      const p = PATIENTS_LIVE.find(x => x.id === selectedPatientId);
+      if (!p) return;
+      if (status === 'Emergency') { p.emg = true; }
+      patientStatuses[selectedPatientId] = status;
+      renderQueue();
+      syncToPatientAssistant();
+      if (status === 'Completed') pushVisitToMediVault(p);
+      persistDoctorState();
+      const msgs = {
+        'Serving': `Attending ${p.name} now.`,
+        'Calling': `${p.name} is being called.`,
+        'Waiting': `${p.name} returned to waiting queue.`,
+        'Completed': `Consultation completed for ${p.name}.`,
+        'No-Show': `${p.name} marked as No-Show.`,
+        'Emergency': `${p.name} marked as emergency.`
+      };
+      showToast(status === 'Completed' ? '✅' : status === 'No-Show' ? '🚫' : '📣', msgs[status] || 'Status updated.');
+      addNotification({ icon: status === 'Completed' ? '✅' : '📣', text: msgs[status], time: 'Just now', unread: true });
+    }
+
+    function markPatientEmergency() {
+      if (!selectedPatientId) { showToast('ℹ️', 'Select a patient first.'); return; }
+      const p = PATIENTS_LIVE.find(x => x.id === selectedPatientId);
+      if (!p) return;
+      p.emg = true;
+      updatePatientStatus('Emergency');
+    }
+
+    function pushVisitToMediVault(p) {
+      if (!SH()) return;
+      const notes = patientNotes[p.id] || '';
+      const drugs = patientDrugs[p.id] || p.drugs || [];
+      const today = new Date().toISOString().split('T')[0];
+      const types = drugs.length ? ['Prescription'] : [];
+      const drugTxt = drugs.map(d => `${d.name} (${d.dosage}, ${d.freq}, ${d.duration})`).join('; ');
+      const diag = notes.trim() || p.complaint || 'Consultation completed.';
+      SH().appendHealthRecord({
+        date: today,
+        dept: p.dept,
+        doc: currentDoctorProfile.name ? (currentDoctorProfile.name.startsWith('Dr') ? currentDoctorProfile.name : 'Dr. ' + currentDoctorProfile.name) : 'Doctor',
+        diag: diag + (drugTxt ? '\n\nRx: ' + drugTxt : ''),
+        followup: (patientFollowups[p.id] && patientFollowups[p.id].date) || '',
+        types,
+        id: Date.now(),
+        token: p.token,
+        patientName: p.name
+      });
+    }
+
+    function serveEmergency() {
+      const emgPatient = PATIENTS_LIVE.find(isActiveEmergency);
+      if (emgPatient) selectPatient(emgPatient.id);
+      else showToast('ℹ️', 'No active emergency cases in queue.');
+    }
+
+    /* ════════════ RIGHT PANEL TABS ════════════ */
+    function switchRPTab(tab) {
+      currentRPTab = tab;
+      document.querySelectorAll('.rp-tab').forEach((t, i) => {
+        const tabs = ['overview', 'vault', 'notes', 'prescription', 'followup'];
+        t.classList.toggle('active', tabs[i] === tab);
+      });
+      document.querySelectorAll('.rp-section').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('tab-' + tab);
+      if (el) el.classList.add('active');
+    }
+
+    function openRPTab(tab) {
+      if (!selectedPatientId) {
+        showToast('ℹ️', 'Please select a patient first.');
+        return;
+      }
+      switchRPTab(tab);
+      // Scroll right panel into view on mobile
+      document.getElementById('right-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ════════════ MEDIVAULT ════════════ */
+    function openVaultFile(name, icon, date, type, patientId, idx) {
+      const p = PATIENTS_LIVE.find(x => x.id === patientId);
+      const vault = (p && p._displayVault) || (p && p.vault) || [];
+      if (!p || !vault[idx]) return;
+      const file = vault[idx];
+      lastVaultFile = { name, data: file.data, patient: p.name, date };
+      document.getElementById('vault-modal-title').textContent = `${icon} ${name}`;
+      document.getElementById('vault-modal-content').innerHTML = `
+        <div class="vault-modal-icon">${icon}</div>
+        <div class="vault-modal-name">${name}</div>
+        <div class="vault-modal-meta">Patient: ${p.name} · Date: ${date}</div>
+        <div class="vault-modal-data">${file.data}</div>`;
+      document.getElementById('vault-modal').classList.remove('hidden');
+    }
+
+    function downloadVaultFile() {
+      if (!lastVaultFile) { showToast('⚠️', 'No document open.'); return; }
+      const text = `${lastVaultFile.name}\nPatient: ${lastVaultFile.patient}\nDate: ${lastVaultFile.date}\n\n${lastVaultFile.data}`;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (lastVaultFile.name || 'document').replace(/\s+/g, '_') + '.txt';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('⬇️', 'Document downloaded.');
+    }
+
+    /* ════════════ NOTES ════════════ */
+    function insertTemplate(key) {
+      const area = document.getElementById('notes-area');
+      const template = NOTE_TEMPLATES[key] || '';
+      area.value = template;
+      updateCharCount();
+      area.focus();
+    }
+
+    function updateCharCount() {
+      const count = document.getElementById('notes-area').value.length;
+      document.getElementById('char-count').textContent = count;
+    }
+
+    function saveNotes() {
+      if (!selectedPatientId) return;
+      patientNotes[selectedPatientId] = document.getElementById('notes-area').value;
+      persistDoctorState();
+      showToast('💾', 'Consultation notes saved successfully.');
+    }
+
+    function debounceSaveNotes() {
+      if (notesSaveTimer) clearTimeout(notesSaveTimer);
+      notesSaveTimer = setTimeout(() => {
+        if (!selectedPatientId) return;
+        patientNotes[selectedPatientId] = document.getElementById('notes-area').value;
+        persistDoctorState();
+      }, 800);
+    }
+
+    /* ════════════ PRESCRIPTION ════════════ */
+    function renderDrugs(patientId) {
+      const drugs = patientDrugs[patientId] || [];
+      const container = document.getElementById('rx-drugs');
+      if (drugs.length === 0) {
+        container.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:6px 0;">No drugs added yet.</div>`;
+        return;
+      }
+      container.innerHTML = drugs.map((d, i) => `
+        <div class="rx-row">
+          <div>
+            <div class="rx-drug-name">${d.name}</div>
+            <div class="rx-dosage">${d.dosage}</div>
+          </div>
+          <div class="rx-freq">${d.freq}</div>
+          <div class="rx-dosage">${d.duration}</div>
+          <div class="rx-remove" onclick="removeDrug(${i})">×</div>
+        </div>`).join('');
+    }
+
+    function toggleRxForm(show) {
+      const form = document.getElementById('rx-add-form');
+      form.classList.toggle('visible', show);
+      if (show) {
+        document.getElementById('rx-drug-name').focus();
+        document.getElementById('rx-drug-name').value = '';
+        document.getElementById('rx-dosage').value = '';
+        document.getElementById('rx-freq').value = '';
+        document.getElementById('rx-duration').value = '';
+      }
+    }
+
+    function addDrug() {
+      if (!selectedPatientId) return;
+      const name = document.getElementById('rx-drug-name').value.trim();
+      const dosage = document.getElementById('rx-dosage').value.trim();
+      const freq = document.getElementById('rx-freq').value.trim();
+      const duration = document.getElementById('rx-duration').value.trim();
+      if (!name) { showToast('⚠️', 'Please enter a drug name.'); return; }
+      if (!patientDrugs[selectedPatientId]) patientDrugs[selectedPatientId] = [];
+      patientDrugs[selectedPatientId].push({ name, dosage, freq, duration });
+      renderDrugs(selectedPatientId);
+      toggleRxForm(false);
+      persistDoctorState();
+      showToast('💊', `${name} added to prescription.`);
+    }
+
+    function removeDrug(idx) {
+      if (!selectedPatientId) return;
+      patientDrugs[selectedPatientId].splice(idx, 1);
+      renderDrugs(selectedPatientId);
+      persistDoctorState();
+    }
+
+    function printPrescription() {
+      if (!selectedPatientId) return;
+      const p = PATIENTS_LIVE.find(x => x.id === selectedPatientId);
+      const drugs = patientDrugs[selectedPatientId] || [];
+      const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('rx-print-preview').innerHTML = `
+        <div class="rx-print-hosp">SmartHeal — District General Hospital</div>
+        <div class="rx-print-sub">Hyderabad, Telangana · Ph: 040-2345-6789</div>
+        <div class="rx-print-divider"></div>
+        <div class="rx-print-label">Patient</div>
+        <div class="rx-print-patient">${p.name} · ${p.age}y / ${p.gender === 'M' ? 'Male' : 'Female'}</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Date: ${today} · Token: ${p.token}</div>
+        <div class="rx-print-divider"></div>
+        <div class="rx-print-label" style="margin-bottom:6px;">℞ Medications</div>
+        ${drugs.length > 0 ? drugs.map(d => `
+          <div class="rx-print-drug">
+            <div class="rx-print-drug-name">${d.name}</div>
+            <div style="color:#555;">${d.dosage} · ${d.freq}</div>
+            <div style="color:#888;">${d.duration}</div>
+          </div>`).join('') : '<div style="font-size:12px;color:#aaa;">No medications prescribed.</div>'}
+        <div class="rx-print-divider"></div>
+        <div class="rx-print-label">Doctor</div>
+        <div class="rx-print-patient">${currentDoctorProfile.name || 'Doctor'}</div>
+        <div style="font-size:11px;color:#888;">${currentDoctorProfile.specialization || ''}</div>
+        <div class="rx-print-footer">This prescription is valid for 30 days from issue date.</div>`;
+      document.getElementById('rx-modal').classList.remove('hidden');
+    }
+
+    function simulatePrint() {
+      showToast('🖨️', 'Prescription sent to printer.');
+      closeModal('rx-modal');
+    }
+
+    /* ════════════ FOLLOW-UP ════════════ */
+    function scheduleFollowup() {
+      const date = document.getElementById('fu-date').value;
+      const time = document.getElementById('fu-time').value;
+      const reason = document.getElementById('fu-reason').value;
+      const instructions = document.getElementById('fu-instructions').value.trim();
+      if (!date || !time) { showToast('⚠️', 'Please select date and time slot.'); return; }
+      if (!selectedPatientId) return;
+      const p = PATIENTS_LIVE.find(x => x.id === selectedPatientId);
+      const dateStr = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      patientFollowups[selectedPatientId] = { date, time, reason, instructions, dateStr };
+      persistDoctorState();
+      if (SH() && p) {
+        SH().addDoctorFollowup({
+          patientName: p.name,
+          token: p.token,
+          dept: p.dept,
+          date,
+          time,
+          reason,
+          instructions
+        });
+      }
+      document.getElementById('followup-scheduled').style.display = 'block';
+      document.getElementById('followup-scheduled').textContent = `✅ Follow-up scheduled for ${p?.name} on ${dateStr}, ${time}.`;
+      addNotification({ icon: '📅', text: `Follow-up scheduled for ${p?.name} on ${dateStr}.`, time: 'Just now', unread: true });
+      showToast('📅', 'Follow-up scheduled successfully.');
+    }
+
+    /* ════════════ DOCTOR STATUS ════════════ */
+    function toggleStatus(el) {
+      const dot = document.getElementById('status-dot');
+      const txt = document.getElementById('status-text');
+      if (dot.classList.contains('break')) {
+        dot.classList.remove('break');
+        txt.textContent = 'Active';
+        showToast('✅', 'Status set to Active.');
+      } else {
+        dot.classList.add('break');
+        txt.textContent = 'On Break';
+        showToast('☕', 'Status set to On Break.');
+      }
+    }
+
+    /* ════════════ NOTIFICATIONS ════════════ */
+    function notifItemHtml(n) {
+      return `<div class="notif-item ${n.unread ? 'unread' : ''}">
+          <div class="notif-icon">${n.icon}</div>
+          <div style="flex:1">
+            <div class="notif-text">${n.text}</div>
+            <div class="notif-time">${n.time}</div>
+          </div>
+          <button type="button" class="notif-dismiss" onclick="event.stopPropagation();dismissNotification(${n.id})" title="Dismiss">✕</button>
+          ${n.unread ? '<div class="notif-dot"></div>' : ''}
+        </div>`;
+    }
+
+    function renderNotifications() {
+      const html = NOTIFICATIONS.map(notifItemHtml).join('');
+      const container = document.getElementById('notif-list');
+      const topList = document.getElementById('topbar-notif-list');
+      if (container) container.innerHTML = html;
+      if (topList) topList.innerHTML = html;
+      const unreadCount = NOTIFICATIONS.filter(n => n.unread).length;
+      document.getElementById('notif-count').textContent = unreadCount;
+      const sbBadge = document.getElementById('sb-notif-badge');
+      if (sbBadge) sbBadge.textContent = unreadCount;
+    }
+
+    function addNotification(notif) {
+      notif.id = notif.id || ++notifIdSeq;
+      NOTIFICATIONS.unshift(notif);
+      renderNotifications();
+    }
+
+    function dismissNotification(id) {
+      const i = NOTIFICATIONS.findIndex(n => n.id === id);
+      if (i >= 0) NOTIFICATIONS.splice(i, 1);
+      renderNotifications();
+    }
+
+    function markNotificationsRead() {
+      NOTIFICATIONS.forEach(n => n.unread = false);
+      renderNotifications();
+      document.getElementById('notif-count').textContent = '0';
+      const sbBadge = document.getElementById('sb-notif-badge');
+      if (sbBadge) sbBadge.textContent = '0';
+    }
+
+    function toggleTopbarNotif(ev) {
+      if (ev) ev.stopPropagation();
+      const dd = document.getElementById('topbar-notif-dropdown');
+      const btn = document.getElementById('topbar-notif-btn');
+      topbarNotifOpen = !topbarNotifOpen;
+      if (dd) dd.classList.toggle('open', topbarNotifOpen);
+      if (btn) btn.setAttribute('aria-expanded', topbarNotifOpen ? 'true' : 'false');
+      if (topbarNotifOpen) markNotificationsRead();
+    }
+
+    function toggleNotifPanel() {
+      const panel = document.getElementById('sb-notif-panel');
+      const left = document.getElementById('left-sidebar');
+      if (window.innerWidth <= 1024 && left) {
+        left.classList.add('mobile-visible');
+        left.style.display = 'flex';
+      }
+      notifPanelOpen = !notifPanelOpen;
+      if (panel) panel.style.display = notifPanelOpen ? 'block' : 'none';
+      if (notifPanelOpen) markNotificationsRead();
+    }
+
+    /* ════════════ CHARTS ════════════ */
+    function renderCharts() {
+      const hours = ['8AM', '9AM', '10AM', '11AM', '12PM', '1PM'];
+      const hourlyMap = hours.map(() => ({ count: 0, emg: 0 }));
+      const deptMap = {};
+      const deptColors = { Cardiology: '#b856a3', 'General OPD': '#765568', Paediatrics: '#1A5FBF', ENT: '#2E9E5B', Orthopaedics: '#534AB7', Gynaecology: '#db87c5', Dermatology: '#1A9E9E' };
+
+      PATIENTS_LIVE.forEach((p, i) => {
+        const bucket = Math.min(hourlyMap.length - 1, Math.floor(i * 1.2) % hourlyMap.length);
+        hourlyMap[bucket].count++;
+        if (isActiveEmergency(p) || p.emg) hourlyMap[bucket].emg++;
+        deptMap[p.dept] = (deptMap[p.dept] || 0) + 1;
+      });
+      if (hourlyMap.every(h => h.count === 0)) {
+        hourlyMap[1].count = 3; hourlyMap[2].count = 5; hourlyMap[3].count = 4;
+      }
+
+      const maxH = Math.max(1, ...hourlyMap.map(d => d.count));
+      const chart = document.getElementById('hourly-chart');
+      const labels = document.getElementById('hourly-labels');
+      chart.innerHTML = hourlyMap.map((d, i) => {
+        const h = Math.round((d.count / maxH) * 75) || 4;
+        return `<div class="bc-col">
+          <div class="bc-bar${d.emg ? ' emg' : ''}" style="height:${h}px;" title="${d.count} patients (${d.emg} emergency)"></div>
+        </div>`;
+      }).join('');
+      labels.innerHTML = hours.map(h => `<div class="bc-lbl" style="flex:1;text-align:center;">${h}</div>`).join('');
+
+      const depts = Object.keys(deptMap).map(name => ({
+        name, count: deptMap[name], color: deptColors[name] || '#765568'
+      })).sort((a, b) => b.count - a.count);
+      const maxD = Math.max(1, ...depts.map(d => d.count));
+      document.getElementById('dept-load-list').innerHTML = depts.map(d => `
+        <div class="dept-load-row">
+          <div class="dept-load-name">${d.name}</div>
+          <div class="dept-load-bar-bg">
+            <div class="dept-load-bar-fill" style="width:${Math.round((d.count / maxD) * 100)}%;background:${d.color};"></div>
+          </div>
+          <div class="dept-load-count">${d.count}</div>
+        </div>`).join('') || '<div style="font-size:12px;color:var(--text-2);">No department data.</div>';
+
+      const done = PATIENTS_LIVE.filter(p => patientStatus(p) === 'Completed').length;
+      const noshow = PATIENTS_LIVE.filter(p => patientStatus(p) === 'No-Show').length;
+      const rate = PATIENTS_LIVE.length ? Math.round((done / PATIENTS_LIVE.length) * 100) : 0;
+      const sumEl = document.getElementById('analytics-summary-line');
+      if (sumEl) sumEl.textContent = `Completion ${rate}% · ${done} completed · ${noshow} no-show`;
+    }
+
+    /* ════════════ LOCALSTORAGE SYNC ════════════ */
+    function syncFromPatientAssistant() {
+      if (!SH()) return;
+      mergePatientQueue();
+      const nowServing = SH().getNowServing();
+      const calling = SH().getCalling();
+      document.querySelectorAll('#queue-tbody tr, .q-mob-card').forEach(el => el.classList.remove('now-serving-row'));
+      if (nowServing) {
+        const p = PATIENTS_LIVE.find(x => SH().tokenToNum(x.token) === parseInt(nowServing, 10));
+        if (p && patientStatus(p) !== 'Completed') {
+          /* highlight via re-render */
+        }
+      }
+      renderQueue();
+      renderCharts();
+    }
+
+    function syncToPatientAssistant() {
+      if (!SH()) return;
+      const serving = PATIENTS_LIVE.find(p => patientStatus(p) === 'Serving');
+      const calling = PATIENTS_LIVE.find(p => patientStatus(p) === 'Calling');
+      if (serving) SH().setNowServing(SH().tokenToNum(serving.token));
+      else if (!calling) SH().setNowServing('');
+      if (calling) SH().setCalling(SH().tokenToNum(calling.token));
+      else SH().setCalling('');
+      exportSharedQueue();
+    }
+
+    /* ════════════ MODAL ════════════ */
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    /* ════════════ TOAST ════════════ */
+    function showToast(icon, msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-icon').textContent = icon;
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    /* ════════════ SCROLL ════════════ */
+    function scrollToSection(id) {
+      const el = document.getElementById(id === 'queue' ? 'queue-section' : 'analytics');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ════════════ MOBILE TABS ════════════ */
+    function mobileSwitchTab(tab) {
+      document.querySelectorAll('.mob-tab').forEach((t, i) => {
+        const tabs = ['queue', 'consult', 'stats', 'notif'];
+        t.classList.toggle('active', tabs[i] === tab);
+      });
+      const main = document.getElementById('main-content');
+      const left = document.getElementById('left-sidebar');
+      const right = document.getElementById('right-panel');
+      main.style.display = (tab === 'queue' || tab === 'stats') ? '' : 'none';
+      left.style.display = (tab === 'notif') ? 'flex' : 'none';
+      right.style.display = (tab === 'consult') ? 'flex' : 'none';
+    }
+
+    /* ════════════════════════════════════════════
+       PROFILE MODAL
+    ════════════════════════════════════════════ */
+    function openProfileModal() {
+      const p = currentDoctorProfile;
+      const name = p.name || 'Doctor';
+      const displayName = name.startsWith('Dr') ? name : 'Dr. ' + name;
+      const initials = name.split(' ').filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+
+      // Hero
+      document.getElementById('pm-avatar').textContent = initials || '??';
+      document.getElementById('pm-name').textContent = displayName;
+      document.getElementById('pm-spec').textContent = p.specialization || '—';
+
+      // Sync status pill with sidebar
+      const isBreak = document.getElementById('status-dot').classList.contains('break');
+      syncModalStatusPill(isBreak);
+
+      // Info rows
+      document.getElementById('pm-docid').textContent = p.doctorId || p.uid || 'DEMO';
+      document.getElementById('pm-spec-val').textContent = p.specialization || '—';
+      document.getElementById('pm-email').textContent = p.email || '—';
+      document.getElementById('pm-phone').textContent = p.phone || '—';
+      document.getElementById('pm-license').textContent = p.licenseNumber || '—';
+
+      // Reset copy buttons
+      ['pm-copy-id', 'pm-copy-email', 'pm-copy-phone'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) { btn.textContent = 'Copy'; btn.classList.remove('copied'); }
+      });
+
+      document.getElementById('profileModalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleProfileOverlayClick(e) {
+      if (e.target === document.getElementById('profileModalOverlay')) closeProfileModal();
+    }
+
+    function syncModalStatusPill(isBreak) {
+      const dot = document.getElementById('pm-status-dot');
+      const txt = document.getElementById('pm-status-text');
+      const btn = document.getElementById('pm-toggle-status-btn');
+      const icon = document.getElementById('pm-toggle-icon');
+      const lbl = document.getElementById('pm-toggle-label');
+      if (isBreak) {
+        dot.classList.add('break');
+        txt.textContent = 'On Break';
+        icon.textContent = '✅';
+        lbl.textContent = 'Set Active';
+      } else {
+        dot.classList.remove('break');
+        txt.textContent = 'Active';
+        icon.textContent = '☕';
+        lbl.textContent = 'Set On Break';
+      }
+    }
+
+    function toggleStatusFromModal() {
+      // Toggle sidebar status
+      const sidebarEl = document.querySelector('.profile-status');
+      toggleStatus(sidebarEl);
+      // Re-sync modal pill
+      const isBreak = document.getElementById('status-dot').classList.contains('break');
+      syncModalStatusPill(isBreak);
+    }
+
+    function copyPmField(fieldId, btnId) {
+      const val = document.getElementById(fieldId)?.textContent?.trim();
+      if (!val || val === '—') return;
+      navigator.clipboard.writeText(val).then(() => {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      }).catch(() => {
+        // Fallback for non-HTTPS
+        const ta = document.createElement('textarea');
+        ta.value = val; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const btn = document.getElementById(btnId);
+        if (btn) { btn.textContent = '✓ Copied'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000); }
+      });
+    }
+
+    function handleLogout() {
+      closeProfileModal();
+      localStorage.removeItem('currentDoctor');
+      localStorage.removeItem('currentUser');
+      showToast('👋', 'Signed out successfully.');
+      setTimeout(() => { window.location.href = 'loginn_fixed.html?role=doctor'; }, 1000);
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeProfileModal();
+    });
+  </script>
+  <!-- ═══════════ DOCTOR PROFILE MODAL ═══════════ -->
+  <div class="profile-modal-overlay" id="profileModalOverlay" onclick="handleProfileOverlayClick(event)">
+    <div class="profile-modal" id="profileModal" role="dialog" aria-modal="true" aria-label="Doctor profile details">
+
+      <!-- Hero Banner -->
+      <div class="pm-hero">
+        <button class="pm-close" onclick="closeProfileModal()" title="Close" aria-label="Close profile">✕</button>
+        <div class="pm-avatar-lg" id="pm-avatar">??</div>
+        <div class="pm-name" id="pm-name">Dr. —</div>
+        <div class="pm-spec" id="pm-spec">—</div>
+        <div class="pm-status-pill" id="pm-status-pill">
+          <div class="pm-status-dot" id="pm-status-dot"></div>
+          <span id="pm-status-text">Active</span>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="pm-body">
+        <div class="pm-section-label">Doctor Information</div>
+
+        <!-- Doctor ID -->
+        <div class="pm-row">
+          <div class="pm-row-icon teal">🪪</div>
+          <div class="pm-row-content">
+            <div class="pm-row-label">Doctor ID</div>
+            <div class="pm-row-value chip" id="pm-docid">—</div>
+          </div>
+          <button class="pm-copy-btn" id="pm-copy-id" onclick="copyPmField('pm-docid','pm-copy-id')"
+            title="Copy Doctor ID">Copy</button>
+        </div>
+
+        <!-- Specialization -->
+        <div class="pm-row">
+          <div class="pm-row-icon purple">🩺</div>
+          <div class="pm-row-content">
+            <div class="pm-row-label">Specialization</div>
+            <div class="pm-row-value" id="pm-spec-val">—</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="pm-row">
+          <div class="pm-row-icon amber">📧</div>
+          <div class="pm-row-content">
+            <div class="pm-row-label">Email Address</div>
+            <div class="pm-row-value" id="pm-email" style="font-size:12px;">—</div>
+          </div>
+          <button class="pm-copy-btn" id="pm-copy-email" onclick="copyPmField('pm-email','pm-copy-email')"
+            title="Copy Email">Copy</button>
+        </div>
+
+        <!-- Phone -->
+        <div class="pm-row">
+          <div class="pm-row-icon green">📱</div>
+          <div class="pm-row-content">
+            <div class="pm-row-label">Phone Number</div>
+            <div class="pm-row-value" id="pm-phone">—</div>
+          </div>
+          <button class="pm-copy-btn" id="pm-copy-phone" onclick="copyPmField('pm-phone','pm-copy-phone')"
+            title="Copy Phone">Copy</button>
+        </div>
+
+        <div class="pm-divider"></div>
+        <div class="pm-section-label">Account</div>
+
+        <!-- License -->
+        <div class="pm-row">
+          <div class="pm-row-icon teal">📋</div>
+          <div class="pm-row-content">
+            <div class="pm-row-label">Medical License No.</div>
+            <div class="pm-row-value" id="pm-license" style="font-size:12px;">—</div>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="pm-footer-actions">
+          <button class="pm-action-btn status-toggle" id="pm-toggle-status-btn" onclick="toggleStatusFromModal()">
+            <span id="pm-toggle-icon">☕</span>
+            <span id="pm-toggle-label">Set On Break</span>
+          </button>
+          <button class="pm-action-btn logout" onclick="handleLogout()">
+            🚪 Sign Out
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

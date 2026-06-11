@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartHeal — Select Your Portal</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════════════
+       DESIGN TOKENS — exact match across all portals
+    ══════════════════════════════════════════════════ */
+    :root {
+      --teal: #765568;
+      --teal-light: #E0F5F2;
+      --teal-mid: #1051f6;
+      --amber: #db87c5;
+      --amber-light: #FEF3E8;
+      --red: #b856a3;
+      --red-light: #FDEAEA;
+      --blue: #1A5FBF;
+      --blue-light: #E8F0FB;
+      --purple: #534AB7;
+      --purple-light: #EEEDFE;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+      --surface: #1A1625;
+      --card: #211a2e;
+      --card-2: #262134;
+      --text: #F0EBF5;
+      --text-2: #9B8EA9;
+      --text-3: #C88553;
+      --border: rgba(200, 180, 220, 0.13);
+      --border-glow: rgba(219, 135, 197, 0.25);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       ANIMATED BACKGROUND MESH
+    ══════════════════════════════════════════════════ */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .mesh-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      animation: orbFloat 18s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--teal), transparent 70%);
+      top: -180px;
+      left: -120px;
+      animation-duration: 20s;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--purple), transparent 70%);
+      top: 30%;
+      right: -100px;
+      animation-duration: 25s;
+      animation-delay: -8s;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--amber), transparent 70%);
+      bottom: -100px;
+      left: 30%;
+      animation-duration: 22s;
+      animation-delay: -4s;
+    }
+
+    @keyframes orbFloat {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(30px, -40px) scale(1.05);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.97);
+      }
+
+      100% {
+        transform: translate(15px, -15px) scale(1.03);
+      }
+    }
+
+    /* Subtle grid overlay */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(200, 180, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 180, 220, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PAGE WRAPPER
+    ══════════════════════════════════════════════════ */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════════════════
+       TOP NAV BAR
+    ══════════════════════════════════════════════════ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(33, 26, 46, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-brand span {
+      color: var(--amber);
+    }
+
+    .nav-tagline {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HERO SECTION
+    ══════════════════════════════════════════════════ */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 72px 24px 56px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: rgba(219, 135, 197, 0.1);
+      border: 1px solid rgba(219, 135, 197, 0.25);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      animation: fadeSlideDown 0.7s ease both;
+    }
+
+    .hero-eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.7);
+      }
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      color: var(--text);
+      margin-bottom: 20px;
+      animation: fadeSlideDown 0.7s ease 0.1s both;
+    }
+
+    .hero-title .accent-teal {
+      color: var(--teal);
+    }
+
+    .hero-title .accent-amber {
+      color: var(--amber);
+    }
+
+    /* Gradient shimmer on the word "Smart" */
+    .hero-title .brand-shimmer {
+      background: linear-gradient(90deg,
+          var(--text) 0%,
+          var(--amber) 40%,
+          var(--teal) 70%,
+          var(--text) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 4s linear infinite;
+    }
+
+    @keyframes shimmerText {
+      from {
+        background-position: 0% center;
+      }
+
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: clamp(14px, 2vw, 17px);
+      color: var(--text-2);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      animation: fadeSlideDown 0.7s ease 0.2s both;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeSlideDown 0.7s ease 0.3s both;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* ══════════════════════════════════════════════════
+       PORTAL CARDS SECTION
+    ══════════════════════════════════════════════════ */
+    .portals-section {
+      padding: 0 24px 72px;
+    }
+
+    .portals-label {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 28px;
+    }
+
+    .portals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    /* ── Individual Portal Card ── */
+    .portal-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      cursor: default;
+      transition: border-color 0.25s ease;
+      overflow: hidden;
+      animation: fadeSlideUp 0.6s ease both;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .portal-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .portal-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .portal-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    /* Top accent bar */
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 24px 24px 0 0;
+      transition: height 0.25s ease;
+    }
+
+    .portal-card:hover::before {
+      height: 4px;
+    }
+
+    .card-patient::before {
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+    }
+
+    .card-doctor::before {
+      background: linear-gradient(90deg, var(--purple), var(--amber));
+    }
+
+    .card-admin::before {
+      background: linear-gradient(90deg, var(--amber), var(--red));
+    }
+
+    /* Hover border glow */
+    .card-patient:hover {
+      border-color: rgba(118, 85, 104, 0.5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(118, 85, 104, 0.3);
+    }
+
+    .card-doctor:hover {
+      border-color: rgba(83, 74, 183, 0.5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(83, 74, 183, 0.3);
+    }
+
+    .card-admin:hover {
+      border-color: rgba(219, 135, 197, 0.5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(219, 135, 197, 0.3);
+    }
+
+    /* Corner decoration */
+    .card-corner-glow {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      opacity: 0.07;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .portal-card:hover .card-corner-glow {
+      opacity: 0.14;
+      transform: scale(1.15);
+    }
+
+    .card-patient .card-corner-glow {
+      background: var(--teal);
+    }
+
+    .card-doctor .card-corner-glow {
+      background: var(--purple);
+    }
+
+    .card-admin .card-corner-glow {
+      background: var(--amber);
+    }
+
+    /* Icon area */
+    .card-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+
+    .portal-card:hover .card-icon-wrap {
+      transform: scale(1.1) rotate(-4deg);
+    }
+
+    .card-patient .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(118, 85, 104, 0.25), rgba(26, 95, 191, 0.15));
+      border: 1px solid rgba(118, 85, 104, 0.3);
+    }
+
+    .card-doctor .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(83, 74, 183, 0.25), rgba(219, 135, 197, 0.15));
+      border: 1px solid rgba(83, 74, 183, 0.3);
+    }
+
+    .card-admin .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(219, 135, 197, 0.25), rgba(184, 86, 163, 0.15));
+      border: 1px solid rgba(219, 135, 197, 0.3);
+    }
+
+    /* Card badge */
+    .card-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .card-patient .card-badge {
+      background: rgba(118, 85, 104, 0.15);
+      color: var(--teal);
+      border: 1px solid rgba(118, 85, 104, 0.25);
+    }
+
+    .card-doctor .card-badge {
+      background: rgba(83, 74, 183, 0.15);
+      color: var(--purple);
+      border: 1px solid rgba(83, 74, 183, 0.25);
+    }
+
+    .card-admin .card-badge {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(219, 135, 197, 0.25);
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.4px;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 22px;
+    }
+
+    /* Feature chips inside card */
+    .card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 22px;
+    }
+
+    .card-chip {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+
+    /* Enter button */
+    .card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: var(--radius-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.02em;
+    }
+
+    .card-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0);
+      transition: background 0.2s;
+    }
+
+    .card-btn:hover::after {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .card-btn .btn-arrow {
+      font-size: 16px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .card-btn:hover .btn-arrow {
+      transform: translateX(4px);
+    }
+
+    .card-patient .card-btn {
+      background: linear-gradient(135deg, var(--teal), #6b4a8a);
+      color: white;
+    }
+
+    .card-doctor .card-btn {
+      background: linear-gradient(135deg, var(--purple), #7b5ea7);
+      color: white;
+    }
+
+    .card-admin .card-btn {
+      background: linear-gradient(135deg, #9b3d80, var(--red));
+      color: white;
+    }
+
+    /* "Recommended" star on doctor card */
+    .card-featured-ring {
+      position: absolute;
+      inset: -1px;
+      border-radius: 25px;
+      background: transparent;
+      border: 2px solid rgba(83, 74, 183, 0);
+      transition: border-color 0.3s;
+      pointer-events: none;
+    }
+
+    .card-doctor:hover .card-featured-ring {
+      border-color: rgba(83, 74, 183, 0.4);
+    }
+
+    /* ══════════════════════════════════════════════════
+       FEATURES SECTION
+    ══════════════════════════════════════════════════ */
+    .features-section {
+      padding: 0 24px 72px;
+    }
+
+    .section-eyebrow {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(22px, 3.5vw, 34px);
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+    }
+
+    .section-sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 44px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    .feat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      animation: fadeSlideUp 0.5s ease both;
+    }
+
+    .feat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(219, 135, 197, 0.25);
+    }
+
+    .feat-card:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .feat-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .feat-card:nth-child(3) {
+      animation-delay: 0.15s;
+    }
+
+    .feat-card:nth-child(4) {
+      animation-delay: 0.2s;
+    }
+
+    .feat-card:nth-child(5) {
+      animation-delay: 0.25s;
+    }
+
+    .feat-card:nth-child(6) {
+      animation-delay: 0.3s;
+    }
+
+    .feat-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .feat-body {
+      flex: 1;
+    }
+
+    .feat-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+      letter-spacing: -0.2px;
+    }
+
+    .feat-desc {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════════════════════════
+       STATS TICKER STRIP
+    ══════════════════════════════════════════════════ */
+    .stats-strip {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      margin-bottom: 72px;
+      overflow: hidden;
+    }
+
+    .stats-inner {
+      display: flex;
+      gap: 0;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 22px 40px;
+      border-right: 1px solid var(--border);
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .stat-item:last-child {
+      border-right: none;
+    }
+
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 3px;
+      text-align: center;
+    }
+
+    .stat-item:nth-child(1) .stat-val {
+      color: var(--teal);
+    }
+
+    .stat-item:nth-child(2) .stat-val {
+      color: var(--purple);
+    }
+
+    .stat-item:nth-child(3) .stat-val {
+      color: var(--amber);
+    }
+
+    .stat-item:nth-child(4) .stat-val {
+      color: var(--green);
+    }
+
+    /* ══════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════ */
+    .footer {
+      margin-top: auto;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 28px 32px;
+    }
+
+    .footer-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .footer-brand span {
+      color: var(--amber);
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 3px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    /* ══════════════════════════════════════════════════
+       SCROLL REVEAL KEYFRAMES
+    ══════════════════════════════════════════════════ */
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ══════════════════════════════════════════════════
+       SCROLL-TRIGGERED FADE-IN (JS-powered)
+    ══════════════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE BREAKPOINTS
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      .portals-grid {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stats-inner {
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        min-width: calc(50% - 1px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        padding: 0 16px;
+      }
+
+      .nav-tagline {
+        display: none;
+      }
+
+      .hero {
+        padding: 48px 16px 40px;
+      }
+
+      .hero-badges {
+        display: none;
+      }
+
+      .portals-section,
+      .features-section {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-inner {
+        flex-direction: column;
+      }
+
+      .stat-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stat-item:last-child {
+        border-bottom: none;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .portal-card {
+        padding: 24px 20px 22px;
+      }
+
+      .card-icon-wrap {
+        width: 54px;
+        height: 54px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── BACKGROUND ── -->
+  <div class="bg-mesh">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+  </div>
+  <div class="bg-grid"></div>
+
+  <!-- ── PAGE WRAPPER ── -->
+  <div class="page">
+
+    <!-- ═══════════════════════════════
+       NAV BAR
+  ═══════════════════════════════ -->
+    <nav class="navbar">
+      <div>
+        <div class="nav-brand">Smart<span>Heal</span></div>
+        <div class="nav-tagline">Integrated Hospital Management System</div>
+      </div>
+    </nav>
+
+    <!-- ═══════════════════════════════
+       HERO
+  ═══════════════════════════════ -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        District General Hospital · Hyderabad, Telangana
+      </div>
+
+      <h1 class="hero-title">
+        <span class="brand-shimmer">Future of</span> Healthcare.<br />
+        <span class="accent-amber">Starts</span> Here.
+      </h1>
+
+      <p class="hero-subtitle">
+        Integrated system for patient engagement, clinical support, and hospital management. </p>
+
+      <div class="hero-badges">
+        <span class="hero-badge">🔒 Secure &amp; Private</span>
+        <span class="hero-badge">📱 Responsive Design</span>
+        <span class="hero-badge">🌍 SDG Aligned</span>
+        <span class="hero-badge">♿ Accessible</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+       PORTAL SELECTION CARDS
+  ═══════════════════════════════ -->
+    <section class="portals-section">
+      <div class="portals-label">Choose Your Portal</div>
+
+      <div class="portals-grid">
+
+        <!-- ── PATIENT PORTAL ── -->
+        <!-- ── PATIENT PORTAL ── -->
+        <div class="portal-card card-patient">
+
+          <div class="card-corner-glow"></div>
+
+          <span class="card-badge">Patient</span>
+
+          <div class="card-icon-wrap">🧑‍🤝‍🧑</div>
+
+          <div class="card-title">Patient Portal</div>
+          <p class="card-desc">
+            Register your appointment, track your live queue position, access your personal
+            MediVault health records, receive heatwave safety alerts, and submit feedback about your visit.
+          </p>
+
+          <div class="card-chips">
+            <span class="card-chip">📋 Registration</span>
+            <span class="card-chip">🔢 Queue Tracker</span>
+            <span class="card-chip">📁 MediVault</span>
+            <span class="card-chip">☀️ Heatwave Alerts</span>
+            <span class="card-chip">⭐ Feedback</span>
+          </div>
+
+          <a class="card-btn" href="loginn_fixed.html?role=patient">
+            Continue as Patient
+            <span class="btn-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- ── DOCTOR PORTAL ── -->
+        <div class="portal-card card-doctor">
+
+          <div class="card-corner-glow"></div>
+          <div class="card-featured-ring"></div>
+          <span class="card-badge">Doctor</span>
+
+          <div class="card-icon-wrap">👨‍⚕️</div>
+
+          <div class="card-title">Doctor Portal</div>
+
+          <p class="card-desc">
+            Manage your patient consultation queue, view full medical histories via MediVault,
+            issue digital prescriptions, schedule follow-ups, and monitor emergency cases in real time.
+          </p>
+
+          <div class="card-chips">
+            <span class="card-chip">🩺 Consultations</span>
+            <span class="card-chip">💊 Prescriptions</span>
+            <span class="card-chip">📁 MediVault</span>
+            <span class="card-chip">🚨 Emergency Panel</span>
+            <span class="card-chip">📅 Scheduler</span>
+          </div>
+
+          <a class="card-btn" href="loginn_fixed.html?role=doctor">Continue as Doctor <span class="btn-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- ── ADMIN PORTAL ── -->
+        <div class="portal-card card-admin">
+
+          <div class="card-corner-glow"></div>
+          <span class="card-badge">Admin</span>
+
+          <div class="card-icon-wrap">🏥</div>
+
+          <div class="card-title">Admin Portal</div>
+
+          <p class="card-desc">
+            Monitor live hospital operations, review patient feedback, track consultation delays,
+            manage doctor schedules, and analyze heatwave trends and emergency statistics.
+          </p>
+
+          <div class="card-chips">
+            <span class="card-chip">📊 Analytics</span>
+            <span class="card-chip">⏱ Delay Monitor</span>
+            <span class="card-chip">🌡️ Heatwave Trends</span>
+            <span class="card-chip">👥 Doctor Management</span>
+            <span class="card-chip">📣 Feedback Review</span>
+          </div>
+
+          <a class="card-btn" href="loginn_fixed.html?role=admin">Continue as Admin <span class="btn-arrow">→</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+       STATS STRIP
+  ═══════════════════════════════ -->
+    <div class="stats-strip reveal">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <div class="stat-val" data-target="1284" data-suffix="">0</div>
+          <div class="stat-lbl">Patients Served This Month</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val" data-target="12" data-suffix="">0</div>
+          <div class="stat-lbl">Doctors Active Today</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val" data-target="8" data-suffix="m">0m</div>
+          <div class="stat-lbl">Average Queue Wait Time</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val" data-target="4.8" data-suffix="★" data-decimal="true">0★</div>
+          <div class="stat-lbl">Patient Satisfaction Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+       FEATURES SECTION
+  ═══════════════════════════════ -->
+    <section class="features-section">
+      <div class="section-eyebrow reveal">Platform Capabilities</div>
+      <h2 class="section-title reveal">Everything in One Platform</h2>
+      <p class="section-sub reveal">Six integrated modules powering smarter, faster, and more equitable healthcare.</p>
+
+      <div class="features-grid">
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(118,85,104,0.2),rgba(26,95,191,0.1));border:1px solid rgba(118,85,104,0.25);">
+            🔢</div>
+          <div class="feat-body">
+            <div class="feat-title">Smart Queue Management</div>
+            <div class="feat-desc">Live OPD token system with real-time position tracking, estimated wait times, and
+              automatic emergency prioritisation.</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(83,74,183,0.2),rgba(219,135,197,0.1));border:1px solid rgba(83,74,183,0.25);">
+            📁</div>
+          <div class="feat-body">
+            <div class="feat-title">MediVault</div>
+            <div class="feat-desc">Unified digital health records — prescriptions, lab reports, diagnoses, and follow-up
+              history — accessible to both patients and doctors.</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(219,135,197,0.2),rgba(232,135,58,0.1));border:1px solid rgba(219,135,197,0.25);">
+            ☀️</div>
+          <div class="feat-body">
+            <div class="feat-title">Heatwave Monitoring</div>
+            <div class="feat-desc">Real-time weather data, heatwave severity alerts, and seasonal health advisories
+              tailored for Hyderabad's climate conditions.</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(184,86,163,0.2),rgba(215,59,59,0.1));border:1px solid rgba(184,86,163,0.25);">
+            ⏱</div>
+          <div class="feat-body">
+            <div class="feat-title">Delay Monitoring</div>
+            <div class="feat-desc">Admin dashboards track OPD delay patterns across departments, helping administration
+              redistribute resources and reduce patient wait times.</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(46,204,138,0.2),rgba(26,95,191,0.1));border:1px solid rgba(46,204,138,0.2);">
+            ⭐</div>
+          <div class="feat-body">
+            <div class="feat-title">Patient Feedback System</div>
+            <div class="feat-desc">Structured post-visit feedback with star ratings, delay reports, and open comments —
+              directly routed to hospital administration.</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-icon-wrap"
+            style="background:linear-gradient(135deg,rgba(184,86,163,0.2),rgba(83,74,183,0.1));border:1px solid rgba(184,86,163,0.25);">
+            🚨</div>
+          <div class="feat-body">
+            <div class="feat-title">Emergency Case Tracking</div>
+            <div class="feat-desc">Dedicated emergency panel with critical vitals monitoring, priority queue escalation,
+              nurse alerts, and ICU coordination.</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- ═══════════════════════════════
+       FOOTER
+  ═══════════════════════════════ -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand">Smart<span>Heal</span></div>
+          <div class="footer-copy">District General Hospital, Hyderabad, Telangana &nbsp;·&nbsp; All rights reserved
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- .page -->
+
+  <script>
+    /* ══════════════════════════════════════════
+       NAVIGATION — placeholder for future auth
+    ══════════════════════════════════════════ */
+    function navigateTo(url, role) {
+      // Future: add auth/session logic here before navigating
+      // For now, navigate directly
+      window.location.href = url;
+    }
+
+    /* ══════════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════════ */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          // Stagger children of grids
+          const el = entry.target;
+          el.classList.add('visible');
+          revealObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* ══════════════════════════════════════════
+       COUNTER ANIMATION
+    ══════════════════════════════════════════ */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const strip = entry.target;
+        strip.querySelectorAll('.stat-val[data-target]').forEach(el => {
+          const target = parseFloat(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          const decimal = el.dataset.decimal === 'true';
+          const duration = 1400;
+          const start = performance.now();
+
+          function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const val = eased * target;
+            el.textContent = (decimal ? val.toFixed(1) : Math.round(val)) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+
+          requestAnimationFrame(tick);
+        });
+        counterObserver.unobserve(strip);
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.stats-strip').forEach(el => counterObserver.observe(el));
+
+    /* ══════════════════════════════════════════
+       STAGGER GRID CHILDREN ON SCROLL
+    ══════════════════════════════════════════ */
+    function staggerReveal(gridSelector, delay = 60) {
+      const grids = document.querySelectorAll(gridSelector);
+      grids.forEach(grid => {
+        const gridObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const children = Array.from(entry.target.children);
+            children.forEach((child, i) => {
+              child.style.transitionDelay = `${i * delay}ms`;
+              child.classList.add('visible');
+            });
+            gridObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.1 });
+        grid.querySelectorAll('.feat-card').forEach(c => c.classList.add('reveal'));
+        gridObserver.observe(grid);
+      });
+    }
+
+    staggerReveal('.features-grid', 70);
+
+  </script>
+</body>
+
+</html>

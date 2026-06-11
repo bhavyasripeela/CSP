@@ -1,0 +1,3545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartHeal — Admin Portal</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --teal: #765568;
+      --teal-light: #E0F5F2;
+      --teal-mid: #1051f6;
+      --amber: #db87c5;
+      --amber-light: #FEF3E8;
+      --red: #b856a3;
+      --red-light: #FDEAEA;
+      --blue: #1A5FBF;
+      --blue-light: #E8F0FB;
+      --purple: #534AB7;
+      --purple-light: #EEEDFE;
+      --surface: #1A1625;
+      --white: #262134;
+      --text: #F0EBF5;
+      --text-2: #9B8EA9;
+      --text-3: #C88553;
+      --border: rgba(200, 180, 220, 0.13);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+      --orange: #E8873A;
+      --orange-light: rgba(232, 135, 58, 0.12);
+      --sidebar: 240px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    /* ══════════════════════════════════
+   LAYOUT
+══════════════════════════════════ */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar);
+      flex-shrink: 0;
+      background: #211a2e;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 200;
+      transition: transform 0.3s;
+    }
+
+    .sb-logo {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sb-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .sb-brand span {
+      color: var(--amber);
+    }
+
+    .sb-role {
+      font-size: 10px;
+      color: var(--text-2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 10px;
+    }
+
+    .sb-section {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 10px 10px 6px;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-2);
+      transition: all 0.15s;
+      margin-bottom: 2px;
+      text-decoration: none;
+    }
+
+    .sb-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .sb-link.active {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+      font-weight: 500;
+    }
+
+    .sb-link .ic {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sb-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .sb-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sb-admin {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sb-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--amber));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .sb-admin-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .sb-admin-role {
+      font-size: 10px;
+      color: var(--text-2);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: #211a2e;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .topbar-sub {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    .tb-time {
+      font-size: 12px;
+      color: var(--text-2);
+      background: var(--white);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .tb-notif {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tb-dot {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 2px solid #211a2e;
+    }
+
+    .tb-emg {
+      background: linear-gradient(135deg, var(--red), #d63b3b);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tb-emg:hover {
+      opacity: 0.9;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    .section {
+      margin-bottom: 36px;
+      scroll-margin-top: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .section-action {
+      font-size: 12px;
+      color: var(--amber);
+      cursor: pointer;
+      font-weight: 500;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ── CARDS BASE ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .card-sm {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+
+    /* ══════════════════════════════════
+   1. OVERVIEW KPI CARDS
+══════════════════════════════════ */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      opacity: 0.07;
+    }
+
+    .kpi-card.c-teal::after {
+      background: var(--teal-mid);
+    }
+
+    .kpi-card.c-amber::after {
+      background: var(--amber);
+    }
+
+    .kpi-card.c-red::after {
+      background: var(--red);
+    }
+
+    .kpi-card.c-green::after {
+      background: var(--green);
+    }
+
+    .kpi-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      margin-bottom: 12px;
+    }
+
+    .kpi-icon.t {
+      background: rgba(16, 81, 246, 0.15);
+    }
+
+    .kpi-icon.a {
+      background: rgba(219, 135, 197, 0.15);
+    }
+
+    .kpi-icon.r {
+      background: rgba(184, 86, 163, 0.15);
+    }
+
+    .kpi-icon.g {
+      background: rgba(46, 204, 138, 0.12);
+    }
+
+    .kpi-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 4px;
+    }
+
+    .kpi-delta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .kpi-delta.up {
+      color: var(--green);
+    }
+
+    .kpi-delta.down {
+      color: var(--red);
+    }
+
+    .kpi-delta.neutral {
+      color: var(--text-3);
+    }
+
+    /* ══════════════════════════════════
+   2. DOCTOR MANAGEMENT
+══════════════════════════════════ */
+    .doctor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .doctor-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.15s;
+    }
+
+    .doctor-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .doc-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .doc-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .doc-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-spec {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    .doc-dept {
+      font-size: 10px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .doc-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .doc-patients {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .doc-plabel {
+      font-size: 9px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    .status-dot.active {
+      background: var(--green);
+    }
+
+    .status-dot.break {
+      background: var(--amber);
+    }
+
+    .status-dot.off {
+      background: var(--text-3);
+    }
+
+    .status-dot.emergency {
+      background: var(--red);
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .status-badge.active {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .status-badge.break {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+
+    .status-badge.off {
+      background: rgba(155, 142, 169, 0.15);
+      color: var(--text-2);
+    }
+
+    .status-badge.emergency {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+    }
+
+    .tog {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: #3a2e4a;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    .tog.on {
+      background: var(--green);
+    }
+
+    .tog-k {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .tog.on .tog-k {
+      left: 18px;
+    }
+
+    /* Director stats bar */
+    .doc-stats-bar {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      gap: 0;
+      margin-bottom: 14px;
+    }
+
+    .dsb-item {
+      flex: 1;
+      text-align: center;
+      padding: 0 16px;
+      border-right: 1px solid var(--border);
+    }
+
+    .dsb-item:last-child {
+      border-right: none;
+    }
+
+    .dsb-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .dsb-lbl {
+      font-size: 10px;
+      color: var(--text-2);
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════
+   3. FEEDBACK CENTER
+══════════════════════════════════ */
+    .feedback-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 14px;
+    }
+
+    .rating-summary {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .big-rating {
+      font-family: 'Syne', sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .rating-stars {
+      color: #F5A942;
+      font-size: 18px;
+      margin: 6px 0;
+    }
+
+    .rating-count {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .rating-bars {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rb-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rb-lbl {
+      font-size: 11px;
+      color: var(--text-2);
+      width: 18px;
+      text-align: right;
+    }
+
+    .rb-bg {
+      flex: 1;
+      height: 7px;
+      background: #3a2e4a;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .rb-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--amber), var(--teal-mid));
+    }
+
+    .rb-pct {
+      font-size: 10px;
+      color: var(--text-3);
+      width: 28px;
+    }
+
+    .feedback-list {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .fb-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .fb-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-2);
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .fb-tab.active {
+      color: var(--amber);
+      border-bottom: 2px solid var(--amber);
+    }
+
+    .fb-items {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .fb-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+    }
+
+    .fb-item:last-child {
+      border-bottom: none;
+    }
+
+    .fb-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--teal-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .fb-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .fb-dept {
+      font-size: 10px;
+      color: var(--text-2);
+    }
+
+    .fb-msg {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .fb-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .fb-stars {
+      font-size: 11px;
+      color: #F5A942;
+    }
+
+    .fb-time {
+      font-size: 10px;
+      color: var(--text-3);
+    }
+
+    .fb-tag {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .fb-tag.complaint {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+    }
+
+    .fb-tag.suggestion {
+      background: rgba(83, 74, 183, 0.15);
+      color: var(--purple);
+    }
+
+    .fb-tag.positive {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    /* ══════════════════════════════════
+   4. DELAY MONITORING
+══════════════════════════════════ */
+    .delay-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 14px;
+    }
+
+    .delay-table-wrap {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: #2d2140;
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    tbody td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    tbody td.td-name {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .wait-bar-cell {
+      min-width: 120px;
+    }
+
+    .wait-bar {
+      height: 6px;
+      background: #3a2e4a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .wait-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .wait-fill.low {
+      background: var(--green);
+    }
+
+    .wait-fill.mid {
+      background: var(--orange);
+    }
+
+    .wait-fill.high {
+      background: var(--red);
+    }
+
+    .wait-num {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .wait-num.low {
+      color: var(--green);
+    }
+
+    .wait-num.mid {
+      color: var(--orange);
+    }
+
+    .wait-num.high {
+      color: var(--red);
+    }
+
+    .res-badge {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .res-badge.resolved {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .res-badge.pending {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+
+    .res-badge.critical {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+    }
+
+    .delay-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .delay-stat {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+
+    .delay-stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .delay-stat-lbl {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .delay-trend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .dtrend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .dtrend-bar {
+      flex: 1;
+      height: 5px;
+      background: #3a2e4a;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .dtrend-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--teal-mid), var(--amber));
+    }
+
+    /* ══════════════════════════════════
+   5. HEATWAVE MONITORING
+══════════════════════════════════ */
+    .heat-kpi {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .heat-card {
+      border-radius: var(--radius);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heat-card.heatstroke {
+      background: linear-gradient(135deg, rgba(184, 86, 163, 0.25), rgba(184, 86, 163, 0.08));
+      border: 1px solid rgba(184, 86, 163, 0.3);
+    }
+
+    .heat-card.dehydration {
+      background: linear-gradient(135deg, rgba(16, 81, 246, 0.2), rgba(16, 81, 246, 0.06));
+      border: 1px solid rgba(16, 81, 246, 0.25);
+    }
+
+    .heat-card.highrisk {
+      background: linear-gradient(135deg, rgba(232, 135, 58, 0.2), rgba(232, 135, 58, 0.06));
+      border: 1px solid rgba(232, 135, 58, 0.25);
+    }
+
+    .heat-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .heat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .heat-lbl {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 3px;
+    }
+
+    .heat-delta {
+      font-size: 11px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .heat-card.heatstroke .heat-delta {
+      color: var(--red);
+    }
+
+    .heat-card.dehydration .heat-delta {
+      color: var(--teal-mid);
+    }
+
+    .heat-card.highrisk .heat-delta {
+      color: var(--orange);
+    }
+
+    .heat-table-wrap {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .risk-badge {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .risk-badge.critical {
+      background: rgba(184, 86, 163, 0.18);
+      color: var(--red);
+    }
+
+    .risk-badge.high {
+      background: rgba(232, 135, 58, 0.15);
+      color: var(--orange);
+    }
+
+    .risk-badge.moderate {
+      background: rgba(16, 81, 246, 0.12);
+      color: var(--teal-mid);
+    }
+
+    .risk-badge.stable {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .temp-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: #3a2e4a;
+    }
+
+    .temp-pill.fever {
+      color: var(--red);
+    }
+
+    .temp-pill.normal {
+      color: var(--green);
+    }
+
+    /* ══════════════════════════════════
+   6. ANALYTICS
+══════════════════════════════════ */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .analytics-wide {
+      grid-column: 1/-1;
+    }
+
+    .chart-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--text-2);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Bar chart */
+    .bar-chart-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 120px;
+      margin-bottom: 8px;
+    }
+
+    .bc-bar-group {
+      flex: 1;
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+    }
+
+    .bc-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .bc-bar:hover {
+      opacity: 0.8;
+    }
+
+    .bc-labels {
+      display: flex;
+      gap: 6px;
+    }
+
+    .bc-lbl {
+      flex: 1;
+      text-align: center;
+      font-size: 9px;
+      color: var(--text-3);
+    }
+
+    /* Dept donut alternative — horizontal bars */
+    .dept-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dept-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-bar-name {
+      font-size: 12px;
+      color: var(--text-2);
+      width: 100px;
+      flex-shrink: 0;
+    }
+
+    .dept-bar-track {
+      flex: 1;
+      height: 10px;
+      background: #3a2e4a;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dept-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .dept-bar-val {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      width: 30px;
+      text-align: right;
+    }
+
+    /* Sparkline */
+    .sparkline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .spark-card {
+      background: #2d2140;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+
+    .spark-label {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+
+    .spark-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .spark-sub {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .spark-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 32px;
+      margin-top: 8px;
+    }
+
+    .spark-b {
+      flex: 1;
+      border-radius: 2px 2px 0 0;
+      background: var(--teal-mid);
+      opacity: 0.6;
+    }
+
+    .spark-b.peak {
+      opacity: 1;
+      background: var(--amber);
+    }
+
+    /* ══════════════════════════════════
+   NOTIFICATIONS PANEL (slide-in)
+══════════════════════════════════ */
+    .notif-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 300;
+      display: none;
+    }
+
+    .notif-overlay.open {
+      display: block;
+    }
+
+    .notif-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 360px;
+      height: 100vh;
+      background: #211a2e;
+      border-left: 1px solid var(--border);
+      z-index: 301;
+      transform: translateX(100%);
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .notif-panel.open {
+      transform: translateX(0);
+    }
+
+    .notif-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .notif-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .notif-close {
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .notif-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .notif-item {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      border-left: 3px solid transparent;
+      background: #2d2140;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .notif-item:hover {
+      background: #342848;
+    }
+
+    .notif-item.urgent {
+      border-left-color: var(--red);
+    }
+
+    .notif-item.warning {
+      border-left-color: var(--amber);
+    }
+
+    .notif-item.info {
+      border-left-color: var(--teal-mid);
+    }
+
+    .notif-item.success {
+      border-left-color: var(--green);
+    }
+
+    .notif-item-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .notif-item-msg {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .notif-item-time {
+      font-size: 10px;
+      color: var(--text-3);
+      margin-top: 5px;
+    }
+
+    .notif-count {
+      font-size: 10px;
+      background: var(--red);
+      color: white;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    /* ══════════════════════════════════
+   EMERGENCY MODAL
+══════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #211a2e;
+      border: 1px solid rgba(184, 86, 163, 0.4);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 480px;
+      max-width: 95vw;
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+
+    .emg-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .emg-row {
+      background: #2d2140;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 3px solid var(--red);
+    }
+
+    .emg-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--red);
+      width: 36px;
+    }
+
+    .emg-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .emg-dept {
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .emg-status {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .emg-status.waiting {
+      background: rgba(184, 86, 163, 0.18);
+      color: var(--red);
+    }
+
+    .emg-status.attending {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .modal-close {
+      width: 100%;
+      padding: 12px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    .modal-close:hover {
+      background: #342848;
+    }
+
+    /* ══════════════════════════════════
+   MOBILE NAV
+══════════════════════════════════ */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #211a2e;
+      border-top: 1px solid var(--border);
+      padding: 8px 0 14px;
+      z-index: 200;
+    }
+
+    .mn-items {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .mn-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .mn-icon {
+      font-size: 20px;
+    }
+
+    .mn-label {
+      font-size: 9px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    .mn-item.active .mn-label {
+      color: var(--amber);
+    }
+
+    /* ══════════════════════════════════
+   TABS
+══════════════════════════════════ */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      background: #2d2140;
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 14px;
+      width: fit-content;
+    }
+
+    .tab-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-2);
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--white);
+      color: var(--text);
+    }
+
+    /* ══════════════════════════════════
+   CHIP / MISC
+══════════════════════════════════ */
+    .chip {
+      display: inline-block;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .chip.blue {
+      background: rgba(16, 81, 246, 0.15);
+      color: var(--teal-mid);
+    }
+
+    .chip.purple {
+      background: rgba(83, 74, 183, 0.15);
+      color: var(--purple);
+    }
+
+    .chip.amber {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+    }
+
+    .chip.green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .chip.red {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+    }
+
+    .chip.orange {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    .flex-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .gap-8 {
+      gap: 8px;
+    }
+
+    .text-sm {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .text-xs {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .font-bold {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+    @media(max-width:1100px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .doctor-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feedback-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .delay-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .analytics-wide {
+        grid-column: 1;
+      }
+
+      .heat-kpi {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media(max-width:768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 16px;
+        padding-bottom: 80px;
+      }
+
+      .mobile-nav {
+        display: block;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .heat-kpi {
+        grid-template-columns: 1fr;
+      }
+
+      .sparkline-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .topbar {
+        padding: 12px 16px;
+      }
+
+      .notif-panel {
+        width: 100%;
+      }
+
+      .tb-time {
+        display: none;
+      }
+    }
+
+    @media(max-width:480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sparkline-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════
+   DOCTOR APPLICATIONS SECTION
+══════════════════════════════════ */
+    .app-counts-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .app-count-card {
+      flex: 1;
+      min-width: 100px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-count-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .app-count-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .app-count-lbl {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .app-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .app-tab {
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-2);
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .app-tab:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .app-tab.active {
+      background: rgba(219, 135, 197, 0.15);
+      color: var(--amber);
+      border-color: rgba(219, 135, 197, 0.3);
+    }
+
+    .app-tab .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+    .app-tab.active .tab-count {
+      background: var(--amber);
+      color: #1A1625;
+    }
+
+    .app-tab:not(.active) .tab-count {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-2);
+    }
+
+    .app-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 40px;
+    }
+
+    .app-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 16px 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .app-card-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 3px;
+    }
+
+    .app-card-accent.pending {
+      background: var(--amber);
+    }
+
+    .app-card-accent.approved {
+      background: var(--green);
+    }
+
+    .app-card-accent.rejected {
+      background: var(--red);
+    }
+
+    .app-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .app-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .app-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .app-badge.pending {
+      background: rgba(219, 135, 197, 0.12);
+      color: var(--amber);
+      border: 1px solid rgba(219, 135, 197, 0.25);
+    }
+
+    .app-badge.approved {
+      background: var(--green-light);
+      color: var(--green);
+      border: 1px solid rgba(46, 204, 138, 0.25);
+    }
+
+    .app-badge.rejected {
+      background: rgba(184, 86, 163, 0.12);
+      color: var(--red);
+      border: 1px solid rgba(184, 86, 163, 0.25);
+    }
+
+    .app-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: flex-start;
+    }
+
+    .app-btn {
+      padding: 7px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .app-btn.approve {
+      background: var(--green);
+      color: #0d1f17;
+    }
+
+    .app-btn.approve:hover {
+      filter: brightness(1.1);
+    }
+
+    .app-btn.reject {
+      background: rgba(184, 86, 163, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(184, 86, 163, 0.25);
+    }
+
+    .app-btn.reject:hover {
+      background: rgba(184, 86, 163, 0.25);
+    }
+
+    .app-btn.reset-btn {
+      background: rgba(200, 133, 83, 0.12);
+      color: var(--text-3);
+      border: 1px solid rgba(200, 133, 83, 0.25);
+    }
+
+    .app-btn.reset-btn:hover {
+      background: rgba(200, 133, 83, 0.22);
+    }
+
+    .app-empty {
+      text-align: center;
+      padding: 44px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .app-empty-icon {
+      font-size: 34px;
+      margin-bottom: 10px;
+      opacity: 0.4;
+    }
+
+    .app-empty-text {
+      font-size: 13px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    .app-empty-sub {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 4px;
+    }
+
+    .admin-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      z-index: 9999;
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+      transition: opacity 0.35s, transform 0.35s;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    .admin-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .admin-toast.t-success {
+      background: #1e3a2f;
+      border: 1px solid rgba(46, 204, 138, 0.3);
+      color: var(--green);
+    }
+
+    .admin-toast.t-reject {
+      background: #2a1e2e;
+      border: 1px solid rgba(184, 86, 163, 0.3);
+      color: var(--red);
+    }
+
+    .admin-toast.t-info {
+      background: #1e2c3a;
+      border: 1px solid rgba(16, 81, 246, 0.3);
+      color: #5b9dff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NOTIFICATIONS PANEL -->
+  <div class="notif-overlay" id="notifOverlay" onclick="closeNotif()"></div>
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-header">
+      <div class="notif-title">Notifications</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="notif-count">7</span>
+        <button class="notif-close" onclick="closeNotif()">✕</button>
+      </div>
+    </div>
+    <div class="notif-list">
+      <div class="notif-item urgent">
+        <div class="notif-item-title">🚨 Emergency — Token #036</div>
+        <div class="notif-item-msg">Lakshmi D. admitted to Cardiology OPD with chest pain. Dr. Ramesh Gupta notified.
+        </div>
+        <div class="notif-item-time">2 minutes ago</div>
+      </div>
+      <div class="notif-item warning">
+        <div class="notif-item-title">⚠️ Long Queue — General OPD</div>
+        <div class="notif-item-msg">Waiting time exceeded 45 minutes. 18 patients in queue.</div>
+        <div class="notif-item-time">11 minutes ago</div>
+      </div>
+      <div class="notif-item warning">
+        <div class="notif-item-title">🌡️ Heatstroke Alert</div>
+        <div class="notif-item-msg">3 new heatstroke cases registered in the last hour. Temperature 42°C outside.</div>
+        <div class="notif-item-time">24 minutes ago</div>
+      </div>
+      <div class="notif-item info">
+        <div class="notif-item-title">📋 Daily Report Ready</div>
+        <div class="notif-item-msg">June 4 patient summary is ready for review. 127 patients seen today.</div>
+        <div class="notif-item-time">1 hour ago</div>
+      </div>
+      <div class="notif-item success">
+        <div class="notif-item-title">✅ Dr. Sneha Iyer — Back on Duty</div>
+        <div class="notif-item-msg">Orthopaedics department now fully staffed.</div>
+        <div class="notif-item-time">1 hour ago</div>
+      </div>
+      <div class="notif-item info">
+        <div class="notif-item-title">💊 Pharmacy Low Stock Alert</div>
+        <div class="notif-item-msg">ORS sachets running low. Current stock: 48 units.</div>
+        <div class="notif-item-time">2 hours ago</div>
+      </div>
+      <div class="notif-item success">
+        <div class="notif-item-title">⭐ New Feedback Received</div>
+        <div class="notif-item-msg">Patient Suresh R. gave 5-star rating for Cardiology department.</div>
+        <div class="notif-item-time">3 hours ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMERGENCY MODAL -->
+  <div class="modal-overlay" id="emgModal">
+    <div class="modal">
+      <div class="modal-title">🚨 Active Emergency Cases</div>
+      <div class="modal-sub">Real-time emergency patient status — June 4, 2026</div>
+      <div class="emg-list">
+        <div class="emg-row">
+          <div class="emg-num">036</div>
+          <div>
+            <div class="emg-name">Lakshmi Devi</div>
+            <div class="emg-dept">Cardiology · Chest pain, BP 180/110</div>
+          </div>
+          <div class="emg-status attending">Attending</div>
+        </div>
+        <div class="emg-row">
+          <div class="emg-num">041</div>
+          <div>
+            <div class="emg-name">Mohammed Salim</div>
+            <div class="emg-dept">General OPD · Heatstroke symptoms</div>
+          </div>
+          <div class="emg-status waiting">Waiting</div>
+        </div>
+        <div class="emg-row">
+          <div class="emg-num">058</div>
+          <div>
+            <div class="emg-name">Pushpa Rani</div>
+            <div class="emg-dept">Paediatrics · Severe dehydration</div>
+          </div>
+          <div class="emg-status waiting">Waiting</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('emgModal').classList.remove('open')">Close</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ═══════ SIDEBAR ═══════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-logo">
+        <div class="sb-brand">Smart<span>Heal</span></div>
+        <div class="sb-role">Admin Portal</div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-section">Overview</div>
+        <a class="sb-link active" href="#overview" onclick="setActive(this)"><span class="ic">📊</span>Dashboard</a>
+        <div class="sb-section">Management</div>
+        <a class="sb-link" href="#doctors" onclick="setActive(this)"><span class="ic">👨‍⚕️</span>Doctor Management</a>
+        <a class="sb-link" href="#applications" onclick="setActive(this)"><span class="ic">📋</span>Doctor
+          Applications<span class="sb-badge" id="sb-pending-badge">0</span></a>
+        <a class="sb-link" href="#feedback" onclick="setActive(this)"><span class="ic">⭐</span>Feedback Center</a>
+        <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Delay Monitoring<span
+            class="sb-badge">3</span></a>
+        <div class="sb-section">Monitoring</div>
+        <a class="sb-link" href="#heatwave" onclick="setActive(this)"><span class="ic">🌡️</span>Heatwave Monitor<span
+            class="sb-badge">!</span></a>
+        <a class="sb-link" href="#analytics" onclick="setActive(this)"><span class="ic">📈</span>Reports & Analytics</a>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-admin">
+          <div class="sb-avatar">RA</div>
+          <div>
+            <div class="sb-admin-name">Dr. Ravi Anand</div>
+            <div class="sb-admin-role">Hospital Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════ MAIN ═══════ -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Hospital Control Center</div>
+          <div class="topbar-sub">District General Hospital, Hyderabad</div>
+        </div>
+        <div class="tb-time" id="adminTime">09:41 AM</div>
+        <div class="tb-notif" onclick="openNotif()">🔔<div class="tb-dot"></div>
+        </div>
+        <button class="tb-emg" onclick="document.getElementById('emgModal').classList.add('open')">🚨 <span>3
+            Emergencies</span></button>
+        <div style="font-size:20px;cursor:pointer;display:none;" id="menuBtn"
+          onclick="document.getElementById('sidebar').classList.toggle('open')">☰</div>
+      </div>
+
+      <!-- ═══════ CONTENT ═══════ -->
+      <div class="content">
+
+        <!-- ══ 1. OVERVIEW ══ -->
+        <section class="section" id="overview">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Dashboard Overview</div>
+              <div class="section-sub">Live hospital status · June 4, 2026</div>
+            </div>
+            <button class="section-action">↻ Refresh</button>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card c-teal">
+              <div class="kpi-icon t">👥</div>
+              <div class="kpi-val">127</div>
+              <div class="kpi-label">Total Patients Today</div>
+              <div class="kpi-delta up">↑ 14% from yesterday</div>
+            </div>
+            <div class="kpi-card c-amber">
+              <div class="kpi-icon a">👨‍⚕️</div>
+              <div class="kpi-val">18</div>
+              <div class="kpi-label">Active Doctors</div>
+              <div class="kpi-delta neutral">— 2 on break, 1 off</div>
+            </div>
+            <div class="kpi-card c-red">
+              <div class="kpi-icon r">🚨</div>
+              <div class="kpi-val">3</div>
+              <div class="kpi-label">Emergency Cases</div>
+              <div class="kpi-delta down">↑ 1 since last hour</div>
+            </div>
+            <div class="kpi-card c-green">
+              <div class="kpi-icon g">⭐</div>
+              <div class="kpi-val">4.2</div>
+              <div class="kpi-label">Patient Satisfaction</div>
+              <div class="kpi-delta up">↑ 0.3 this week</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;">
+            <div class="card-sm" style="text-align:center;">
+              <div style="font-size:22px;margin-bottom:6px;">🏥</div>
+              <div class="font-bold" style="font-size:20px;">89</div>
+              <div class="text-xs" style="margin-top:2px;">Completed Today</div>
+            </div>
+            <div class="card-sm" style="text-align:center;">
+              <div style="font-size:22px;margin-bottom:6px;">⏳</div>
+              <div class="font-bold" style="font-size:20px;">38</div>
+              <div class="text-xs" style="margin-top:2px;">In Queue Now</div>
+            </div>
+            <div class="card-sm" style="text-align:center;">
+              <div style="font-size:22px;margin-bottom:6px;">💊</div>
+              <div class="font-bold" style="font-size:20px;">7</div>
+              <div class="text-xs" style="margin-top:2px;">Depts Active</div>
+            </div>
+            <div class="card-sm" style="text-align:center;">
+              <div style="font-size:22px;margin-bottom:6px;">⏱</div>
+              <div class="font-bold" style="font-size:20px;">8m</div>
+              <div class="text-xs" style="margin-top:2px;">Avg Wait Time</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 2. DOCTOR MANAGEMENT ══ -->
+        <section class="section" id="doctors">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Doctor Management</div>
+              <div class="section-sub">21 doctors registered · 18 active today</div>
+            </div>
+            <button class="section-action">+ Add Doctor</button>
+          </div>
+          <div class="doc-stats-bar">
+            <div class="dsb-item">
+              <div class="dsb-val" style="color:var(--green)">18</div>
+              <div class="dsb-lbl">On Duty</div>
+            </div>
+            <div class="dsb-item">
+              <div class="dsb-val" style="color:var(--orange)">2</div>
+              <div class="dsb-lbl">On Break</div>
+            </div>
+            <div class="dsb-item">
+              <div class="dsb-val" style="color:var(--text-3)">1</div>
+              <div class="dsb-lbl">Off Duty</div>
+            </div>
+            <div class="dsb-item">
+              <div class="dsb-val" style="color:var(--red)">1</div>
+              <div class="dsb-lbl">Emergency</div>
+            </div>
+            <div class="dsb-item">
+              <div class="dsb-val">127</div>
+              <div class="dsb-lbl">Total Patients Seen</div>
+            </div>
+          </div>
+          <div class="doctor-grid">
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#1051f6,#534AB7)">PS</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Priya Sharma</div>
+                <div class="doc-spec">General Physician</div>
+                <div class="doc-dept"><span class="status-dot active"></span>General OPD</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">48</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge active">● Active</div>
+              </div><button class="tog on"
+                onclick="this.classList.toggle('on');this.querySelector('.tog-k') && this.classList.contains('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#b856a3,#765568)">RG</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Ramesh Gupta</div>
+                <div class="doc-spec">Cardiologist</div>
+                <div class="doc-dept"><span class="status-dot emergency"></span>Cardiology</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">22</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge emergency">● Emergency</div>
+              </div><button class="tog on" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#2ECC8A,#1051f6)">SI</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Sneha Iyer</div>
+                <div class="doc-spec">Orthopaedic Surgeon</div>
+                <div class="doc-dept"><span class="status-dot active"></span>Orthopaedics</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">18</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge active">● Active</div>
+              </div><button class="tog on" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#E8873A,#db87c5)">AR</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Arjun Rao</div>
+                <div class="doc-spec">Paediatrician</div>
+                <div class="doc-dept"><span class="status-dot active"></span>Paediatrics</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">19</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge active">● Active</div>
+              </div><button class="tog on" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#534AB7,#b856a3)">MP</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Meena Pillai</div>
+                <div class="doc-spec">ENT Specialist</div>
+                <div class="doc-dept"><span class="status-dot break"></span>ENT</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">11</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge break">● On Break</div>
+              </div><button class="tog" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#765568,#E8873A)">KR</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Kiran Reddy</div>
+                <div class="doc-spec">Dermatologist</div>
+                <div class="doc-dept"><span class="status-dot active"></span>Dermatology</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">9</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge active">● Active</div>
+              </div><button class="tog on" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#1051f6,#2ECC8A)">SR</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Sunita Rao</div>
+                <div class="doc-spec">Gynaecologist</div>
+                <div class="doc-dept"><span class="status-dot active"></span>Gynaecology</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">14</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge active">● Active</div>
+              </div><button class="tog on" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+            <div class="doctor-card">
+              <div class="doc-avatar" style="background:linear-gradient(135deg,#db87c5,#534AB7)">VK</div>
+              <div class="doc-info">
+                <div class="doc-name">Dr. Vijay Kumar</div>
+                <div class="doc-spec">General Physician</div>
+                <div class="doc-dept"><span class="status-dot off"></span>General OPD</div>
+              </div>
+              <div class="doc-right">
+                <div class="doc-patients">0</div>
+                <div class="doc-plabel">patients</div>
+                <div class="status-badge off">● Off Duty</div>
+              </div><button class="tog" onclick="this.classList.toggle('on')">
+                <div class="tog-k"></div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 2b. DOCTOR APPLICATIONS ══ -->
+        <section class="section" id="applications">
+          <div class="section-header">
+            <div>
+              <div class="section-title">📝 Doctor Applications</div>
+              <div class="section-sub" id="apps-section-sub">Loading applications…</div>
+            </div>
+            <button class="section-action" onclick="loadApplications()">↻ Refresh</button>
+          </div>
+
+          <!-- Live count cards -->
+          <div class="app-counts-bar">
+            <div class="app-count-card">
+              <div class="app-count-icon" style="background:rgba(219,135,197,0.12);">⏳</div>
+              <div>
+                <div class="app-count-val" id="count-pending">0</div>
+                <div class="app-count-lbl">Pending</div>
+              </div>
+            </div>
+            <div class="app-count-card">
+              <div class="app-count-icon" style="background:var(--green-light);">✅</div>
+              <div>
+                <div class="app-count-val" id="count-approved">0</div>
+                <div class="app-count-lbl">Approved</div>
+              </div>
+            </div>
+            <div class="app-count-card">
+              <div class="app-count-icon" style="background:rgba(184,86,163,0.12);">❌</div>
+              <div>
+                <div class="app-count-val" id="count-rejected">0</div>
+                <div class="app-count-lbl">Rejected</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter tabs -->
+          <div class="app-tabs">
+            <button class="app-tab active" id="atab-all" onclick="switchAppTab('all')">All<span class="tab-count"
+                id="tc-all">0</span></button>
+            <button class="app-tab" id="atab-pending" onclick="switchAppTab('pending')">Pending<span class="tab-count"
+                id="tc-pending">0</span></button>
+            <button class="app-tab" id="atab-approved" onclick="switchAppTab('approved')">Approved<span
+                class="tab-count" id="tc-approved">0</span></button>
+            <button class="app-tab" id="atab-rejected" onclick="switchAppTab('rejected')">Rejected<span
+                class="tab-count" id="tc-rejected">0</span></button>
+          </div>
+
+          <!-- Application cards rendered here -->
+          <div class="app-list" id="app-list">
+            <div class="app-empty">
+              <div class="app-empty-icon">📋</div>
+              <div class="app-empty-text">No applications yet</div>
+              <div class="app-empty-sub">Doctor applications will appear here once submitted.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 3. FEEDBACK CENTER ══ -->
+        <section class="section" id="feedback">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Feedback Center</div>
+              <div class="section-sub">243 total responses · last 30 days</div>
+            </div>
+            <button class="section-action">Export CSV</button>
+          </div>
+          <div class="feedback-layout">
+            <div class="rating-summary">
+              <div class="big-rating">4.2</div>
+              <div class="rating-stars">★★★★☆</div>
+              <div class="rating-count">Based on 243 reviews</div>
+              <div class="rating-bars">
+                <div class="rb-row">
+                  <div class="rb-lbl">5</div>
+                  <div class="rb-bg">
+                    <div class="rb-fill" style="width:62%"></div>
+                  </div>
+                  <div class="rb-pct">62%</div>
+                </div>
+                <div class="rb-row">
+                  <div class="rb-lbl">4</div>
+                  <div class="rb-bg">
+                    <div class="rb-fill" style="width:22%"></div>
+                  </div>
+                  <div class="rb-pct">22%</div>
+                </div>
+                <div class="rb-row">
+                  <div class="rb-lbl">3</div>
+                  <div class="rb-bg">
+                    <div class="rb-fill" style="width:10%"></div>
+                  </div>
+                  <div class="rb-pct">10%</div>
+                </div>
+                <div class="rb-row">
+                  <div class="rb-lbl">2</div>
+                  <div class="rb-bg">
+                    <div class="rb-fill" style="width:4%"></div>
+                  </div>
+                  <div class="rb-pct">4%</div>
+                </div>
+                <div class="rb-row">
+                  <div class="rb-lbl">1</div>
+                  <div class="rb-bg">
+                    <div class="rb-fill" style="width:2%"></div>
+                  </div>
+                  <div class="rb-pct">2%</div>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="flex-between">
+                  <div class="text-sm">Complaints</div>
+                  <div class="chip red">18</div>
+                </div>
+                <div class="flex-between">
+                  <div class="text-sm">Suggestions</div>
+                  <div class="chip purple">34</div>
+                </div>
+                <div class="flex-between">
+                  <div class="text-sm">Positive</div>
+                  <div class="chip green">191</div>
+                </div>
+              </div>
+            </div>
+            <div class="feedback-list">
+              <div class="fb-tabs">
+                <button class="fb-tab active" onclick="switchFbTab(this,'all')">All (243)</button>
+                <button class="fb-tab" onclick="switchFbTab(this,'complaint')">Complaints (18)</button>
+                <button class="fb-tab" onclick="switchFbTab(this,'suggestion')">Suggestions (34)</button>
+                <button class="fb-tab" onclick="switchFbTab(this,'positive')">Positive (191)</button>
+              </div>
+              <div class="fb-items" id="fbItems">
+                <div class="fb-item" data-type="complaint">
+                  <div class="fb-avatar">SK</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Suresh Kumar</div><span class="fb-tag complaint">Complaint</span>
+                    </div>
+                    <div class="fb-dept">General OPD · Token #032</div>
+                    <div class="fb-msg">Waited for over 1 hour. No one informed about the delay. Doctor was on a break
+                      but patients were not told.</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★☆☆☆</div>
+                      <div class="fb-time">Today, 10:45 AM</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="fb-item" data-type="positive">
+                  <div class="fb-avatar">AL</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Anita Laxmi</div><span class="fb-tag positive">Positive</span>
+                    </div>
+                    <div class="fb-dept">Cardiology · Token #018</div>
+                    <div class="fb-msg">Dr. Ramesh was extremely thorough and kind. The queue system on the app is very
+                      helpful. Thank you!</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★★★★</div>
+                      <div class="fb-time">Today, 9:30 AM</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="fb-item" data-type="suggestion">
+                  <div class="fb-avatar">RP</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Raju Prasad</div><span class="fb-tag suggestion">Suggestion</span>
+                    </div>
+                    <div class="fb-dept">Orthopaedics · Token #009</div>
+                    <div class="fb-msg">Please add a water dispenser near the OPD waiting area. It is very hot and
+                      people are fainting.</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★★★☆</div>
+                      <div class="fb-time">Today, 11:15 AM</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="fb-item" data-type="complaint">
+                  <div class="fb-avatar">MK</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Meena Kumari</div><span class="fb-tag complaint">Complaint</span>
+                    </div>
+                    <div class="fb-dept">Paediatrics · Token #022</div>
+                    <div class="fb-msg">My child was crying in pain and we waited 40 minutes. Emergency case should have
+                      been prioritised.</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★☆☆☆</div>
+                      <div class="fb-time">Today, 8:55 AM</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="fb-item" data-type="positive">
+                  <div class="fb-avatar">VB</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Venkat Babu</div><span class="fb-tag positive">Positive</span>
+                    </div>
+                    <div class="fb-dept">ENT · Token #011</div>
+                    <div class="fb-msg">Very clean hospital. The SmartHeal app made the process so much easier. Highly
+                      recommend.</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★★★★</div>
+                      <div class="fb-time">Yesterday, 2:10 PM</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="fb-item" data-type="suggestion">
+                  <div class="fb-avatar">KD</div>
+                  <div style="flex:1">
+                    <div class="flex-between">
+                      <div class="fb-name">Kavitha Devi</div><span class="fb-tag suggestion">Suggestion</span>
+                    </div>
+                    <div class="fb-dept">Dermatology · Token #014</div>
+                    <div class="fb-msg">Please provide SMS notification when our token is about to be called. Old
+                      patients cannot keep watching the screen.</div>
+                    <div class="fb-meta">
+                      <div class="fb-stars">★★★★☆</div>
+                      <div class="fb-time">Yesterday, 12:30 PM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 4. DELAY MONITORING ══ -->
+        <section class="section" id="delays">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Delay Monitoring</div>
+              <div class="section-sub">Waiting time by department · live data</div>
+            </div>
+            <button class="section-action">View Full Report</button>
+          </div>
+          <div class="delay-layout">
+            <div class="delay-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Doctor</th>
+                    <th>In Queue</th>
+                    <th>Avg Wait Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="td-name">General OPD</td>
+                    <td class="text-sm">Dr. Priya Sharma</td>
+                    <td><span class="chip amber">18</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num high">47 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill high" style="width:85%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge critical">Critical</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">Cardiology</td>
+                    <td class="text-sm">Dr. Ramesh Gupta</td>
+                    <td><span class="chip red">6</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num mid">28 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill mid" style="width:55%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge pending">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">Orthopaedics</td>
+                    <td class="text-sm">Dr. Sneha Iyer</td>
+                    <td><span class="chip blue">4</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num low">12 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill low" style="width:22%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge resolved">Normal</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">Paediatrics</td>
+                    <td class="text-sm">Dr. Arjun Rao</td>
+                    <td><span class="chip amber">8</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num mid">32 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill mid" style="width:60%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge pending">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">ENT</td>
+                    <td class="text-sm">Dr. Meena Pillai</td>
+                    <td><span class="chip blue">3</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num low">8 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill low" style="width:15%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge resolved">Normal</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">Dermatology</td>
+                    <td class="text-sm">Dr. Kiran Reddy</td>
+                    <td><span class="chip blue">4</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num low">14 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill low" style="width:26%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge resolved">Normal</span></td>
+                  </tr>
+                  <tr>
+                    <td class="td-name">Gynaecology</td>
+                    <td class="text-sm">Dr. Sunita Rao</td>
+                    <td><span class="chip blue">5</span></td>
+                    <td class="wait-bar-cell">
+                      <div class="wait-num low">18 min</div>
+                      <div class="wait-bar">
+                        <div class="wait-fill low" style="width:33%"></div>
+                      </div>
+                    </td>
+                    <td><span class="res-badge resolved">Normal</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="delay-summary">
+              <div class="delay-stat">
+                <div class="delay-stat-val" style="color:var(--red)">47 min</div>
+                <div class="delay-stat-lbl">Peak wait time (General OPD)</div>
+              </div>
+              <div class="delay-stat">
+                <div class="delay-stat-val">8 min</div>
+                <div class="delay-stat-lbl">Best wait time (ENT)</div>
+              </div>
+              <div class="delay-stat">
+                <div class="delay-stat-val" style="color:var(--amber)">22 min</div>
+                <div class="delay-stat-lbl">Hospital average</div>
+              </div>
+              <div class="card-sm">
+                <div
+                  style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">
+                  Wait Trend Today</div>
+                <div class="delay-trend">
+                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">8 AM</span>
+                    <div class="dtrend-bar">
+                      <div class="dtrend-fill" style="width:20%"></div>
+                    </div><span>12m</span>
+                  </div>
+                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">10 AM</span>
+                    <div class="dtrend-bar">
+                      <div class="dtrend-fill" style="width:55%"></div>
+                    </div><span>28m</span>
+                  </div>
+                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">12 PM</span>
+                    <div class="dtrend-bar">
+                      <div class="dtrend-fill" style="width:88%"></div>
+                    </div><span>47m</span>
+                  </div>
+                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">2 PM</span>
+                    <div class="dtrend-bar">
+                      <div class="dtrend-fill" style="width:40%"></div>
+                    </div><span>22m</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ 5. HEATWAVE MONITORING ══ -->
+        <section class="section" id="heatwave">
+          <div class="section-header">
+            <div>
+              <div class="section-title">🌡️ Heatwave Monitoring</div>
+              <div class="section-sub">Hyderabad: 42°C today · High risk alert active</div>
+            </div>
+            <button class="section-action" style="color:var(--red)">Send Alert</button>
+          </div>
+          <div class="heat-kpi">
+            <div class="heat-card heatstroke">
+              <div class="heat-icon">🥵</div>
+              <div class="heat-val">7</div>
+              <div class="heat-lbl">Heatstroke Cases Today</div>
+              <div class="heat-delta">↑ 3 since yesterday</div>
+            </div>
+            <div class="heat-card dehydration">
+              <div class="heat-icon">💧</div>
+              <div class="heat-val">23</div>
+              <div class="heat-lbl">Dehydration Cases</div>
+              <div class="heat-delta">↑ 8 since yesterday</div>
+            </div>
+            <div class="heat-card highrisk">
+              <div class="heat-icon">⚠️</div>
+              <div class="heat-val">41</div>
+              <div class="heat-lbl">High Risk Patients</div>
+              <div class="heat-delta">↑ 15 this week</div>
+            </div>
+          </div>
+          <div class="heat-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Token</th>
+                  <th>Age</th>
+                  <th>Temperature</th>
+                  <th>Symptoms</th>
+                  <th>Risk Level</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-name">Mohammed Salim</td>
+                  <td><span class="chip amber">#041</span></td>
+                  <td class="text-sm">62</td>
+                  <td><span class="temp-pill fever">40.2°C</span></td>
+                  <td class="text-sm">Dizziness, confusion</td>
+                  <td><span class="risk-badge critical">Critical</span></td>
+                  <td><span class="res-badge pending">In Treatment</span></td>
+                </tr>
+                <tr>
+                  <td class="td-name">Pushpa Rani</td>
+                  <td><span class="chip amber">#058</span></td>
+                  <td class="text-sm">8</td>
+                  <td><span class="temp-pill fever">39.8°C</span></td>
+                  <td class="text-sm">Severe dehydration</td>
+                  <td><span class="risk-badge high">High</span></td>
+                  <td><span class="res-badge pending">In Queue</span></td>
+                </tr>
+                <tr>
+                  <td class="td-name">Narayana Swamy</td>
+                  <td><span class="chip blue">#073</span></td>
+                  <td class="text-sm">71</td>
+                  <td><span class="temp-pill fever">38.9°C</span></td>
+                  <td class="text-sm">Weakness, nausea</td>
+                  <td><span class="risk-badge high">High</span></td>
+                  <td><span class="res-badge resolved">Treated</span></td>
+                </tr>
+                <tr>
+                  <td class="td-name">Fatima Bi</td>
+                  <td><span class="chip blue">#089</span></td>
+                  <td class="text-sm">45</td>
+                  <td><span class="temp-pill fever">38.4°C</span></td>
+                  <td class="text-sm">Headache, cramps</td>
+                  <td><span class="risk-badge moderate">Moderate</span></td>
+                  <td><span class="res-badge resolved">Treated</span></td>
+                </tr>
+                <tr>
+                  <td class="td-name">Raju Venkat</td>
+                  <td><span class="chip blue">#094</span></td>
+                  <td class="text-sm">34</td>
+                  <td><span class="temp-pill normal">37.2°C</span></td>
+                  <td class="text-sm">Mild dehydration</td>
+                  <td><span class="risk-badge stable">Stable</span></td>
+                  <td><span class="res-badge resolved">Discharged</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ══ 6. ANALYTICS ══ -->
+        <section class="section" id="analytics">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Reports & Analytics</div>
+              <div class="section-sub">Last 7 days · District General Hospital</div>
+            </div>
+            <button class="section-action">Download Report</button>
+          </div>
+
+          <!-- Bar chart — patient flow -->
+          <div class="chart-card analytics-wide" style="margin-bottom:14px;">
+            <div class="chart-title">
+              Patient Flow — Last 7 Days
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--teal-mid)"></div>OPD
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--amber)"></div>Emergency
+                </div>
+              </div>
+            </div>
+            <div class="bar-chart-wrap" id="patientFlowChart"></div>
+            <div class="bc-labels" id="patientFlowLabels"></div>
+          </div>
+
+          <div class="analytics-grid">
+            <!-- Dept load -->
+            <div class="chart-card">
+              <div class="chart-title">Department Load Today</div>
+              <div class="dept-bars">
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">General OPD</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:100%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">48</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">Cardiology</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:46%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">22</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">Paediatrics</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:40%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">19</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">Orthopaedics</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:38%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">18</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">Gynaecology</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:29%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">14</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">ENT</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:23%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">11</div>
+                </div>
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">Dermatology</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill"
+                      style="width:19%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">9</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Emergency trends sparklines -->
+            <div class="chart-card">
+              <div class="chart-title">Emergency Trends</div>
+              <div class="sparkline-grid">
+                <div class="spark-card">
+                  <div class="spark-label">Heat Cases</div>
+                  <div class="spark-val" style="color:var(--red)">7</div>
+                  <div class="spark-sub" style="color:var(--red)">↑ 43% today</div>
+                  <div class="spark-bars">
+                    <div class="spark-b" style="height:30%"></div>
+                    <div class="spark-b" style="height:50%"></div>
+                    <div class="spark-b" style="height:40%"></div>
+                    <div class="spark-b" style="height:60%"></div>
+                    <div class="spark-b" style="height:45%"></div>
+                    <div class="spark-b" style="height:70%"></div>
+                    <div class="spark-b peak" style="height:100%"></div>
+                  </div>
+                </div>
+                <div class="spark-card">
+                  <div class="spark-label">Avg Wait</div>
+                  <div class="spark-val" style="color:var(--orange)">22m</div>
+                  <div class="spark-sub" style="color:var(--orange)">↑ 8m from Mon</div>
+                  <div class="spark-bars">
+                    <div class="spark-b" style="height:40%"></div>
+                    <div class="spark-b" style="height:35%"></div>
+                    <div class="spark-b" style="height:50%"></div>
+                    <div class="spark-b" style="height:45%"></div>
+                    <div class="spark-b" style="height:55%"></div>
+                    <div class="spark-b" style="height:60%"></div>
+                    <div class="spark-b peak" style="height:75%"></div>
+                  </div>
+                </div>
+                <div class="spark-card">
+                  <div class="spark-label">Satisfaction</div>
+                  <div class="spark-val" style="color:var(--green)">4.2</div>
+                  <div class="spark-sub" style="color:var(--green)">↑ 0.3 this week</div>
+                  <div class="spark-bars">
+                    <div class="spark-b" style="height:70%"></div>
+                    <div class="spark-b" style="height:72%"></div>
+                    <div class="spark-b" style="height:68%"></div>
+                    <div class="spark-b" style="height:75%"></div>
+                    <div class="spark-b" style="height:78%"></div>
+                    <div class="spark-b" style="height:80%"></div>
+                    <div class="spark-b peak" style="height:85%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="flex-between text-sm"><span>Total emergencies this week</span><span class="font-bold"
+                    style="font-size:14px;">31</span></div>
+                <div class="flex-between text-sm"><span>Resolved within 30 min</span><span
+                    style="color:var(--green);font-weight:600;">87%</span></div>
+                <div class="flex-between text-sm"><span>Escalated to ICU</span><span
+                    style="color:var(--red);font-weight:600;">2</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+
+
+        <script>
+          // ── CLOCK ──
+          function updateClock() {
+            const n = new Date();
+            const h = n.getHours();
+            const m = n.getMinutes().toString().padStart(2, '0');
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const h12 = ((h % 12) || 12).toString().padStart(2, '0');
+            const el = document.getElementById('adminTime');
+            if (el) el.textContent = `${h12}:${m} ${ampm}`;
+          }
+          updateClock();
+          setInterval(updateClock, 30000);
+
+          // ── NOTIFICATIONS ──
+          function openNotif() {
+            document.getElementById('notifOverlay').classList.add('open');
+            document.getElementById('notifPanel').classList.add('open');
+          }
+          function closeNotif() {
+            document.getElementById('notifOverlay').classList.remove('open');
+            document.getElementById('notifPanel').classList.remove('open');
+          }
+
+          // ── SIDEBAR ACTIVE ──
+          function setActive(el) {
+            document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+          }
+
+          // ── FEEDBACK TABS ──
+          function switchFbTab(btn, type) {
+            document.querySelectorAll('.fb-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.fb-item').forEach(item => {
+              item.style.display = (type === 'all' || item.dataset.type === type) ? 'flex' : 'none';
+            });
+          }
+
+          // ── DOCTOR TOGGLES ──
+          document.querySelectorAll('.tog').forEach(tog => {
+            tog.addEventListener('click', function () {
+              this.classList.toggle('on');
+              const card = this.closest('.doctor-card');
+              if (!card) return;
+              const badge = card.querySelector('.status-badge');
+              const dot = card.querySelector('.status-dot');
+              if (this.classList.contains('on')) {
+                badge.className = 'status-badge active'; badge.textContent = '● Active';
+                dot.className = 'status-dot active';
+              } else {
+                badge.className = 'status-badge off'; badge.textContent = '● Off Duty';
+                dot.className = 'status-dot off';
+              }
+            });
+          });
+
+          // ── SCROLL ──
+          function scrollTo(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.querySelectorAll('.mn-item').forEach(i => i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+          }
+
+          // ── PATIENT FLOW BAR CHART ──
+          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+          const opdVals = [98, 112, 89, 134, 121, 108, 127];
+          const emgVals = [2, 4, 3, 5, 3, 4, 3];
+          const maxVal = Math.max(...opdVals);
+          const bc = document.getElementById('patientFlowChart');
+          const bl = document.getElementById('patientFlowLabels');
+          if (bc && bl) {
+            days.forEach((d, i) => {
+              const grp = document.createElement('div');
+              grp.className = 'bc-bar-group';
+              const b1 = document.createElement('div');
+              b1.className = 'bc-bar';
+              b1.style.height = Math.round((opdVals[i] / maxVal) * 108) + 'px';
+              b1.style.background = i === 6 ? 'var(--teal-mid)' : 'rgba(16,81,246,0.45)';
+              b1.title = `OPD: ${opdVals[i]}`;
+              const b2 = document.createElement('div');
+              b2.className = 'bc-bar';
+              b2.style.height = Math.round((emgVals[i] / maxVal) * 108) + 'px';
+              b2.style.background = i === 6 ? 'var(--amber)' : 'rgba(219,135,197,0.5)';
+              b2.title = `Emergency: ${emgVals[i]}`;
+              grp.appendChild(b1); grp.appendChild(b2); bc.appendChild(grp);
+              const lbl = document.createElement('div');
+              lbl.className = 'bc-lbl'; lbl.textContent = d; bl.appendChild(lbl);
+            });
+          }
+
+          // ── SCROLL SPY (sidebar) ──
+          const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'heatwave', 'analytics'];
+          window.addEventListener('scroll', () => {
+            const y = window.scrollY + 120;
+            sections.forEach(id => {
+              const el = document.getElementById(id);
+              if (!el) return;
+              if (el.offsetTop <= y && el.offsetTop + el.offsetHeight > y) {
+                document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+                const link = document.querySelector(`.sb-link[href="#${id}"]`);
+                if (link) link.classList.add('active');
+              }
+            });
+          }, { passive: true });
+
+          // ── RESPONSIVE MENU ──
+          const menuBtn = document.getElementById('menuBtn');
+          if (window.innerWidth <= 768 && menuBtn) menuBtn.style.display = 'block';
+          window.addEventListener('resize', () => {
+            if (menuBtn) menuBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+          });
+
+          // ══════════════════════════════════════════════════
+          // DOCTOR APPLICATIONS — Admin Workflow
+          // ══════════════════════════════════════════════════
+
+          // ══════════════════════════════════════════════════════════
+          // DOCTOR APPLICATIONS — complete localStorage implementation
+          // ══════════════════════════════════════════════════════════
+          let allApplications = [];
+          let currentFilter = 'all';
+          let toastTimeout = null;
+
+          /* ── Load & render ─────────────────────────────────────── */
+          function loadApplications() {
+            allApplications = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            // Normalize: ensure every record has a uid field we can key on
+            allApplications = allApplications.map(a => ({
+              ...a,
+              uid: a.uid || a.id || ('LOCAL-' + (a.refId || a.id || Date.now()))
+            }));
+            allApplications.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+            const pending = allApplications.filter(a => a.status === 'pending').length;
+            const approved = allApplications.filter(a => a.status === 'approved').length;
+            const rejected = allApplications.filter(a => a.status === 'rejected').length;
+
+            console.log('[SmartHeal Admin] Loaded applications:', allApplications.length);
+            console.log('[SmartHeal Admin] Pending count:', pending);
+            console.log('[SmartHeal Admin] Approved count:', approved);
+            console.log('[SmartHeal Admin] Rejected count:', rejected);
+
+            // Update count cards
+            safeText('count-pending', pending);
+            safeText('count-approved', approved);
+            safeText('count-rejected', rejected);
+
+            // Update tab counts
+            safeText('tc-all', allApplications.length);
+            safeText('tc-pending', pending);
+            safeText('tc-approved', approved);
+            safeText('tc-rejected', rejected);
+
+            // Update sidebar badge
+            const badge = document.getElementById('sb-pending-badge');
+            if (badge) {
+              badge.textContent = pending;
+              badge.style.display = pending > 0 ? 'inline-flex' : 'none';
+            }
+
+            // Update section subtitle
+            const sub = document.getElementById('apps-section-sub');
+            if (sub) sub.textContent = `${allApplications.length} total · ${pending} pending review`;
+
+            renderApplications();
+          }
+
+          function safeText(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          }
+
+          /* ── Tab switching ──────────────────────────────────────── */
+          function switchAppTab(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.getElementById('atab-' + filter);
+            if (activeTab) activeTab.classList.add('active');
+            renderApplications();
+          }
+
+          /* ── Helpers ────────────────────────────────────────────── */
+          function getInitials(name) {
+            return (name || '').split(' ').filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+          }
+
+          function adminFmtDate(iso) {
+            if (!iso) return '—';
+            try { return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+            catch (_) { return iso; }
+          }
+
+          const AVATAR_GRADIENTS = [
+            'linear-gradient(135deg,#1051f6,#534AB7)',
+            'linear-gradient(135deg,#b856a3,#765568)',
+            'linear-gradient(135deg,#2ECC8A,#1051f6)',
+            'linear-gradient(135deg,#E8873A,#db87c5)',
+            'linear-gradient(135deg,#534AB7,#b856a3)',
+            'linear-gradient(135deg,#765568,#E8873A)',
+          ];
+
+          /* ── Render cards ───────────────────────────────────────── */
+          function renderApplications() {
+            const list = document.getElementById('app-list');
+            if (!list) return;
+
+            const filtered = currentFilter === 'all'
+              ? allApplications
+              : allApplications.filter(a => a.status === currentFilter);
+
+            if (filtered.length === 0) {
+              const msgs = {
+                all: ['📋', 'No applications yet', 'Doctor applications will appear here once submitted.'],
+                pending: ['⏳', 'No pending applications', 'All applications have been reviewed.'],
+                approved: ['✅', 'No approved doctors yet', 'Approved applications will appear here.'],
+                rejected: ['❌', 'No rejected applications', 'Rejected applications will appear here.'],
+              };
+              const [icon, text, sub] = msgs[currentFilter] || msgs.all;
+              list.innerHTML = `<div class="app-empty">
+          <div class="app-empty-icon">${icon}</div>
+          <div class="app-empty-text">${text}</div>
+          <div class="app-empty-sub">${sub}</div>
+        </div>`;
+              return;
+            }
+
+            list.innerHTML = filtered.map((app, idx) => {
+              const initials = getInitials(app.name || app.fullName || '?');
+              const grad = AVATAR_GRADIENTS[idx % AVATAR_GRADIENTS.length];
+              const uid = app.uid;
+              const status = app.status || 'pending';
+
+              const statusBadge = status === 'approved'
+                ? '<span class="app-badge approved">✅ Approved</span>'
+                : status === 'rejected'
+                  ? '<span class="app-badge rejected">❌ Rejected</span>'
+                  : '<span class="app-badge pending">⏳ Pending</span>';
+
+              const actionBtns = status === 'pending'
+                ? `<button class="app-btn approve" onclick="approveDoctor('${uid}')">✅ Approve</button>
+             <button class="app-btn reject"  onclick="rejectDoctor('${uid}')">✗ Reject</button>`
+                : status === 'approved'
+                  ? `<button class="app-btn reject"    onclick="rejectDoctor('${uid}')">✗ Revoke</button>
+               <button class="app-btn reset-btn" onclick="resetDoctor('${uid}')">↺ Reset</button>`
+                  : `<button class="app-btn reset-btn" onclick="resetDoctor('${uid}')">↺ Reset to Pending</button>`;
+
+              return `
+        <div class="app-card" id="appcard-${uid}">
+          <div class="app-card-accent ${status}"></div>
+          <div class="app-avatar" style="background:${grad}">${initials}</div>
+          <div class="app-info">
+            <div class="app-name">
+              ${app.name || app.fullName || '—'}
+              ${statusBadge}
+            </div>
+            <div class="app-meta">
+              <span class="app-meta-item">🩺 ${app.specialization || '—'}</span>
+              <span class="app-meta-item">📧 ${app.email || '—'}</span>
+              <span class="app-meta-item">📞 ${app.phone || '—'}</span>
+              <span class="app-meta-item">🪪 ${app.licenseNumber || '—'}</span>
+              <span class="app-meta-item">📅 ${adminFmtDate(app.submittedAt)}</span>
+              ${app.doctorId ? `<span class="app-meta-item" style="color:#1051f6;font-family:monospace;font-weight:700;background:rgba(16,81,246,0.08);padding:2px 8px;border-radius:6px;">🆔 ${app.doctorId}</span>` : ''}
+              ${app.refId ? `<span class="app-meta-item" style="color:var(--text-3);font-family:monospace;">${app.refId}</span>` : ''}
+            </div>
+          </div>
+          <div class="app-actions">${actionBtns}</div>
+        </div>`;
+            }).join('');
+          }
+
+          /* ── Doctor ID generator ────────────────────────────────── */
+          function generateDoctorId() {
+            const allApps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            // Find the highest existing DOCxxxx number
+            let maxNum = 1000;
+            allApps.forEach(a => {
+              if (a.doctorId && /^DOC\d+$/.test(a.doctorId)) {
+                const n = parseInt(a.doctorId.replace('DOC', ''), 10);
+                if (n > maxNum) maxNum = n;
+              }
+            });
+            // Also check smartheal_doctors for any IDs assigned there
+            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+            doctors.forEach(d => {
+              if (d.doctorId && /^DOC\d+$/.test(d.doctorId)) {
+                const n = parseInt(d.doctorId.replace('DOC', ''), 10);
+                if (n > maxNum) maxNum = n;
+              }
+            });
+            return 'DOC' + (maxNum + 1);
+          }
+
+          /* ── Approve ────────────────────────────────────────────── */
+          function approveDoctor(uid) {
+            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
+            if (i < 0) { console.warn('[SmartHeal Admin] approveDoctor: uid not found:', uid); return; }
+
+            // Assign Doctor ID only if not already assigned
+            const doctorId = apps[i].doctorId || generateDoctorId();
+
+            apps[i].status = 'approved';
+            apps[i].approved = true;
+            apps[i].doctorId = doctorId;
+            apps[i].approvedAt = new Date().toISOString();
+            localStorage.setItem('doctorApplications', JSON.stringify(apps));
+
+            // Update smartheal_doctors entry so login check passes
+            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
+            if (di >= 0) {
+              doctors[di].approved = true;
+              doctors[di].status = 'approved';
+              doctors[di].doctorId = doctorId;
+              doctors[di].role = 'doctor';
+            }
+            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+
+            console.log('[SmartHeal Admin] Approved doctor uid:', uid, '| name:', apps[i].name, '| doctorId:', doctorId);
+            showAdminToast('t-success', '✅', `Dr. ${apps[i].name || apps[i].fullName} approved — Doctor ID: ${doctorId}`);
+            loadApplications();
+          }
+
+          /* ── Reject ─────────────────────────────────────────────── */
+          function rejectDoctor(uid) {
+            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
+            if (i < 0) { console.warn('[SmartHeal Admin] rejectDoctor: uid not found:', uid); return; }
+
+            apps[i].status = 'rejected';
+            apps[i].approved = false;
+            apps[i].rejectedAt = new Date().toISOString();
+            localStorage.setItem('doctorApplications', JSON.stringify(apps));
+
+            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
+            if (di >= 0) {
+              doctors[di].approved = false;
+              doctors[di].status = 'rejected';
+            }
+            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+
+            console.log('[SmartHeal Admin] Rejected doctor uid:', uid, '| name:', apps[i].name);
+            showAdminToast('t-reject', '❌', `Application for ${apps[i].name || apps[i].fullName} rejected.`);
+            loadApplications();
+          }
+
+          /* ── Reset to pending ───────────────────────────────────── */
+          function resetDoctor(uid) {
+            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
+            if (i < 0) { console.warn('[SmartHeal Admin] resetDoctor: uid not found:', uid); return; }
+
+            apps[i].status = 'pending';
+            apps[i].approved = false;
+            delete apps[i].approvedAt;
+            delete apps[i].rejectedAt;
+            delete apps[i].doctorId;
+            localStorage.setItem('doctorApplications', JSON.stringify(apps));
+
+            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
+            if (di >= 0) {
+              doctors[di].approved = false;
+              doctors[di].status = 'pending';
+            }
+            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+
+            console.log('[SmartHeal Admin] Reset doctor uid:', uid, 'back to pending');
+            showAdminToast('t-info', '↺', `Application reset to pending.`);
+            loadApplications();
+          }
+
+          /* ── Toast ──────────────────────────────────────────────── */
+          function showAdminToast(type, icon, msg) {
+            const t = document.getElementById('admin-toast');
+            if (!t) return;
+            document.getElementById('admin-toast-icon').textContent = icon;
+            document.getElementById('admin-toast-msg').textContent = msg;
+            t.className = `admin-toast ${type} show`;
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => t.classList.remove('show'), 3500);
+          }
+
+          // Auto-load on DOMContentLoaded
+          document.addEventListener('DOMContentLoaded', loadApplications);
+          // Immediate call for when script runs after DOM is ready
+          if (document.readyState !== 'loading') loadApplications();
+        </script>
+
+        <!-- ADMIN TOAST -->
+        <div class="admin-toast" id="admin-toast">
+          <span id="admin-toast-icon">✓</span>
+          <span id="admin-toast-msg">Done</span>
+        </div>
+
+</body>
+
+</html>
