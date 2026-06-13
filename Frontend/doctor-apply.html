@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartHeal — Doctor Application</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0E7C7B;
+      --teal-light: rgba(14, 124, 123, 0.12);
+      --amber: #F0A500;
+      --red: #E05555;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+      --surface: #0D1B2A;
+      --card: #132030;
+      --card-2: #172636;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
+      --border: rgba(14, 124, 123, 0.18);
+      --border-glow: rgba(14, 124, 123, 0.4);
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* BG */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .mesh-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.15;
+    }
+
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--teal), transparent 70%);
+      top: -180px;
+      left: -100px;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #1A5FBF, transparent 70%);
+      bottom: -120px;
+      right: -80px;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: linear-gradient(rgba(14, 124, 123, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 124, 123, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* PAGE */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: rgba(13, 27, 42, 0.7);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-brand span {
+      color: var(--teal);
+    }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-2);
+      text-decoration: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .nav-back:hover {
+      color: var(--text);
+      border-color: var(--border-glow);
+    }
+
+    /* WRAP */
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* HEADER */
+    .page-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 14px;
+    }
+
+    .page-eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* STEPS */
+    .steps-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 36px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .step-num.done {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .step-num.active {
+      background: var(--teal);
+      color: #fff;
+      box-shadow: 0 0 0 3px var(--teal-light);
+    }
+
+    .step-num.pending {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+
+    .step-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .step-lbl.active {
+      color: var(--text);
+    }
+
+    .step-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      margin: 0 8px;
+    }
+
+    .step-line.done {
+      background: var(--teal);
+    }
+
+    /* CARD */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal), #1A5FBF);
+    }
+
+    .form-card+.form-card {
+      margin-top: 16px;
+    }
+
+    .form-section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section-title .sec-icon {
+      font-size: 16px;
+    }
+
+    /* FIELDS */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media(max-width:520px) {
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field-group {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 7px;
+      letter-spacing: 0.02em;
+    }
+
+    .field-label span {
+      margin-right: 4px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .field-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(14, 124, 123, 0.12);
+    }
+
+    .field-input::placeholder {
+      color: rgba(122, 155, 181, 0.5);
+    }
+
+    .field-input.error {
+      border-color: var(--red);
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: rgba(122, 155, 181, 0.7);
+      margin-top: 5px;
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--red);
+      margin-top: 5px;
+      display: none;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    select.field-input {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A9BB5' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    select.field-input option {
+      background: #132030;
+    }
+
+    /* PASSWORD WRAP */
+    .pw-wrap {
+      position: relative;
+    }
+
+    .pw-wrap .field-input {
+      padding-right: 44px;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-2);
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    /* PASSWORD STRENGTH */
+    .pw-strength {
+      margin-top: 8px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .pw-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.3s;
+    }
+
+    .pw-bar.s1 {
+      background: var(--red);
+    }
+
+    .pw-bar.s2 {
+      background: var(--amber);
+    }
+
+    .pw-bar.s3 {
+      background: var(--teal);
+    }
+
+    .pw-bar.s4 {
+      background: var(--green);
+    }
+
+    .pw-str-lbl {
+      font-size: 11px;
+      color: var(--text-2);
+      width: 52px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* TERMS */
+    .terms-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .terms-row input[type=checkbox] {
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--teal);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .terms-row label {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.6;
+      cursor: pointer;
+    }
+
+    .terms-row a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    /* SUBMIT BTN */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: linear-gradient(135deg, var(--teal), #1A5FBF);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: opacity 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .submit-btn.loading {
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .submit-btn.loading .btn-spinner {
+      display: block;
+    }
+
+    .submit-btn.loading .btn-main-text {
+      opacity: 0.4;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* STEP PANELS */
+    .step-panel {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PROGRESS DOTS */
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .step-back-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-back-btn:hover {
+      border-color: var(--border-glow);
+      color: var(--text);
+    }
+
+    .step-next-btn {
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: var(--teal);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-next-btn:hover {
+      filter: brightness(1.15);
+    }
+
+    /* SUCCESS STATE */
+    .success-view {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--green-light);
+      border: 1px solid rgba(46, 204, 138, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+    }
+
+    .success-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .success-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+      max-width: 380px;
+      margin: 0 auto 24px;
+    }
+
+    .success-id-box {
+      background: rgba(14, 124, 123, 0.08);
+      border: 1px dashed rgba(14, 124, 123, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+
+    .success-id-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .success-id-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+
+    .back-login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--teal), #1A5FBF);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .back-login-btn:hover {
+      opacity: 0.88;
+    }
+
+    /* MSG */
+    .msg-box {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 14px;
+    }
+
+    .msg-box.show {
+      display: flex;
+    }
+
+    .msg-box.error {
+      background: rgba(224, 85, 85, 0.1);
+      border: 1px solid rgba(224, 85, 85, 0.25);
+      color: #E05555;
+    }
+
+    .msg-box.info {
+      background: rgba(14, 124, 123, 0.1);
+      border: 1px solid rgba(14, 124, 123, 0.25);
+      color: var(--teal);
+    }
+
+    /* SEPARATOR */
+    .divider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--text-2);
+      font-size: 11px;
+    }
+
+    .divider-row::before,
+    .divider-row::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* INFO CHIPS */
+    .info-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(14, 124, 123, 0.08);
+      border: 1px solid rgba(14, 124, 123, 0.2);
+      font-size: 11px;
+      color: var(--teal);
+      font-weight: 500;
+    }
+
+    /* REVIEW SECTION */
+    .review-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .review-item:last-child {
+      border-bottom: none;
+    }
+
+    .review-label {
+      color: var(--text-2);
+    }
+
+    .review-val {
+      color: var(--text);
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-mesh">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+  </div>
+  <div class="bg-grid"></div>
+
+  <div class="page">
+    <nav class="navbar">
+      <div class="nav-brand">Smart<span>Heal</span></div>
+      <a href="loginn_fixed.html?role=doctor" class="nav-back">← Back to Login</a>
+    </nav>
+
+    <div class="wrap">
+
+      <!-- HEADER -->
+      <div class="page-eyebrow">
+        <div class="dot"></div>Doctor Onboarding
+      </div>
+      <h1 class="page-title">Apply to Join<br>SmartHeal</h1>
+      <p class="page-sub">Fill out your details below. Your application will be reviewed by a hospital administrator.
+        You will receive your Doctor ID upon approval.</p>
+
+      <!-- STEPS BAR -->
+      <div class="steps-bar" id="stepsBar">
+        <div class="step-item">
+          <div class="step-num active" id="sn1">1</div>
+          <div class="step-lbl active" id="sl1">Personal</div>
+        </div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-item">
+          <div class="step-num pending" id="sn2">2</div>
+          <div class="step-lbl" id="sl2">Credentials</div>
+        </div>
+        <div class="step-line" id="line2"></div>
+        <div class="step-item">
+          <div class="step-num pending" id="sn3">3</div>
+          <div class="step-lbl" id="sl3">Review</div>
+        </div>
+      </div>
+
+      <!-- ════ STEP 1 — Personal Info ════ -->
+      <div class="step-panel active" id="panel1">
+        <div class="form-card">
+          <div class="form-section-title"><span class="sec-icon">👤</span> Personal Information</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="ap-fname"><span>✦</span>First Name</label>
+                <input class="field-input" type="text" id="ap-fname" placeholder="e.g. Priya" autocomplete="given-name">
+                <div class="field-error" id="err-fname">First name is required.</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="ap-lname"><span>✦</span>Last Name</label>
+                <input class="field-input" type="text" id="ap-lname" placeholder="e.g. Sharma"
+                  autocomplete="family-name">
+                <div class="field-error" id="err-lname">Last name is required.</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ap-email"><span>✦</span>Email Address</label>
+              <input class="field-input" type="email" id="ap-email" placeholder="doctor@example.com"
+                autocomplete="email">
+              <div class="field-error" id="err-email">Enter a valid email address.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ap-phone"><span>✦</span>Phone Number</label>
+              <input class="field-input" type="tel" id="ap-phone" placeholder="10-digit mobile number" maxlength="10">
+              <div class="field-error" id="err-phone">Enter a valid 10-digit phone number.</div>
+            </div>
+          </div>
+        </div>
+        <div class="step-nav">
+          <span></span>
+          <button class="step-next-btn" onclick="goStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ════ STEP 2 — Credentials ════ -->
+      <div class="step-panel" id="panel2">
+        <div class="form-card">
+          <div class="form-section-title"><span class="sec-icon">🩺</span> Medical Credentials</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="field-group">
+              <label class="field-label" for="ap-spec"><span>✦</span>Specialization</label>
+              <select class="field-input" id="ap-spec">
+                <option value="">Select your specialization</option>
+                <option>General OPD</option>
+                <option>Cardiology</option>
+                <option>Orthopaedics</option>
+                <option>Gynaecology</option>
+                <option>Paediatrics</option>
+                <option>ENT</option>
+                <option>Dermatology</option>
+              </select>
+              <div class="field-error" id="err-spec">Please select a specialization.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ap-license"><span>✦</span>Medical License Number</label>
+              <input class="field-input" type="text" id="ap-license" placeholder="e.g. MCI-2024-AP-12345"
+                style="letter-spacing:0.03em;font-family:'DM Sans',monospace;">
+              <div class="field-hint">As issued by MCI / NMC or State Medical Council</div>
+              <div class="field-error" id="err-license">License number is required.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card" style="margin-top:14px;">
+          <div class="form-section-title"><span class="sec-icon">🔒</span> Account Security</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="field-group">
+              <label class="field-label" for="ap-pw"><span>✦</span>Password</label>
+              <div class="pw-wrap">
+                <input class="field-input" type="password" id="ap-pw" placeholder="Create a strong password"
+                  oninput="checkPwStrength(this.value)">
+                <button class="pw-toggle" type="button" onclick="togglePw('ap-pw',this)">👁️</button>
+              </div>
+              <div class="pw-strength">
+                <div class="pw-bar" id="ps1"></div>
+                <div class="pw-bar" id="ps2"></div>
+                <div class="pw-bar" id="ps3"></div>
+                <div class="pw-bar" id="ps4"></div>
+                <span class="pw-str-lbl" id="ps-lbl"></span>
+              </div>
+              <div class="field-error" id="err-pw">Password must be at least 8 characters.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ap-pw2"><span>✦</span>Confirm Password</label>
+              <div class="pw-wrap">
+                <input class="field-input" type="password" id="ap-pw2" placeholder="Re-enter your password">
+                <button class="pw-toggle" type="button" onclick="togglePw('ap-pw2',this)">👁️</button>
+              </div>
+              <div class="field-error" id="err-pw2">Passwords do not match.</div>
+            </div>
+            <div class="terms-row">
+              <input type="checkbox" id="ap-terms">
+              <label for="ap-terms">I confirm that the information provided is accurate and I agree to the <a
+                  href="#">Terms of Service</a> and <a href="#">Medical Code of Conduct</a> of SmartHeal.</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg-box error" id="step2-error"><span>⚠️</span><span id="step2-error-text">Please fix errors
+            above.</span></div>
+
+        <div class="step-nav">
+          <button class="step-back-btn" onclick="goStep(1)">← Back</button>
+          <button class="step-next-btn" onclick="goStep(3)">Review →</button>
+        </div>
+      </div>
+
+      <!-- ════ STEP 3 — Review & Submit ════ -->
+      <div class="step-panel" id="panel3">
+        <div class="form-card">
+          <div class="form-section-title"><span class="sec-icon">📋</span> Review Your Application</div>
+          <div id="review-content"></div>
+        </div>
+
+        <div class="form-card" style="margin-top:14px;">
+          <div class="form-section-title"><span class="sec-icon">ℹ️</span> What happens next?</div>
+          <div class="info-chips">
+            <div class="info-chip">📨 Application received</div>
+            <div class="info-chip">🔍 Admin review (1–2 working days)</div>
+            <div class="info-chip">✅ Approval email sent</div>
+            <div class="info-chip">🏥 Access Doctor Dashboard</div>
+          </div>
+        </div>
+
+        <div class="msg-box error" id="submit-error"><span>⚠️</span><span id="submit-error-text">Something went
+            wrong.</span></div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitApplication()">
+          <span class="btn-main-text">Submit Application</span>
+          <div class="btn-spinner"></div>
+        </button>
+
+        <div class="step-nav" style="margin-top:0;padding-top:12px;">
+          <button class="step-back-btn" onclick="goStep(2)">← Back</button>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- ════ SUCCESS ════ -->
+      <div class="step-panel" id="panelSuccess">
+        <div class="form-card">
+          <div class="success-view">
+            <div class="success-icon">🎉</div>
+            <div class="success-title">Application Submitted!</div>
+            <p class="success-sub">Your doctor application has been received. A hospital administrator will review it
+              within 1–2 working days. You will be notified by email.</p>
+            <div class="success-id-box">
+              <div class="success-id-label">Application Reference ID</div>
+              <div class="success-id-val" id="app-ref-id">APP-000000</div>
+            </div>
+            <div class="success-id-box"
+              style="margin-top:12px;background:rgba(16,81,246,0.06);border:1.5px dashed rgba(16,81,246,0.25);border-radius:12px;padding:14px 20px;">
+              <div class="success-id-label" style="color:#1051f6;">🆔 Doctor ID</div>
+              <div class="success-id-val" style="font-size:13px;color:#555;font-weight:500;">Will be assigned upon admin
+                approval.<br>Use it to log in to the Doctor Portal.</div>
+            </div>
+            <br>
+            <a href="loginn_fixed.html?role=doctor" class="back-login-btn">← Back to Login</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── STATE ──
+    let appData = {};
+    let currentStep = 1;
+
+    // ── STEP NAV ──
+    function goStep(n) {
+      if (n === 2 && !validateStep1()) return;
+      if (n === 3 && !validateStep2()) return;
+      currentStep = n;
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel' + n).classList.add('active');
+      updateStepBar(n);
+      if (n === 3) buildReview();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateStepBar(n) {
+      for (let i = 1; i <= 3; i++) {
+        const numEl = document.getElementById('sn' + i);
+        const lblEl = document.getElementById('sl' + i);
+        if (i < n) { numEl.className = 'step-num done'; numEl.textContent = '✓'; }
+        else if (i === n) { numEl.className = 'step-num active'; numEl.textContent = i; lblEl.classList.add('active'); }
+        else { numEl.className = 'step-num pending'; numEl.textContent = i; lblEl.classList.remove('active'); }
+        if (i < 3) {
+          document.getElementById('line' + i).classList.toggle('done', i < n);
+        }
+      }
+    }
+
+    // ── VALIDATION ──
+    function showErr(id, show) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('show', show);
+    }
+    function markField(id, error) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('error', error);
+    }
+
+    function validateStep1() {
+      const fname = document.getElementById('ap-fname').value.trim();
+      const lname = document.getElementById('ap-lname').value.trim();
+      const email = document.getElementById('ap-email').value.trim();
+      const phone = document.getElementById('ap-phone').value.trim();
+      let ok = true;
+      const eF = !fname; markField('ap-fname', eF); showErr('err-fname', eF); if (eF) ok = false;
+      const eL = !lname; markField('ap-lname', eL); showErr('err-lname', eL); if (eL) ok = false;
+      const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); markField('ap-email', eE); showErr('err-email', eE); if (eE) ok = false;
+      const ePh = !/^\d{10}$/.test(phone); markField('ap-phone', ePh); showErr('err-phone', ePh); if (ePh) ok = false;
+      if (ok) appData = { ...appData, fname, lname, email, phone };
+      return ok;
+    }
+
+    function validateStep2() {
+      const spec = document.getElementById('ap-spec').value;
+      const license = document.getElementById('ap-license').value.trim();
+      const pw = document.getElementById('ap-pw').value;
+      const pw2 = document.getElementById('ap-pw2').value;
+      const terms = document.getElementById('ap-terms').checked;
+      let ok = true;
+      const eS = !spec; markField('ap-spec', eS); showErr('err-spec', eS); if (eS) ok = false;
+      const eLic = !license; markField('ap-license', eLic); showErr('err-license', eLic); if (eLic) ok = false;
+      const ePw = pw.length < 8; markField('ap-pw', ePw); showErr('err-pw', ePw); if (ePw) ok = false;
+      const ePw2 = pw !== pw2; markField('ap-pw2', ePw2); showErr('err-pw2', ePw2); if (ePw2) ok = false;
+      if (!terms) {
+        const errEl = document.getElementById('step2-error');
+        const errTxt = document.getElementById('step2-error-text');
+        errTxt.textContent = 'You must agree to the Terms of Service to continue.';
+        errEl.classList.add('show');
+        ok = false;
+      } else {
+        document.getElementById('step2-error').classList.remove('show');
+      }
+      if (ok) appData = { ...appData, spec, license, pw };
+      return ok;
+    }
+
+    // ── REVIEW ──
+    function buildReview() {
+      const fields = [
+        ['Full Name', `${appData.fname} ${appData.lname}`],
+        ['Email', appData.email],
+        ['Phone', appData.phone],
+        ['Specialization', appData.spec],
+        ['License Number', appData.license],
+        ['Password', '••••••••'],
+      ];
+      document.getElementById('review-content').innerHTML = fields.map(([l, v]) => `
+      <div class="review-item">
+        <span class="review-label">${l}</span>
+        <span class="review-val">${v}</span>
+      </div>`).join('');
+    }
+
+    // ── PASSWORD STRENGTH ──
+    function checkPwStrength(v) {
+      const bars = [document.getElementById('ps1'), document.getElementById('ps2'), document.getElementById('ps3'), document.getElementById('ps4')];
+      const lbl = document.getElementById('ps-lbl');
+      bars.forEach(b => b.className = 'pw-bar');
+      let score = 0;
+      if (v.length >= 8) score++;
+      if (/[A-Z]/.test(v)) score++;
+      if (/[0-9]/.test(v)) score++;
+      if (/[^A-Za-z0-9]/.test(v)) score++;
+      const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+      const classes = ['', 's1', 's2', 's3', 's4'];
+      for (let i = 0; i < score; i++) bars[i].classList.add(classes[score]);
+      lbl.textContent = score > 0 ? labels[score] : '';
+    }
+
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      const vis = inp.type === 'text';
+      inp.type = vis ? 'password' : 'text';
+      btn.textContent = vis ? '👁️' : '🙈';
+    }
+
+    // ── SUBMIT ──
+    function generateRefId() {
+      return 'APP-' + Date.now().toString().slice(-6);
+    }
+
+    async function submitApplication() {
+      const btn = document.getElementById('submitBtn');
+      btn.classList.add('loading');
+
+      // ── Duplicate email check ──
+      const existingDoctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+      if (existingDoctors.some(d => d.email && d.email.toLowerCase() === appData.email.toLowerCase())) {
+        btn.classList.remove('loading');
+        const errEl = document.getElementById('submit-error');
+        document.getElementById('submit-error-text').textContent = 'An application with this email already exists.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      const refId = generateRefId();
+      const uid = 'LOCAL-' + refId;
+      const application = {
+        id: uid,
+        uid,
+        refId,
+        fullName: `${appData.fname} ${appData.lname}`,
+        name: `${appData.fname} ${appData.lname}`,
+        email: appData.email,
+        phone: appData.phone,
+        specialization: appData.spec,
+        licenseNumber: appData.license,
+        status: 'pending',
+        approved: false,
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        // ── Save to doctorApplications ──
+        const existing = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+        existing.push(application);
+        localStorage.setItem('doctorApplications', JSON.stringify(existing));
+        console.log('[SmartHeal] Application saved:', application);
+
+        // ── Save to smartheal_doctors (for login lookup) ──
+        const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+        doctors.push({
+          uid,
+          id: uid,
+          username: appData.email,   // login uses email as username
+          password: appData.pw,
+          name: application.name,
+          fullName: application.fullName,
+          email: appData.email,
+          phone: appData.phone,
+          specialization: appData.spec,
+          licenseNumber: appData.license,
+          role: 'doctor',
+          approved: false,
+          status: 'pending',
+          refId
+        });
+        localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+
+        await new Promise(r => setTimeout(r, 1200)); // simulate network
+        btn.classList.remove('loading');
+        document.getElementById('app-ref-id').textContent = refId;
+        document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panelSuccess').classList.add('active');
+        document.getElementById('stepsBar').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        console.log('[SmartHeal] Application submitted successfully. RefID:', refId);
+      } catch (err) {
+        btn.classList.remove('loading');
+        const errEl = document.getElementById('submit-error');
+        document.getElementById('submit-error-text').textContent = err.message || 'Submission failed. Please try again.';
+        errEl.classList.add('show');
+        console.error('[SmartHeal] Application submission error:', err);
+      }
+    }
+  </script>
+</body>
+
+</html>
