@@ -13,27 +13,27 @@
        DESIGN TOKENS — exact match across all portals
     ══════════════════════════════════════════════════ */
     :root {
-      --teal: #765568;
-      --teal-light: #E0F5F2;
-      --teal-mid: #1051f6;
-      --amber: #db87c5;
+      --teal: #0E7C7B;
+      --teal-light: #D0EFEF;
+      --teal-mid: #0E7C7B;
+      --amber: #F0A500;
       --amber-light: #FEF3E8;
-      --red: #b856a3;
+      --red: #E05555;
       --red-light: #FDEAEA;
       --blue: #1A5FBF;
       --blue-light: #E8F0FB;
-      --purple: #534AB7;
-      --purple-light: #EEEDFE;
+      --purple: #0E7C7B;
+      --purple-light: #D0EFEF;
       --green: #2ECC8A;
       --green-light: rgba(46, 204, 138, 0.12);
-      --surface: #1A1625;
-      --card: #211a2e;
-      --card-2: #262134;
-      --text: #F0EBF5;
-      --text-2: #9B8EA9;
-      --text-3: #C88553;
-      --border: rgba(200, 180, 220, 0.13);
-      --border-glow: rgba(219, 135, 197, 0.25);
+      --surface: #0D1B2A;
+      --card: #132030;
+      --card-2: #172636;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
+      --border: rgba(14, 124, 123, 0.18);
+      --border-glow: rgba(14, 124, 123, 0.40);
       --radius: 18px;
       --radius-sm: 12px;
       --radius-xs: 8px;
@@ -148,8 +148,8 @@
       inset: 0;
       z-index: 0;
       background-image:
-        linear-gradient(rgba(200, 180, 220, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200, 180, 220, 0.04) 1px, transparent 1px);
+        linear-gradient(rgba(14, 124, 123, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 124, 123, 0.04) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
     }
@@ -172,7 +172,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(33, 26, 46, 0.82);
+      background: rgba(13, 27, 42, 0.90);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -343,9 +343,9 @@
 
     .portals-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 22px;
-      max-width: 1060px;
+      max-width: 760px;
       margin: 0 auto;
     }
 
@@ -402,24 +402,15 @@
       background: linear-gradient(90deg, var(--purple), var(--amber));
     }
 
-    .card-admin::before {
-      background: linear-gradient(90deg, var(--amber), var(--red));
-    }
-
     /* Hover border glow */
     .card-patient:hover {
-      border-color: rgba(118, 85, 104, 0.5);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(118, 85, 104, 0.3);
+      border-color: rgba(14, 124, 123, 0.5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(14, 124, 123, 0.3);
     }
 
     .card-doctor:hover {
-      border-color: rgba(83, 74, 183, 0.5);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(83, 74, 183, 0.3);
-    }
-
-    .card-admin:hover {
-      border-color: rgba(219, 135, 197, 0.5);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(219, 135, 197, 0.3);
+      border-color: rgba(14, 124, 123, 0.5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(14, 124, 123, 0.3);
     }
 
     /* Corner decoration */
@@ -447,10 +438,6 @@
       background: var(--purple);
     }
 
-    .card-admin .card-corner-glow {
-      background: var(--amber);
-    }
-
     /* Icon area */
     .card-icon-wrap {
       width: 64px;
@@ -471,18 +458,13 @@
     }
 
     .card-patient .card-icon-wrap {
-      background: linear-gradient(135deg, rgba(118, 85, 104, 0.25), rgba(26, 95, 191, 0.15));
-      border: 1px solid rgba(118, 85, 104, 0.3);
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.25), rgba(26, 95, 191, 0.15));
+      border: 1px solid rgba(14, 124, 123, 0.3);
     }
 
     .card-doctor .card-icon-wrap {
-      background: linear-gradient(135deg, rgba(83, 74, 183, 0.25), rgba(219, 135, 197, 0.15));
-      border: 1px solid rgba(83, 74, 183, 0.3);
-    }
-
-    .card-admin .card-icon-wrap {
-      background: linear-gradient(135deg, rgba(219, 135, 197, 0.25), rgba(184, 86, 163, 0.15));
-      border: 1px solid rgba(219, 135, 197, 0.3);
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.25), rgba(240, 165, 0, 0.15));
+      border: 1px solid rgba(14, 124, 123, 0.3);
     }
 
     /* Card badge */
@@ -499,21 +481,15 @@
     }
 
     .card-patient .card-badge {
-      background: rgba(118, 85, 104, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--teal);
-      border: 1px solid rgba(118, 85, 104, 0.25);
+      border: 1px solid rgba(14, 124, 123, 0.25);
     }
 
     .card-doctor .card-badge {
-      background: rgba(83, 74, 183, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--purple);
-      border: 1px solid rgba(83, 74, 183, 0.25);
-    }
-
-    .card-admin .card-badge {
-      background: rgba(219, 135, 197, 0.15);
-      color: var(--amber);
-      border: 1px solid rgba(219, 135, 197, 0.25);
+      border: 1px solid rgba(14, 124, 123, 0.25);
     }
 
     .card-title {
@@ -594,17 +570,12 @@
     }
 
     .card-patient .card-btn {
-      background: linear-gradient(135deg, var(--teal), #6b4a8a);
+      background: linear-gradient(135deg, var(--teal), var(--blue));
       color: white;
     }
 
     .card-doctor .card-btn {
-      background: linear-gradient(135deg, var(--purple), #7b5ea7);
-      color: white;
-    }
-
-    .card-admin .card-btn {
-      background: linear-gradient(135deg, #9b3d80, var(--red));
+      background: linear-gradient(135deg, var(--purple), #0a5a59);
       color: white;
     }
 
@@ -614,13 +585,13 @@
       inset: -1px;
       border-radius: 25px;
       background: transparent;
-      border: 2px solid rgba(83, 74, 183, 0);
+      border: 2px solid rgba(14, 124, 123, 0);
       transition: border-color 0.3s;
       pointer-events: none;
     }
 
     .card-doctor:hover .card-featured-ring {
-      border-color: rgba(83, 74, 183, 0.4);
+      border-color: rgba(14, 124, 123, 0.4);
     }
 
     /* ══════════════════════════════════════════════════
@@ -679,7 +650,7 @@
 
     .feat-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(219, 135, 197, 0.25);
+      border-color: var(--border-glow);
     }
 
     .feat-card:nth-child(1) {
@@ -1096,33 +1067,6 @@
           </a>
         </div>
 
-        <!-- ── ADMIN PORTAL ── -->
-        <div class="portal-card card-admin">
-
-          <div class="card-corner-glow"></div>
-          <span class="card-badge">Admin</span>
-
-          <div class="card-icon-wrap">🏥</div>
-
-          <div class="card-title">Admin Portal</div>
-
-          <p class="card-desc">
-            Monitor live hospital operations, review patient feedback, track consultation delays,
-            manage doctor schedules, and analyze heatwave trends and emergency statistics.
-          </p>
-
-          <div class="card-chips">
-            <span class="card-chip">📊 Analytics</span>
-            <span class="card-chip">⏱ Delay Monitor</span>
-            <span class="card-chip">🌡️ Heatwave Trends</span>
-            <span class="card-chip">👥 Doctor Management</span>
-            <span class="card-chip">📣 Feedback Review</span>
-          </div>
-
-          <a class="card-btn" href="loginn_fixed.html?role=admin">Continue as Admin <span class="btn-arrow">→</span>
-          </a>
-        </div>
-
       </div>
     </section>
 
@@ -1162,7 +1106,7 @@
 
         <div class="feat-card reveal">
           <div class="feat-icon-wrap"
-            style="background:linear-gradient(135deg,rgba(118,85,104,0.2),rgba(26,95,191,0.1));border:1px solid rgba(118,85,104,0.25);">
+            style="background:linear-gradient(135deg,rgba(14,124,123,0.2),rgba(26,95,191,0.1));border:1px solid rgba(14,124,123,0.25);">
             🔢</div>
           <div class="feat-body">
             <div class="feat-title">Smart Queue Management</div>
@@ -1173,7 +1117,7 @@
 
         <div class="feat-card reveal">
           <div class="feat-icon-wrap"
-            style="background:linear-gradient(135deg,rgba(83,74,183,0.2),rgba(219,135,197,0.1));border:1px solid rgba(83,74,183,0.25);">
+            style="background:linear-gradient(135deg,rgba(14,124,123,0.2),rgba(240,165,0,0.1));border:1px solid rgba(14,124,123,0.25);">
             📁</div>
           <div class="feat-body">
             <div class="feat-title">MediVault</div>
@@ -1184,7 +1128,7 @@
 
         <div class="feat-card reveal">
           <div class="feat-icon-wrap"
-            style="background:linear-gradient(135deg,rgba(219,135,197,0.2),rgba(232,135,58,0.1));border:1px solid rgba(219,135,197,0.25);">
+            style="background:linear-gradient(135deg,rgba(240,165,0,0.2),rgba(240,165,0,0.1));border:1px solid rgba(240,165,0,0.25);">
             ☀️</div>
           <div class="feat-body">
             <div class="feat-title">Heatwave Monitoring</div>
@@ -1195,7 +1139,7 @@
 
         <div class="feat-card reveal">
           <div class="feat-icon-wrap"
-            style="background:linear-gradient(135deg,rgba(184,86,163,0.2),rgba(215,59,59,0.1));border:1px solid rgba(184,86,163,0.25);">
+            style="background:linear-gradient(135deg,rgba(224,85,85,0.2),rgba(224,85,85,0.1));border:1px solid rgba(224,85,85,0.25);">
             ⏱</div>
           <div class="feat-body">
             <div class="feat-title">Delay Monitoring</div>
@@ -1217,7 +1161,7 @@
 
         <div class="feat-card reveal">
           <div class="feat-icon-wrap"
-            style="background:linear-gradient(135deg,rgba(184,86,163,0.2),rgba(83,74,183,0.1));border:1px solid rgba(184,86,163,0.25);">
+            style="background:linear-gradient(135deg,rgba(224,85,85,0.2),rgba(14,124,123,0.1));border:1px solid rgba(224,85,85,0.25);">
             🚨</div>
           <div class="feat-body">
             <div class="feat-title">Emergency Case Tracking</div>

@@ -989,6 +989,11 @@
       color: var(--red);
     }
 
+    .res-badge.busy {
+      background: rgba(232, 135, 58, 0.12);
+      color: var(--orange);
+    }
+
     .delay-summary {
       display: flex;
       flex-direction: column;
@@ -1042,124 +1047,6 @@
       height: 100%;
       border-radius: 3px;
       background: linear-gradient(90deg, var(--teal-mid), var(--amber));
-    }
-
-    /* ══════════════════════════════════
-   5. HEATWAVE MONITORING
-══════════════════════════════════ */
-    .heat-kpi {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .heat-card {
-      border-radius: var(--radius);
-      padding: 18px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .heat-card.heatstroke {
-      background: linear-gradient(135deg, rgba(184, 86, 163, 0.25), rgba(184, 86, 163, 0.08));
-      border: 1px solid rgba(184, 86, 163, 0.3);
-    }
-
-    .heat-card.dehydration {
-      background: linear-gradient(135deg, rgba(16, 81, 246, 0.2), rgba(16, 81, 246, 0.06));
-      border: 1px solid rgba(16, 81, 246, 0.25);
-    }
-
-    .heat-card.highrisk {
-      background: linear-gradient(135deg, rgba(232, 135, 58, 0.2), rgba(232, 135, 58, 0.06));
-      border: 1px solid rgba(232, 135, 58, 0.25);
-    }
-
-    .heat-icon {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    .heat-val {
-      font-family: 'Syne', sans-serif;
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .heat-lbl {
-      font-size: 12px;
-      color: var(--text-2);
-      margin-top: 3px;
-    }
-
-    .heat-delta {
-      font-size: 11px;
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    .heat-card.heatstroke .heat-delta {
-      color: var(--red);
-    }
-
-    .heat-card.dehydration .heat-delta {
-      color: var(--teal-mid);
-    }
-
-    .heat-card.highrisk .heat-delta {
-      color: var(--orange);
-    }
-
-    .heat-table-wrap {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .risk-badge {
-      font-size: 10px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-
-    .risk-badge.critical {
-      background: rgba(184, 86, 163, 0.18);
-      color: var(--red);
-    }
-
-    .risk-badge.high {
-      background: rgba(232, 135, 58, 0.15);
-      color: var(--orange);
-    }
-
-    .risk-badge.moderate {
-      background: rgba(16, 81, 246, 0.12);
-      color: var(--teal-mid);
-    }
-
-    .risk-badge.stable {
-      background: var(--green-light);
-      color: var(--green);
-    }
-
-    .temp-pill {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 8px;
-      background: #3a2e4a;
-    }
-
-    .temp-pill.fever {
-      color: var(--red);
-    }
-
-    .temp-pill.normal {
-      color: var(--green);
     }
 
     /* ══════════════════════════════════
@@ -1765,9 +1652,6 @@
         grid-column: 1;
       }
 
-      .heat-kpi {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     @media(max-width:768px) {
@@ -1794,10 +1678,6 @@
 
       .kpi-grid {
         grid-template-columns: 1fr 1fr;
-      }
-
-      .heat-kpi {
-        grid-template-columns: 1fr;
       }
 
       .sparkline-grid {
@@ -2166,46 +2046,19 @@
     <div class="notif-header">
       <div class="notif-title">Notifications</div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span class="notif-count">7</span>
+        <span class="notif-count" id="notif-count" style="display:none">0</span>
         <button class="notif-close" onclick="closeNotif()">✕</button>
       </div>
     </div>
-    <div class="notif-list">
-      <div class="notif-item urgent">
-        <div class="notif-item-title">🚨 Emergency — Token #036</div>
-        <div class="notif-item-msg">Lakshmi D. admitted to Cardiology OPD with chest pain. Dr. Ramesh Gupta notified.
-        </div>
-        <div class="notif-item-time">2 minutes ago</div>
-      </div>
-      <div class="notif-item warning">
-        <div class="notif-item-title">⚠️ Long Queue — General OPD</div>
-        <div class="notif-item-msg">Waiting time exceeded 45 minutes. 18 patients in queue.</div>
-        <div class="notif-item-time">11 minutes ago</div>
-      </div>
-      <div class="notif-item warning">
-        <div class="notif-item-title">🌡️ Heatstroke Alert</div>
-        <div class="notif-item-msg">3 new heatstroke cases registered in the last hour. Temperature 42°C outside.</div>
-        <div class="notif-item-time">24 minutes ago</div>
-      </div>
-      <div class="notif-item info">
-        <div class="notif-item-title">📋 Daily Report Ready</div>
-        <div class="notif-item-msg">June 4 patient summary is ready for review. 127 patients seen today.</div>
-        <div class="notif-item-time">1 hour ago</div>
-      </div>
-      <div class="notif-item success">
-        <div class="notif-item-title">✅ Dr. Sneha Iyer — Back on Duty</div>
-        <div class="notif-item-msg">Orthopaedics department now fully staffed.</div>
-        <div class="notif-item-time">1 hour ago</div>
-      </div>
-      <div class="notif-item info">
-        <div class="notif-item-title">💊 Pharmacy Low Stock Alert</div>
-        <div class="notif-item-msg">ORS sachets running low. Current stock: 48 units.</div>
-        <div class="notif-item-time">2 hours ago</div>
-      </div>
+    <div class="notif-list" id="notifList">
       <div class="notif-item success" id="notif-latest-feedback" style="display:none">
         <div class="notif-item-title">⭐ New Feedback Received</div>
         <div class="notif-item-msg" id="notif-latest-feedback-msg"></div>
         <div class="notif-item-time" id="notif-latest-feedback-time"></div>
+      </div>
+      <div class="notif-item info" id="notif-empty">
+        <div class="notif-item-title">🔔 No new notifications</div>
+        <div class="notif-item-msg">You're all caught up. Real-time alerts will appear here.</div>
       </div>
     </div>
   </div>
@@ -2264,8 +2117,6 @@
         <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Delay Monitoring<span
             class="sb-badge">3</span></a>
         <div class="sb-section">Monitoring</div>
-        <a class="sb-link" href="#heatwave" onclick="setActive(this)"><span class="ic">🌡️</span>Heatwave Monitor<span
-            class="sb-badge">!</span></a>
         <a class="sb-link" href="#analytics" onclick="setActive(this)"><span class="ic">📈</span>Reports & Analytics</a>
       </nav>
       <div class="sb-footer">
@@ -2289,7 +2140,7 @@
           <div class="topbar-sub">District General Hospital, Hyderabad</div>
         </div>
         <div class="tb-time" id="adminTime">09:41 AM</div>
-        <div class="tb-notif" onclick="openNotif()">🔔<div class="tb-dot"></div>
+        <div class="tb-notif" onclick="openNotif()">🔔<div class="tb-dot" id="tb-dot" style="display:none;"></div>
         </div>
         <button class="tb-emg" onclick="document.getElementById('emgModal').classList.add('open')">🚨 <span>3
             Emergencies</span></button>
@@ -2307,7 +2158,7 @@
               <div class="section-title">Dashboard Overview</div>
               <div class="section-sub" id="overview-sub">Loading…</div>
             </div>
-            <button class="section-action" onclick="loadDashboardStats()">↻ Refresh</button>
+            <button class="section-action" onclick="refreshDashboard()">↻ Refresh</button>
           </div>
           <div class="kpi-grid">
             <div class="kpi-card c-teal">
@@ -2366,7 +2217,7 @@
               <div class="section-title">Doctor Management</div>
               <div class="section-sub" id="doc-section-sub">Loading…</div>
             </div>
-            <button class="section-action">+ Add Doctor</button>
+            <button class="section-action" onclick="goToApplications()">+ Add Doctor</button>
           </div>
           <div class="doc-stats-bar">
             <div class="dsb-item">
@@ -2546,7 +2397,7 @@
               <div class="section-title">Delay Monitoring</div>
               <div class="section-sub">Waiting time by department · live data</div>
             </div>
-            <button class="section-action">View Full Report</button>
+            <button class="section-action" onclick="viewFullReport()">View Full Report</button>
           </div>
           <div class="delay-layout">
             <div class="delay-table-wrap">
@@ -2567,138 +2418,26 @@
             </div>
             <div class="delay-summary">
               <div class="delay-stat">
-                <div class="delay-stat-val" style="color:var(--red)">47 min</div>
-                <div class="delay-stat-lbl">Peak wait time (General OPD)</div>
+                <div class="delay-stat-val" id="delay-peak-val" style="color:var(--red)">—</div>
+                <div class="delay-stat-lbl" id="delay-peak-lbl">Peak wait time</div>
               </div>
               <div class="delay-stat">
-                <div class="delay-stat-val">8 min</div>
-                <div class="delay-stat-lbl">Best wait time (ENT)</div>
+                <div class="delay-stat-val" id="delay-best-val">—</div>
+                <div class="delay-stat-lbl" id="delay-best-lbl">Best wait time</div>
               </div>
               <div class="delay-stat">
-                <div class="delay-stat-val" style="color:var(--amber)">22 min</div>
+                <div class="delay-stat-val" id="delay-avg-val" style="color:var(--amber)">—</div>
                 <div class="delay-stat-lbl">Hospital average</div>
               </div>
               <div class="card-sm">
                 <div
                   style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">
                   Wait Trend Today</div>
-                <div class="delay-trend">
-                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">8 AM</span>
-                    <div class="dtrend-bar">
-                      <div class="dtrend-fill" style="width:20%"></div>
-                    </div><span>12m</span>
-                  </div>
-                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">10 AM</span>
-                    <div class="dtrend-bar">
-                      <div class="dtrend-fill" style="width:55%"></div>
-                    </div><span>28m</span>
-                  </div>
-                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">12 PM</span>
-                    <div class="dtrend-bar">
-                      <div class="dtrend-fill" style="width:88%"></div>
-                    </div><span>47m</span>
-                  </div>
-                  <div class="dtrend-item"><span style="width:50px;flex-shrink:0;">2 PM</span>
-                    <div class="dtrend-bar">
-                      <div class="dtrend-fill" style="width:40%"></div>
-                    </div><span>22m</span>
-                  </div>
+                <div class="delay-trend" id="delay-trend-body">
+                  <!-- populated by renderDelayTable() -->
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        <!-- ══ 5. HEATWAVE MONITORING ══ -->
-        <section class="section" id="heatwave">
-          <div class="section-header">
-            <div>
-              <div class="section-title">🌡️ Heatwave Monitoring</div>
-              <div class="section-sub">Hyderabad: 42°C today · High risk alert active</div>
-            </div>
-            <button class="section-action" style="color:var(--red)">Send Alert</button>
-          </div>
-          <div class="heat-kpi">
-            <div class="heat-card heatstroke">
-              <div class="heat-icon">🥵</div>
-              <div class="heat-val">7</div>
-              <div class="heat-lbl">Heatstroke Cases Today</div>
-              <div class="heat-delta">↑ 3 since yesterday</div>
-            </div>
-            <div class="heat-card dehydration">
-              <div class="heat-icon">💧</div>
-              <div class="heat-val">23</div>
-              <div class="heat-lbl">Dehydration Cases</div>
-              <div class="heat-delta">↑ 8 since yesterday</div>
-            </div>
-            <div class="heat-card highrisk">
-              <div class="heat-icon">⚠️</div>
-              <div class="heat-val">41</div>
-              <div class="heat-lbl">High Risk Patients</div>
-              <div class="heat-delta">↑ 15 this week</div>
-            </div>
-          </div>
-          <div class="heat-table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Patient</th>
-                  <th>Token</th>
-                  <th>Age</th>
-                  <th>Temperature</th>
-                  <th>Symptoms</th>
-                  <th>Risk Level</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="td-name">Mohammed Salim</td>
-                  <td><span class="chip amber">#041</span></td>
-                  <td class="text-sm">62</td>
-                  <td><span class="temp-pill fever">40.2°C</span></td>
-                  <td class="text-sm">Dizziness, confusion</td>
-                  <td><span class="risk-badge critical">Critical</span></td>
-                  <td><span class="res-badge pending">In Treatment</span></td>
-                </tr>
-                <tr>
-                  <td class="td-name">Pushpa Rani</td>
-                  <td><span class="chip amber">#058</span></td>
-                  <td class="text-sm">8</td>
-                  <td><span class="temp-pill fever">39.8°C</span></td>
-                  <td class="text-sm">Severe dehydration</td>
-                  <td><span class="risk-badge high">High</span></td>
-                  <td><span class="res-badge pending">In Queue</span></td>
-                </tr>
-                <tr>
-                  <td class="td-name">Narayana Swamy</td>
-                  <td><span class="chip blue">#073</span></td>
-                  <td class="text-sm">71</td>
-                  <td><span class="temp-pill fever">38.9°C</span></td>
-                  <td class="text-sm">Weakness, nausea</td>
-                  <td><span class="risk-badge high">High</span></td>
-                  <td><span class="res-badge resolved">Treated</span></td>
-                </tr>
-                <tr>
-                  <td class="td-name">Fatima Bi</td>
-                  <td><span class="chip blue">#089</span></td>
-                  <td class="text-sm">45</td>
-                  <td><span class="temp-pill fever">38.4°C</span></td>
-                  <td class="text-sm">Headache, cramps</td>
-                  <td><span class="risk-badge moderate">Moderate</span></td>
-                  <td><span class="res-badge resolved">Treated</span></td>
-                </tr>
-                <tr>
-                  <td class="td-name">Raju Venkat</td>
-                  <td><span class="chip blue">#094</span></td>
-                  <td class="text-sm">34</td>
-                  <td><span class="temp-pill normal">37.2°C</span></td>
-                  <td class="text-sm">Mild dehydration</td>
-                  <td><span class="risk-badge stable">Stable</span></td>
-                  <td><span class="res-badge resolved">Discharged</span></td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </section>
 
@@ -2709,7 +2448,10 @@
               <div class="section-title">Reports & Analytics</div>
               <div class="section-sub">Last 7 days · District General Hospital</div>
             </div>
-            <button class="section-action">Download Report</button>
+            <div style="display:flex;gap:8px;">
+              <button class="section-action" onclick="loadAnalytics()">Refresh</button>
+              <button class="section-action" onclick="exportAnalyticsReport()">⬇ Download Report</button>
+            </div>
           </div>
 
           <!-- Bar chart — patient flow -->
@@ -2730,125 +2472,66 @@
           </div>
 
           <div class="analytics-grid">
-            <!-- Dept load -->
+            <!-- Dept load — rendered dynamically -->
             <div class="chart-card">
               <div class="chart-title">Department Load Today</div>
-              <div class="dept-bars">
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">General OPD</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:100%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">48</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">Cardiology</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:46%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">22</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">Paediatrics</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:40%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">19</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">Orthopaedics</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:38%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">18</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">Gynaecology</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:29%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">14</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">ENT</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:23%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">11</div>
-                </div>
-                <div class="dept-bar-row">
-                  <div class="dept-bar-name">Dermatology</div>
-                  <div class="dept-bar-track">
-                    <div class="dept-bar-fill"
-                      style="width:19%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
-                  </div>
-                  <div class="dept-bar-val">9</div>
-                </div>
+              <div class="dept-bars" id="deptLoadBars">
+                <div style="padding:20px 0;text-align:center;color:var(--text-2);font-size:13px;">Loading…</div>
               </div>
             </div>
 
-            <!-- Emergency trends sparklines -->
+            <!-- Emergency trends sparklines — rendered dynamically -->
             <div class="chart-card">
               <div class="chart-title">Emergency Trends</div>
               <div class="sparkline-grid">
                 <div class="spark-card">
-                  <div class="spark-label">Heat Cases</div>
-                  <div class="spark-val" style="color:var(--red)">7</div>
-                  <div class="spark-sub" style="color:var(--red)">↑ 43% today</div>
-                  <div class="spark-bars">
-                    <div class="spark-b" style="height:30%"></div>
-                    <div class="spark-b" style="height:50%"></div>
-                    <div class="spark-b" style="height:40%"></div>
-                    <div class="spark-b" style="height:60%"></div>
-                    <div class="spark-b" style="height:45%"></div>
-                    <div class="spark-b" style="height:70%"></div>
-                    <div class="spark-b peak" style="height:100%"></div>
+                  <div class="spark-label">Emergencies</div>
+                  <div class="spark-val" style="color:var(--red)" id="spark-emg-total">—</div>
+                  <div class="spark-sub" style="color:var(--red)" id="spark-emg-sub">This week</div>
+                  <div class="spark-bars" id="spark-emg-bars">
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
                   </div>
                 </div>
                 <div class="spark-card">
                   <div class="spark-label">Avg Wait</div>
-                  <div class="spark-val" style="color:var(--orange)">22m</div>
-                  <div class="spark-sub" style="color:var(--orange)">↑ 8m from Mon</div>
+                  <div class="spark-val" style="color:var(--orange)" id="spark-wait-val">—</div>
+                  <div class="spark-sub" style="color:var(--orange)" id="spark-wait-sub">Completed patients</div>
                   <div class="spark-bars">
-                    <div class="spark-b" style="height:40%"></div>
-                    <div class="spark-b" style="height:35%"></div>
-                    <div class="spark-b" style="height:50%"></div>
-                    <div class="spark-b" style="height:45%"></div>
-                    <div class="spark-b" style="height:55%"></div>
-                    <div class="spark-b" style="height:60%"></div>
-                    <div class="spark-b peak" style="height:75%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
                   </div>
                 </div>
                 <div class="spark-card">
                   <div class="spark-label">Satisfaction</div>
                   <div class="spark-val" style="color:var(--green)" id="spark-satisfaction">—</div>
-                  <div class="spark-sub" style="color:var(--green)" id="spark-satisfaction-sub">Based on patient
-                    feedback</div>
-                  <div class="spark-bars">
-                    <div class="spark-b" style="height:70%"></div>
-                    <div class="spark-b" style="height:72%"></div>
-                    <div class="spark-b" style="height:68%"></div>
-                    <div class="spark-b" style="height:75%"></div>
-                    <div class="spark-b" style="height:78%"></div>
-                    <div class="spark-b" style="height:80%"></div>
-                    <div class="spark-b peak" style="height:85%"></div>
+                  <div class="spark-sub" style="color:var(--green)" id="spark-satisfaction-sub">Based on patient feedback</div>
+                  <div class="spark-bars" id="spark-satisfaction-bars">
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
+                    <div class="spark-b" style="height:20%"></div>
                   </div>
                 </div>
               </div>
               <div class="divider"></div>
               <div style="display:flex;flex-direction:column;gap:8px;">
-                <div class="flex-between text-sm"><span>Total emergencies this week</span><span class="font-bold"
-                    style="font-size:14px;">31</span></div>
-                <div class="flex-between text-sm"><span>Resolved within 30 min</span><span
-                    style="color:var(--green);font-weight:600;">87%</span></div>
-                <div class="flex-between text-sm"><span>Escalated to ICU</span><span
-                    style="color:var(--red);font-weight:600;">2</span></div>
+                <div class="flex-between text-sm"><span>Total emergencies this week</span><span class="font-bold" style="font-size:14px;" id="emg-stat-week">—</span></div>
+                <div class="flex-between text-sm"><span>Active (in queue / being seen)</span><span style="color:var(--orange);font-weight:600;" id="emg-stat-active">—</span></div>
+                <div class="flex-between text-sm"><span>Completed consultations</span><span style="color:var(--green);font-weight:600;" id="emg-stat-done">—</span></div>
               </div>
             </div>
           </div>
@@ -3037,8 +2720,53 @@
           function setActive(el) {
             document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
             el.classList.add('active');
-            if (el.getAttribute('href') === '#feedback') setTimeout(loadFeedbackCenter, 80);
-            if (el.getAttribute('href') === '#doctors') setTimeout(loadDoctorManagement, 80);
+            if (el.getAttribute('href') === '#feedback')  setTimeout(loadFeedbackCenter, 80);
+            if (el.getAttribute('href') === '#doctors')   setTimeout(loadDoctorManagement, 80);
+            if (el.getAttribute('href') === '#analytics') setTimeout(() => { loadAnalytics(); _syncWaitTimeSpark(); }, 80);
+          }
+
+          // ── NAVIGATE TO A SECTION PROGRAMMATICALLY (no full page reload) ──
+          function gotoSection(hash) {
+            const link = document.querySelector(`.sb-link[href="${hash}"]`);
+            if (link) {
+              setActive(link);
+              document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+              link.classList.add('active');
+            }
+            const section = document.querySelector(hash);
+            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Close mobile sidebar if open
+            document.getElementById('sidebar').classList.remove('open');
+          }
+
+          // ── REFRESH ENTIRE DASHBOARD (Overview "Refresh" button) ──
+          function refreshDashboard() {
+            loadDashboardStats();    // also reloads feedback center summary
+            loadDoctorManagement();  // doctor management + delay table
+            loadApplications();      // doctor applications
+            loadFeedbackCenter();    // feedback center detail list
+            loadAnalytics();         // reports & analytics
+            _syncWaitTimeSpark();
+            showAdminToast('t-success', '✓', 'Dashboard refreshed.');
+          }
+
+          // ── ADD DOCTOR → Doctor Applications workflow ──
+          function goToApplications() {
+            gotoSection('#applications');
+            loadApplications();
+            setTimeout(() => {
+              const pendingTab = document.getElementById('atab-pending');
+              if (pendingTab) switchAppTab('pending');
+            }, 100);
+            showAdminToast('t-info', '📋', 'Review pending applications to approve a new doctor.');
+          }
+
+          // ── DELAY MONITORING "View Full Report" → expanded analytics view ──
+          function viewFullReport() {
+            gotoSection('#analytics');
+            loadAnalytics();
+            _syncWaitTimeSpark();
+            showAdminToast('t-info', '📈', 'Showing full analytics report.');
           }
 
           // ── FEEDBACK TABS ──
@@ -3101,6 +2829,9 @@
             if (sparkSubEl) sparkSubEl.textContent = ratingCount > 0 ? `${ratingCount} review${ratingCount !== 1 ? 's' : ''}` : 'No reviews yet';
 
             // ── Update notification panel with latest feedback ──
+            const notifEmpty = document.getElementById('notif-empty');
+            const notifCount = document.getElementById('notif-count');
+            const tbDot = document.getElementById('tb-dot');
             if (feedbacks.length > 0) {
               const latest = feedbacks[0];
               const notifEl = document.getElementById('notif-latest-feedback');
@@ -3111,6 +2842,13 @@
                 notifMsg.textContent = `${latest.name || 'A patient'} gave ${latest.rating || '?'}-star rating for ${latest.dept || 'General OPD'}.`;
                 notifTime.textContent = formatFbTime(latest.submittedAt);
               }
+              if (notifEmpty) notifEmpty.style.display = 'none';
+              if (notifCount) { notifCount.textContent = '1'; notifCount.style.display = ''; }
+              if (tbDot) tbDot.style.display = '';
+            } else {
+              if (notifEmpty) notifEmpty.style.display = '';
+              if (notifCount) notifCount.style.display = 'none';
+              if (tbDot) tbDot.style.display = 'none';
             }
 
             // ── Update tab labels ──
@@ -3190,17 +2928,18 @@
 
           function exportFeedbackCSV() {
             const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
-            if (!feedbacks.length) { alert('No feedback to export.'); return; }
-            const header = ['Name', 'Department', 'Token', 'Rating', 'Delay', 'Comment', 'Category', 'Submitted At'];
+            if (!feedbacks.length) { showAdminToast('t-info', 'ℹ️', 'No feedback records to export.'); return; }
+            const header = ['Patient Name', 'Department', 'Token Number', 'Rating', 'Delay Category', 'Feedback Comment', 'Submission Date'];
             const rows = feedbacks.map(fb => [
               fb.name || '', fb.dept || '', fb.token || '', fb.rating || '',
-              fb.delay || '', (fb.comment || '').replace(/"/g, '""'), fb.category || '', fb.submittedAt || ''
+              fb.delay || '', (fb.comment || '').replace(/"/g, '""'), fb.submittedAt || ''
             ].map(v => `"${v}"`).join(','));
             const csv = [header.join(','), ...rows].join('\n');
             const a = document.createElement('a');
             a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-            a.download = 'smartheal-feedback.csv';
+            a.download = 'feedback-report.csv';
             a.click();
+            showAdminToast('t-success', '✓', 'Feedback report downloaded.');
           }
 
           // Load feedback center when DOM is ready + refresh when navigating to it
@@ -3384,29 +3123,196 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
           }
 
+          // ── DELAY MONITORING — live queue/wait stats per department ──
+          // Data sources:
+          //   hospitalQueue          → current queue records (status, dept, token, timestamps)
+          //   smartheal_visitHistory → completed/attended visits (createdAt + completedAt/attendedAt = "called" time)
+          //   smartheal_nowServing / smartheal_calling → token currently being served/called
+          //
+          // Wait-time formula: Called Time − Registration Time
+          //   Registration Time = createdAt / registeredAt / timestamp
+          //   Called Time       = calledAt / attendedAt / completedAt
+          //
+          // Status thresholds (avg wait): 0–15 Normal · 15–30 Busy · 30–45 Delayed · 45+ Critical
           function renderDelayTable(approved) {
             const tbody = document.getElementById('delay-table-body');
             if (!tbody) return;
 
             if (!approved.length) {
               tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-2)">No approved doctors on record.</td></tr>';
+              _renderDelaySummary([]);
               return;
             }
 
+            const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue  = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const nowServing = localStorage.getItem('smartheal_nowServing');
+            const calling    = localStorage.getItem('smartheal_calling');
+            const todayStr = dateStr(0);
+
+            const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
+            const getCalled = r => r.calledAt || r.attendedAt || r.completedAt;
+
+            // ── Per-department "In Queue" — count of patients currently waiting ──
+            function queueCountFor(dept) {
+              return queue.filter(p => {
+                if (normDept(p.dept || p.department || p.specialization || '') !== dept) return false;
+                const tok = String(p.token || '').replace('#', '');
+                const isServing = nowServing && String(nowServing).replace('#', '') === tok;
+                const isCalling = calling && String(calling).replace('#', '') === tok;
+                if (isServing || isCalling) return false;
+                if (p.status === 'completed' || p.status === 'done') return false;
+                if (p.status && p.status !== 'waiting') return false;
+                return true;
+              }).length;
+            }
+
+            // ── Per-department average wait time (minutes) — today's records only ──
+            function avgWaitFor(dept) {
+              const records = [];
+              visits.forEach(v => {
+                if (normDept(v.dept || v.department || v.specialization || '') !== dept) return;
+                const start = getStart(v), end = getCalled(v);
+                if (!start || !end) return;
+                if (new Date(start).toISOString().slice(0, 10) !== todayStr) return;
+                records.push(v);
+              });
+              queue.forEach(p => {
+                if (normDept(p.dept || p.department || p.specialization || '') !== dept) return;
+                const start = getStart(p), end = getCalled(p);
+                if (!start || !end) return;
+                if (new Date(start).toISOString().slice(0, 10) !== todayStr) return;
+                const dup = records.some(r => r.token && r.token === p.token);
+                if (!dup) records.push(p);
+              });
+
+              const mins = records.map(r => (new Date(getCalled(r)).getTime() - new Date(getStart(r)).getTime()) / 60000)
+                .filter(m => m >= 0 && m < 300); // sanity cap at 5h
+
+              if (!mins.length) return null; // "Not Available"
+              return Math.round(mins.reduce((a, b) => a + b, 0) / mins.length);
+            }
+
+            // ── Status classification from avg wait time ──
+            function statusFor(avgMin) {
+              if (avgMin === null) return { label: 'Normal', badge: 'resolved', tier: 'low' };
+              if (avgMin <= 15) return { label: 'Normal', badge: 'resolved', tier: 'low' };
+              if (avgMin <= 30) return { label: 'Busy', badge: 'busy', tier: 'mid' };
+              if (avgMin <= 45) return { label: 'Delayed', badge: 'busy', tier: 'high' };
+              return { label: 'Critical', badge: 'critical', tier: 'high' };
+            }
+
+            // ── Build one row per approved doctor (dept-doctor mapping unchanged) ──
+            const deptStats = [];
             tbody.innerHTML = approved.map(doc => {
               const name = escDr(doc.name || doc.fullName || 'Unknown');
-              const dept = escDr(doc.specialization || 'General OPD');
+              const dept = normDept(doc.specialization || 'General OPD');
+              const inQueue = queueCountFor(dept);
+              const avgMin = avgWaitFor(dept);
+              const st = statusFor(avgMin);
+
+              deptStats.push({ dept, avgMin });
+
+              const waitLabel = avgMin === null ? 'Not Available' : `${avgMin} min`;
+              const pct = avgMin === null ? 0 : Math.min(100, Math.round((avgMin / 60) * 100));
+
               return `
                 <tr>
-                  <td class="td-name">${dept}</td>
+                  <td class="td-name">${escDr(dept)}</td>
                   <td class="text-sm">${name}</td>
-                  <td><span class="chip blue">—</span></td>
+                  <td><span class="chip blue">${inQueue}</span></td>
                   <td class="wait-bar-cell">
-                    <div class="wait-num low">— min</div>
-                    <div class="wait-bar"><div class="wait-fill low" style="width:0%"></div></div>
+                    <div class="wait-num ${st.tier}">${waitLabel}</div>
+                    <div class="wait-bar"><div class="wait-fill ${st.tier}" style="width:${pct}%"></div></div>
                   </td>
-                  <td><span class="res-badge resolved">Normal</span></td>
+                  <td><span class="res-badge ${st.badge}">${st.label}</span></td>
                 </tr>`;
+            }).join('');
+
+            _renderDelaySummary(deptStats, visits, queue, todayStr);
+          }
+
+          // ── Delay summary cards: Peak / Best / Hospital Average + Wait Trend Today ──
+          function _renderDelaySummary(deptStats, visits, queue, todayStr) {
+            const peakValEl = document.getElementById('delay-peak-val');
+            const peakLblEl = document.getElementById('delay-peak-lbl');
+            const bestValEl = document.getElementById('delay-best-val');
+            const bestLblEl = document.getElementById('delay-best-lbl');
+            const avgValEl  = document.getElementById('delay-avg-val');
+            const trendEl   = document.getElementById('delay-trend-body');
+
+            const withData = (deptStats || []).filter(d => d.avgMin !== null);
+
+            if (withData.length === 0) {
+              if (peakValEl) peakValEl.textContent = '—';
+              if (peakLblEl) peakLblEl.textContent = 'Peak wait time (no data yet)';
+              if (bestValEl) bestValEl.textContent = '—';
+              if (bestLblEl) bestLblEl.textContent = 'Best wait time (no data yet)';
+              if (avgValEl)  avgValEl.textContent  = 'Not Available';
+            } else {
+              const peak = withData.reduce((a, b) => b.avgMin > a.avgMin ? b : a);
+              const best = withData.reduce((a, b) => b.avgMin < a.avgMin ? b : a);
+              const hospAvg = Math.round(withData.reduce((s, d) => s + d.avgMin, 0) / withData.length);
+
+              if (peakValEl) peakValEl.textContent = `${peak.avgMin} min`;
+              if (peakLblEl) peakLblEl.textContent = `Peak wait time (${peak.dept})`;
+              if (bestValEl) bestValEl.textContent = `${best.avgMin} min`;
+              if (bestLblEl) bestLblEl.textContent = `Best wait time (${best.dept})`;
+              if (avgValEl)  avgValEl.textContent  = `${hospAvg} min`;
+            }
+
+            // ── Wait Trend Today — average wait by 2-hour block, from real timestamps ──
+            if (!trendEl) return;
+
+            const blocks = [
+              { label: '8 AM',  start: 8,  end: 10 },
+              { label: '10 AM', start: 10, end: 12 },
+              { label: '12 PM', start: 12, end: 14 },
+              { label: '2 PM',  start: 14, end: 16 },
+            ];
+
+            const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
+            const getCalled = r => r.calledAt || r.attendedAt || r.completedAt;
+
+            const allRecords = (visits || []).slice();
+            (queue || []).forEach(p => {
+              const dup = allRecords.some(v => v.token && v.token === p.token);
+              if (!dup) allRecords.push(p);
+            });
+
+            const todayRecords = allRecords.filter(r => {
+              const start = getStart(r), end = getCalled(r);
+              if (!start || !end) return false;
+              if (new Date(start).toISOString().slice(0, 10) !== todayStr) return false;
+              const mins = (new Date(end).getTime() - new Date(start).getTime()) / 60000;
+              return mins >= 0 && mins < 300;
+            });
+
+            if (todayRecords.length === 0) {
+              trendEl.innerHTML = '<div style="padding:12px 0;text-align:center;color:var(--text-2);font-size:13px;">No trend data available</div>';
+              return;
+            }
+
+            const blockStats = blocks.map(b => {
+              const mins = todayRecords.filter(r => {
+                const hour = new Date(getStart(r)).getHours();
+                return hour >= b.start && hour < b.end;
+              }).map(r => (new Date(getCalled(r)).getTime() - new Date(getStart(r)).getTime()) / 60000);
+              if (!mins.length) return null;
+              return Math.round(mins.reduce((a, c) => a + c, 0) / mins.length);
+            });
+
+            const maxBlock = Math.max(...blockStats.filter(m => m !== null), 1);
+
+            trendEl.innerHTML = blocks.map((b, i) => {
+              const m = blockStats[i];
+              const pct = m === null ? 0 : Math.max(4, Math.round((m / maxBlock) * 100));
+              const label = m === null ? '—' : `${m}m`;
+              return `<div class="dtrend-item"><span style="width:50px;flex-shrink:0;">${b.label}</span>
+                    <div class="dtrend-bar">
+                      <div class="dtrend-fill" style="width:${pct}%"></div>
+                    </div><span>${label}</span>
+                  </div>`;
             }).join('');
           }
 
@@ -3435,35 +3341,491 @@
             event.currentTarget.classList.add('active');
           }
 
-          // ── PATIENT FLOW BAR CHART ──
-          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
-          const opdVals = [98, 112, 89, 134, 121, 108, 127];
-          const emgVals = [2, 4, 3, 5, 3, 4, 3];
-          const maxVal = Math.max(...opdVals);
-          const bc = document.getElementById('patientFlowChart');
-          const bl = document.getElementById('patientFlowLabels');
-          if (bc && bl) {
-            days.forEach((d, i) => {
+          // ══════════════════════════════════════════════════════════
+          // REPORTS & ANALYTICS — real SmartHeal data
+          // ══════════════════════════════════════════════════════════
+
+          // ── Helpers ────────────────────────────────────────────────
+
+          /** True if a visit/queue record is an emergency. */
+          function isEmergency(r) {
+            return r.emergency === true
+              || r.priority === 'emergency'
+              || (r.priorityLabel && r.priorityLabel.toLowerCase().includes('emergency'))
+              || r.type === 'emergency';
+          }
+
+          /** True if a visit is completed (consultation done). */
+          function isCompleted(v) {
+            return !!(v.consultationNote || v.prescription || v.completed === true
+              || v.status === 'completed' || v.status === 'done');
+          }
+
+          /**
+           * Return the YYYY-MM-DD string for a date offset from today.
+           * offset=0 → today, offset=-1 → yesterday, etc.
+           */
+          function dateStr(offset) {
+            const d = new Date();
+            d.setDate(d.getDate() + offset);
+            return d.toISOString().slice(0, 10);
+          }
+
+          /** Short day label for a YYYY-MM-DD string. */
+          function shortDay(ymd) {
+            const d = new Date(ymd + 'T00:00:00');
+            return d.toLocaleDateString('en-IN', { weekday: 'short' });
+          }
+
+          /** Normalise a department/specialization string to a canonical name. */
+          function normDept(raw) {
+            if (!raw) return 'General OPD';
+            const s = String(raw).trim().toLowerCase();
+            if (s.includes('cardio')) return 'Cardiology';
+            if (s.includes('ortho')) return 'Orthopaedics';
+            if (s.includes('gynaec') || s.includes('gynec') || s.includes('obst')) return 'Gynaecology';
+            if (s.includes('paed') || s.includes('pedia')) return 'Paediatrics';
+            if (s.includes('ent') || s.includes('ear') || s.includes('nose') || s.includes('throat')) return 'ENT';
+            if (s.includes('derm') || s.includes('skin')) return 'Dermatology';
+            if (s.includes('neuro')) return 'Neurology';
+            if (s.includes('gastro')) return 'Gastroenterology';
+            if (s.includes('pulmo') || s.includes('chest') || s.includes('lung')) return 'Pulmonology';
+            if (s.includes('ophthal') || s.includes('eye')) return 'Ophthalmology';
+            if (s.includes('urol')) return 'Urology';
+            if (s.includes('general') || s.includes('opd')) return 'General OPD';
+            // Title-case unknown specialty rather than discarding it
+            return raw.trim().replace(/\b\w/g, c => c.toUpperCase());
+          }
+
+          // ── Main analytics loader ──────────────────────────────────
+
+          function loadAnalytics() {
+            const visits  = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue   = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
+
+            _renderPatientFlowChart(visits, queue);
+            _renderDeptLoad(visits, queue);
+            _renderEmergencyTrends(visits, queue);
+            _renderSatisfactionSpark(feedbacks);
+
+            // Update section subtitle
+            const sub = document.querySelector('#analytics .section-sub');
+            if (sub) {
+              const now = new Date();
+              sub.textContent = 'Last 7 days · ' + now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+          }
+
+          // ── ANALYTICS "Download Report" — full CSV from real SmartHeal data ──
+          function exportAnalyticsReport() {
+            const visits    = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue     = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
+            const doctors   = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
+            const apps      = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+
+            const lines = [];
+            const today = dateStr(0);
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
+
+            // Combine visits + queue (de-duplicated by token) for registration counts
+            const allRecords = visits.slice();
+            queue.forEach(p => {
+              const dup = visits.some(v => v.token && v.token === p.token);
+              if (!dup) allRecords.push(p);
+            });
+
+            // ── Patient Registrations ──
+            lines.push('PATIENT REGISTRATIONS');
+            lines.push('Date,Total Registrations,Emergency Registrations');
+            last7.forEach(d => {
+              const dayRecords = allRecords.filter(r => {
+                const ts = r.createdAt || r.registeredAt || r.timestamp;
+                return ts && new Date(ts).toISOString().slice(0, 10) === d;
+              });
+              const emgCount = dayRecords.filter(isEmergency).length;
+              lines.push(`${d},${dayRecords.length},${emgCount}`);
+            });
+            const totalRegistrations = allRecords.length;
+            const totalEmergencies = allRecords.filter(isEmergency).length;
+            lines.push(`Total (7 days),${allRecords.length},${totalEmergencies}`);
+            lines.push('');
+
+            // ── Department Statistics (today) ──
+            lines.push('DEPARTMENT STATISTICS (TODAY)');
+            lines.push('Department,Patients Today');
+            const deptMap = {};
+            allRecords.forEach(r => {
+              const ts = r.createdAt || r.registeredAt || r.timestamp;
+              if (ts && new Date(ts).toISOString().slice(0, 10) !== today) return;
+              const dept = normDept(r.dept || r.department || r.specialization || '');
+              deptMap[dept] = (deptMap[dept] || 0) + 1;
+            });
+            Object.entries(deptMap).sort((a, b) => b[1] - a[1]).forEach(([dept, count]) => {
+              lines.push(`${dept},${count}`);
+            });
+            if (Object.keys(deptMap).length === 0) lines.push('No registrations today,0');
+            lines.push('');
+
+            // ── Emergency Statistics ──
+            lines.push('EMERGENCY STATISTICS');
+            lines.push('Metric,Value');
+            lines.push(`Total emergencies (7 days),${totalEmergencies}`);
+            const nowServing = localStorage.getItem('smartheal_nowServing');
+            const calling    = localStorage.getItem('smartheal_calling');
+            const activeEmg = queue.filter(p => {
+              if (!isEmergency(p)) return false;
+              const tok = String(p.token || '').replace('#', '');
+              const isServing = nowServing && String(nowServing).replace('#', '') === tok;
+              const isCalling = calling && String(calling).replace('#', '') === tok;
+              return !isServing && !isCalling && p.status !== 'completed' && p.status !== 'done';
+            }).length;
+            const doneEmgToday = visits.filter(v =>
+              isEmergency(v) && isCompleted(v) && v.createdAt
+              && new Date(v.createdAt).toISOString().slice(0, 10) === today
+            ).length;
+            lines.push(`Active emergencies (in queue/being seen),${activeEmg}`);
+            lines.push(`Completed emergency consultations today,${doneEmgToday}`);
+            lines.push('');
+
+            // ── Feedback Metrics ──
+            lines.push('FEEDBACK METRICS');
+            lines.push('Metric,Value');
+            const ratedFeedbacks = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5);
+            const avgRating = ratedFeedbacks.length
+              ? (ratedFeedbacks.reduce((a, fb) => a + fb.rating, 0) / ratedFeedbacks.length).toFixed(2)
+              : 'N/A';
+            lines.push(`Total feedback responses,${feedbacks.length}`);
+            lines.push(`Average rating,${avgRating}`);
+            ['complaint', 'suggestion', 'positive'].forEach(cat => {
+              const c = feedbacks.filter(fb => fb.category === cat).length;
+              lines.push(`${cap(cat)} feedback count,${c}`);
+            });
+            lines.push('');
+
+            // ── Doctor Statistics ──
+            lines.push('DOCTOR STATISTICS');
+            lines.push('Metric,Value');
+            const docStatusStoreLocal = JSON.parse(localStorage.getItem('smartheal_docStatus') || '{}');
+            const approvedDoctors = doctors.filter(d => d.status === 'approved' || !d.status);
+            let onCount = 0, breakCount = 0, offCount = 0;
+            approvedDoctors.forEach(d => {
+              const st = docStatusStoreLocal[d.uid] || docStatusStoreLocal[d.id] || 'active';
+              if (st === 'active') onCount++;
+              else if (st === 'break') breakCount++;
+              else offCount++;
+            });
+            lines.push(`Total approved doctors,${approvedDoctors.length}`);
+            lines.push(`On duty,${onCount}`);
+            lines.push(`On break,${breakCount}`);
+            lines.push(`Off duty,${offCount}`);
+            lines.push(`Pending applications,${apps.filter(a => !a.status || a.status === 'pending').length}`);
+            lines.push(`Rejected applications,${apps.filter(a => a.status === 'rejected').length}`);
+
+            const csv = lines.join('\n');
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            a.download = 'smartheal-analytics-report.csv';
+            a.click();
+            showAdminToast('t-success', '✓', 'Analytics report downloaded.');
+          }
+
+          // ── 1. Patient Flow — Last 7 Days ─────────────────────────
+
+          function _renderPatientFlowChart(visits, queue) {
+            const bc = document.getElementById('patientFlowChart');
+            const bl = document.getElementById('patientFlowLabels');
+            if (!bc || !bl) return;
+
+            // Build last 7 days date strings (oldest → newest, today last)
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6)); // [today-6, … , today]
+
+            // Count per day from visitHistory (createdAt field)
+            const opdCounts = new Array(7).fill(0);
+            const emgCounts = new Array(7).fill(0);
+
+            visits.forEach(v => {
+              if (!v.createdAt) return;
+              const d = new Date(v.createdAt).toISOString().slice(0, 10);
+              const idx = last7.indexOf(d);
+              if (idx === -1) return;
+              if (isEmergency(v)) emgCounts[idx]++;
+              else opdCounts[idx]++;
+            });
+
+            // Also absorb queue records that may not be in visitHistory yet
+            queue.forEach(p => {
+              const ts = p.createdAt || p.registeredAt || p.timestamp;
+              if (!ts) return;
+              const d = new Date(ts).toISOString().slice(0, 10);
+              const idx = last7.indexOf(d);
+              if (idx === -1) return;
+              // Only add if not already counted in visits (match by token)
+              const alreadyCounted = visits.some(v => v.token && v.token === p.token
+                && v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === d);
+              if (alreadyCounted) return;
+              if (isEmergency(p)) emgCounts[idx]++;
+              else opdCounts[idx]++;
+            });
+
+            const maxVal = Math.max(...opdCounts, ...emgCounts, 1); // avoid /0
+            const totalThisWeek = opdCounts.reduce((a, b) => a + b, 0) + emgCounts.reduce((a, b) => a + b, 0);
+
+            bc.innerHTML = '';
+            bl.innerHTML = '';
+
+            last7.forEach((ymd, i) => {
+              const isToday = (i === 6);
+              const label = isToday ? 'Today' : shortDay(ymd);
+
               const grp = document.createElement('div');
               grp.className = 'bc-bar-group';
+
               const b1 = document.createElement('div');
               b1.className = 'bc-bar';
-              b1.style.height = Math.round((opdVals[i] / maxVal) * 108) + 'px';
-              b1.style.background = i === 6 ? 'var(--teal-mid)' : 'rgba(16,81,246,0.45)';
-              b1.title = `OPD: ${opdVals[i]}`;
+              b1.style.height = Math.max(4, Math.round((opdCounts[i] / maxVal) * 108)) + 'px';
+              b1.style.background = isToday ? 'var(--teal-mid)' : 'rgba(16,81,246,0.45)';
+              b1.title = `OPD: ${opdCounts[i]}`;
+
               const b2 = document.createElement('div');
               b2.className = 'bc-bar';
-              b2.style.height = Math.round((emgVals[i] / maxVal) * 108) + 'px';
-              b2.style.background = i === 6 ? 'var(--amber)' : 'rgba(219,135,197,0.5)';
-              b2.title = `Emergency: ${emgVals[i]}`;
-              grp.appendChild(b1); grp.appendChild(b2); bc.appendChild(grp);
+              b2.style.height = Math.max(emgCounts[i] > 0 ? 4 : 0, Math.round((emgCounts[i] / maxVal) * 108)) + 'px';
+              b2.style.background = isToday ? 'var(--amber)' : 'rgba(219,135,197,0.5)';
+              b2.title = `Emergency: ${emgCounts[i]}`;
+
+              grp.appendChild(b1);
+              grp.appendChild(b2);
+              bc.appendChild(grp);
+
               const lbl = document.createElement('div');
-              lbl.className = 'bc-lbl'; lbl.textContent = d; bl.appendChild(lbl);
+              lbl.className = 'bc-lbl';
+              lbl.textContent = label;
+              bl.appendChild(lbl);
             });
+
+            // Update section sub if no data at all
+            if (totalThisWeek === 0) {
+              const sub = document.querySelector('#analytics .section-sub');
+              if (sub && !sub.textContent.includes('No registrations')) {
+                // Leave it — loadAnalytics already set it
+              }
+            }
+          }
+
+          // ── 2. Department Load Today ───────────────────────────────
+
+          function _renderDeptLoad(visits, queue) {
+            const container = document.getElementById('deptLoadBars');
+            if (!container) return;
+
+            const todayStr = dateStr(0);
+            const deptMap = {};
+
+            // From visitHistory — today only
+            visits.forEach(v => {
+              if (!v.createdAt) return;
+              if (new Date(v.createdAt).toISOString().slice(0, 10) !== todayStr) return;
+              const dept = normDept(v.dept || v.department || v.specialization || '');
+              deptMap[dept] = (deptMap[dept] || 0) + 1;
+            });
+
+            // From queue — absorb records not in visitHistory
+            queue.forEach(p => {
+              const ts = p.createdAt || p.registeredAt || p.timestamp;
+              // If no timestamp assume it's today (queue is cleared daily in most implementations)
+              if (ts && new Date(ts).toISOString().slice(0, 10) !== todayStr) return;
+              const alreadyCounted = visits.some(v => v.token && v.token === p.token);
+              if (alreadyCounted) return;
+              const dept = normDept(p.dept || p.department || p.specialization || '');
+              deptMap[dept] = (deptMap[dept] || 0) + 1;
+            });
+
+            // Sort by count descending
+            const sorted = Object.entries(deptMap).sort((a, b) => b[1] - a[1]);
+
+            if (sorted.length === 0) {
+              container.innerHTML = '<div style="padding:24px 0;text-align:center;color:var(--text-2);font-size:13px;">No patient registrations today yet.</div>';
+              return;
+            }
+
+            const maxCount = sorted[0][1];
+            container.innerHTML = sorted.map(([dept, count]) => {
+              const pct = Math.max(4, Math.round((count / maxCount) * 100));
+              return `
+                <div class="dept-bar-row">
+                  <div class="dept-bar-name">${escHtml(dept)}</div>
+                  <div class="dept-bar-track">
+                    <div class="dept-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--teal-mid),var(--amber))"></div>
+                  </div>
+                  <div class="dept-bar-val">${count}</div>
+                </div>`;
+            }).join('');
+          }
+
+          // ── 3. Emergency Trends ────────────────────────────────────
+
+          function _renderEmergencyTrends(visits, queue) {
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
+
+            // Per-day emergency counts from visitHistory
+            const emgPerDay = new Array(7).fill(0);
+            visits.forEach(v => {
+              if (!isEmergency(v) || !v.createdAt) return;
+              const d = new Date(v.createdAt).toISOString().slice(0, 10);
+              const idx = last7.indexOf(d);
+              if (idx !== -1) emgPerDay[idx]++;
+            });
+
+            // Absorb from queue
+            queue.forEach(p => {
+              if (!isEmergency(p)) return;
+              const ts = p.createdAt || p.registeredAt || p.timestamp;
+              if (!ts) return;
+              const d = new Date(ts).toISOString().slice(0, 10);
+              const idx = last7.indexOf(d);
+              if (idx === -1) return;
+              const alreadyCounted = visits.some(v => isEmergency(v) && v.token && v.token === p.token);
+              if (!alreadyCounted) emgPerDay[idx]++;
+            });
+
+            const weekTotal = emgPerDay.reduce((a, b) => a + b, 0);
+            const maxEmg = Math.max(...emgPerDay, 1);
+
+            // Spark bars
+            const sparkBarsEl = document.getElementById('spark-emg-bars');
+            if (sparkBarsEl) {
+              sparkBarsEl.innerHTML = emgPerDay.map((c, i) => {
+                const h = Math.max(c > 0 ? 8 : 0, Math.round((c / maxEmg) * 100));
+                const isPeak = c === maxEmg && c > 0;
+                return `<div class="spark-b${isPeak ? ' peak' : ''}" style="height:${h}%"></div>`;
+              }).join('');
+            }
+
+            const totalEl = document.getElementById('spark-emg-total');
+            const subEl   = document.getElementById('spark-emg-sub');
+            if (totalEl) totalEl.textContent = weekTotal > 0 ? weekTotal : '0';
+            if (subEl)   subEl.textContent   = weekTotal === 0 ? 'None this week' : 'Past 7 days';
+
+            // Bottom stats
+            const safeSet = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            safeSet('emg-stat-week', weekTotal > 0 ? weekTotal : 'None');
+
+            // Active = in queue with emergency flag
+            const nowServing = localStorage.getItem('smartheal_nowServing');
+            const calling    = localStorage.getItem('smartheal_calling');
+            const activeEmg = queue.filter(p => {
+              if (!isEmergency(p)) return false;
+              const tok = String(p.token || '').replace('#', '');
+              const isServing  = nowServing && String(nowServing).replace('#', '') === tok;
+              const isCalling  = calling    && String(calling).replace('#', '')    === tok;
+              return !isServing && !isCalling && p.status !== 'completed' && p.status !== 'done';
+            }).length;
+
+            // Completed = visitHistory emergency records with consultation note
+            const todayStr = dateStr(0);
+            const doneEmg = visits.filter(v =>
+              isEmergency(v) && isCompleted(v)
+              && v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === todayStr
+            ).length;
+
+            safeSet('emg-stat-active', activeEmg > 0 ? activeEmg : '0');
+            safeSet('emg-stat-done',   doneEmg   > 0 ? doneEmg   : '0');
+          }
+
+          // ── 4. Satisfaction sparkline (bars track last 7 days avg) ─
+
+          function _renderSatisfactionSpark(feedbacks) {
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
+            const daySums   = new Array(7).fill(0);
+            const dayCounts = new Array(7).fill(0);
+
+            feedbacks.forEach(fb => {
+              if (!fb.submittedAt || !fb.rating) return;
+              const d = new Date(fb.submittedAt).toISOString().slice(0, 10);
+              const idx = last7.indexOf(d);
+              if (idx !== -1) {
+                daySums[idx]   += fb.rating;
+                dayCounts[idx] += 1;
+              }
+            });
+
+            const dayAvgs = daySums.map((s, i) => dayCounts[i] > 0 ? s / dayCounts[i] : null);
+            const validAvgs = dayAvgs.filter(a => a !== null);
+            const maxAvg = validAvgs.length > 0 ? Math.max(...validAvgs) : 5;
+
+            const sparkBarsEl = document.getElementById('spark-satisfaction-bars');
+            if (sparkBarsEl) {
+              sparkBarsEl.innerHTML = dayAvgs.map((avg, i) => {
+                if (avg === null) return `<div class="spark-b" style="height:8%;opacity:0.25"></div>`;
+                const h = Math.max(8, Math.round((avg / 5) * 100)); // scale to 5-star max
+                const isPeak = avg === maxAvg && dayCounts[i] > 0;
+                return `<div class="spark-b${isPeak ? ' peak' : ''}" style="height:${h}%"></div>`;
+              }).join('');
+            }
+
+            // Overall avg (already computed by loadFeedbackCenter — just sync here)
+            const totalCount = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).length;
+            const totalSum   = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).reduce((a, fb) => a + fb.rating, 0);
+            const overallAvg = totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '—';
+
+            const sparkEl    = document.getElementById('spark-satisfaction');
+            const sparkSubEl = document.getElementById('spark-satisfaction-sub');
+            if (sparkEl)    sparkEl.textContent    = overallAvg;
+            if (sparkSubEl) sparkSubEl.textContent = totalCount > 0 ? `${totalCount} review${totalCount !== 1 ? 's' : ''}` : 'No reviews yet';
+          }
+
+          // ── 5. Average Wait Time spark (delegated to loadDashboardStats) ─
+          // The kpi-wait card is already computed in loadDashboardStats().
+          // Here we also populate the analytics spark-wait-val from the same calculation.
+          function _syncWaitTimeSpark() {
+            const visits   = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const todayStr = dateStr(0);
+            const todayVisits = visits.filter(v =>
+              v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === todayStr
+            );
+            const waitTimes = todayVisits
+              .filter(v => v.createdAt && (v.completedAt || v.attendedAt))
+              .map(v => {
+                const start = new Date(v.createdAt).getTime();
+                const end   = new Date(v.completedAt || v.attendedAt).getTime();
+                return (end - start) / 60000;
+              })
+              .filter(m => m > 0 && m < 300);
+
+            const valEl = document.getElementById('spark-wait-val');
+            const subEl = document.getElementById('spark-wait-sub');
+            if (waitTimes.length > 0) {
+              const avg = Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length);
+              if (valEl) valEl.textContent = avg + 'm';
+              if (subEl) subEl.textContent = `Avg of ${waitTimes.length} completed`;
+            } else {
+              if (valEl) valEl.textContent = 'N/A';
+              if (subEl) subEl.textContent = 'No timestamp data yet';
+            }
+          }
+
+          // ── Wire analytics sidebar nav click ──────────────────────
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('a.sb-link').forEach(link => {
+              link.addEventListener('click', () => {
+                if (link.getAttribute('href') === '#analytics') {
+                  setTimeout(() => { loadAnalytics(); _syncWaitTimeSpark(); }, 80);
+                }
+              });
+            });
+            // Initial render on page load
+            loadAnalytics();
+            _syncWaitTimeSpark();
+          });
+          // Immediate call if DOM already ready
+          if (document.readyState !== 'loading') {
+            loadAnalytics();
+            _syncWaitTimeSpark();
           }
 
           // ── SCROLL SPY (sidebar) ──
-          const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'heatwave', 'analytics'];
+          const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'analytics'];
           window.addEventListener('scroll', () => {
             const y = window.scrollY + 120;
             sections.forEach(id => {
@@ -3759,6 +4121,17 @@
             if (toastTimeout) clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => t.classList.remove('show'), 3500);
           }
+
+          // ── REAL-TIME UPDATES for Delay Monitoring ──
+          // Refresh when queue/visit data changes in another tab (patient registers,
+          // doctor calls patient, consultation completes), and poll periodically as
+          // a fallback for same-tab changes (no full page reload).
+          window.addEventListener('storage', function (e) {
+            if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications'].includes(e.key)) {
+              loadDoctorManagement();
+            }
+          });
+          setInterval(loadDoctorManagement, 10000);
 
           // Auto-load on DOMContentLoaded
           document.addEventListener('DOMContentLoaded', loadApplications);

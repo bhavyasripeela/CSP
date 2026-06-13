@@ -1691,6 +1691,66 @@
         }
 
         // ══ LOGIN HANDLER ══
+        // ══════════════════════════════════════════════════════════
+        // RESTORE ACTIVE QUEUE SESSION ON LOGIN
+        //
+        //   Login
+        //     ↓
+        //   Get patient account ID/email/phone
+        //     ↓
+        //   Search active queue records (hospitalQueue)
+        //     ↓
+        //   Find patient's latest active registration
+        //     ↓
+        //   Restore: Token, Department, Queue Position, Status
+        //
+        // currentTokenData only needs { token, department } — once the
+        // patient app (hospiiiii.html) loads, restoreTokenData() reads this,
+        // and syncMyTokenStatus() / updatePopupInfo() derive the live Queue
+        // Position and Status directly from hospitalQueue.
+        // ══════════════════════════════════════════════════════════
+        function restoreActiveQueueSession(patient) {
+            try {
+                const phone = String(patient.phone || '').replace(/\D/g, '');
+                if (!phone) { localStorage.removeItem('currentTokenData'); return; }
+
+                const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+
+                // "Active" = still in the queue pipeline (not finished/no-show)
+                const ACTIVE_STATUSES = ['Waiting', 'Calling', 'Serving', 'Emergency'];
+
+                const myActive = queue
+                    .filter(e => String(e.phone || '').replace(/\D/g, '') === phone)
+                    .filter(e => ACTIVE_STATUSES.includes(e.status || 'Waiting'))
+                    .sort((a, b) => (b.registeredAt || 0) - (a.registeredAt || 0));
+
+                if (myActive.length > 0) {
+                    const latest = myActive[0];
+
+                    // Restore Token + Department for the patient app
+                    localStorage.setItem('currentTokenData', JSON.stringify({
+                        token: latest.token,
+                        department: latest.dept
+                    }));
+
+                    // Queue Position — how many active patients are ahead in this dept
+                    const deptQueue = queue.filter(e =>
+                        (e.dept || 'General OPD') === latest.dept
+                        && ACTIVE_STATUSES.includes(e.status || 'Waiting')
+                    ).sort((a, b) => (a.registeredAt || 0) - (b.registeredAt || 0));
+                    const position = deptQueue.findIndex(e => e.token === latest.token) + 1;
+
+                    console.log(`[SmartHeal] Restored active registration — Token ${latest.token}, ` +
+                        `Dept ${latest.dept}, Position ${position || '?'}, Status ${latest.status || 'Waiting'}`);
+                } else {
+                    // No active registration for this patient — clear any stale token
+                    localStorage.removeItem('currentTokenData');
+                }
+            } catch (e) {
+                localStorage.removeItem('currentTokenData');
+            }
+        }
+
         function handleLogin() {
             const id = document.getElementById('idInput').value.trim();
             const pw = document.getElementById('pwInput').value.trim();
@@ -1708,7 +1768,7 @@
                     const found = stored.find(u => u.username.toLowerCase() === id.toLowerCase() && u.password === pw);
                     if (found) {
                         localStorage.setItem('currentPatient', JSON.stringify(found));
-                        localStorage.removeItem('currentTokenData');
+                        restoreActiveQueueSession(found);
                         loginSuccess(btn, r.redirect, id);
                         return;
                     }
@@ -1719,15 +1779,16 @@
                         let last = 'Patient';
                         if (id.toLowerCase() === 'ravi_kumar') { first = 'Ravi'; last = 'Kumar'; }
                         else if (id.toLowerCase() === 'anita_sharma') { first = 'Anita'; last = 'Sharma'; }
-                        localStorage.setItem('currentPatient', JSON.stringify({
+                        const demoPatient = {
                             username: id,
                             first: first,
                             last: last,
                             phone: '9876543210',
                             age: '30',
                             gender: 'Male'
-                        }));
-                        localStorage.removeItem('currentTokenData');
+                        };
+                        localStorage.setItem('currentPatient', JSON.stringify(demoPatient));
+                        restoreActiveQueueSession(demoPatient);
                         loginSuccess(btn, r.redirect, id);
                     } else {
                         showMsg('loginError', 'error', '⚠️',

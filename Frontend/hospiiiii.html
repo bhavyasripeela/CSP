@@ -11,25 +11,29 @@
   <link rel="stylesheet" href="css/design-system.css">
   <style>
     :root {
-      --teal: #765568;
-      --teal-light: #E0F5F2;
-      --teal-mid: #1051f6;
-      --amber: #db87c5;
+      --teal: #0E7C7B;
+      --teal-light: #D0EFEF;
+      --teal-mid: #0E7C7B;
+      --amber: #F0A500;
       --amber-light: #FEF3E8;
-      --red: #b856a3;
+      --red: #E05555;
       --red-light: #FDEAEA;
       --blue: #1A5FBF;
       --blue-light: #E8F0FB;
-      --purple: #534AB7;
-      --purple-light: #EEEDFE;
-      --surface: #1A1625;
-      --white: #262134;
-      --text: #F0EBF5;
-      --text-2: #9B8EA9;
-      --text-3: #C88553;
-      --border: rgba(11, 110, 110, 0.12);
+      --purple: #0E7C7B;
+      --purple-light: #D0EFEF;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+      --surface: #0D1B2A;
+      --white: #132030;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
+      --border: rgba(14, 124, 123, 0.18);
+      --border-glow: rgba(14, 124, 123, 0.40);
       --radius: 18px;
       --radius-sm: 12px;
+      --radius-xs: 8px;
     }
 
     * {
@@ -88,7 +92,7 @@
     /* ── TABLET (600px+) — still single column, slight breathing room ── */
     @media(min-width:600px) {
       body {
-        background: #120E18;
+        background: var(--surface);
         display: flex;
         justify-content: center;
       }
@@ -104,7 +108,7 @@
         flex-shrink: 0;
         min-height: 90vh;
         border-radius: 28px;
-        box-shadow: 0 0 0 1px rgba(11, 110, 110, 0.1), 0 24px 80px rgba(11, 110, 110, 0.18);
+        box-shadow: 0 0 0 1px var(--border), 0 24px 80px rgba(14, 124, 123, 0.18);
       }
 
       .screen {
@@ -115,7 +119,7 @@
     /* ── DESKTOP (1024px+) — full website layout ── */
     @media(min-width:1024px) {
       body {
-        background: #120E18;
+        background: var(--surface);
         align-items: flex-start;
       }
 
@@ -147,7 +151,7 @@
         width: 100%;
         min-height: auto;
         border-radius: 20px;
-        box-shadow: 0 0 0 1px rgba(11, 110, 110, 0.1), 0 8px 40px rgba(11, 110, 110, 0.12);
+        box-shadow: 0 0 0 1px var(--border), 0 8px 40px rgba(14, 124, 123, 0.12);
       }
 
       /* Right panel */
@@ -375,9 +379,9 @@
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 20px;
-      background: rgba(219, 135, 197, 0.15);
+      background: rgba(240, 165, 0, 0.15);
       color: var(--amber);
-      border: 1px solid rgba(219, 135, 197, 0.3);
+      border: 1px solid rgba(240, 165, 0, 0.3);
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
@@ -408,9 +412,9 @@
     }
 
     .rp-token-badge.status-noshow {
-      background: rgba(184, 86, 163, 0.12);
+      background: rgba(224, 85, 85, 0.12);
       color: var(--red);
-      border-color: rgba(184, 86, 163, 0.25);
+      border-color: rgba(224, 85, 85, 0.25);
     }
 
     @keyframes badge-pulse {
@@ -1801,9 +1805,9 @@
     .upload-doc-btn {
       width: 100%;
       padding: 13px 16px;
-      background: linear-gradient(135deg, rgba(83, 74, 183, 0.18), rgba(184, 86, 163, 0.18));
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.18), rgba(26, 95, 191, 0.18));
       color: var(--text);
-      border: 1.5px dashed rgba(83, 74, 183, 0.55);
+      border: 1.5px dashed rgba(14, 124, 123, 0.55);
       border-radius: var(--radius-sm);
       font-family: 'DM Sans', sans-serif;
       font-size: 13px;
@@ -1818,7 +1822,7 @@
     }
 
     .upload-doc-btn:hover {
-      background: linear-gradient(135deg, rgba(83, 74, 183, 0.28), rgba(184, 86, 163, 0.28));
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.28), rgba(26, 95, 191, 0.28));
       border-color: var(--purple);
       transform: translateY(-1px);
     }
@@ -1869,7 +1873,7 @@
     .file-drop-zone:hover,
     .file-drop-zone.dragover {
       border-color: var(--purple);
-      background: rgba(83, 74, 183, 0.08);
+      background: rgba(14, 124, 123, 0.08);
     }
 
     .file-drop-zone input[type="file"] {
@@ -1966,9 +1970,9 @@
     }
 
     .badge-prescription {
-      background: rgba(83, 74, 183, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--purple);
-      border: 1px solid rgba(83, 74, 183, 0.3);
+      border: 1px solid rgba(14, 124, 123, 0.3);
     }
 
     .badge-lab {
@@ -1986,7 +1990,7 @@
     .badge-discharge {
       background: var(--amber-light);
       color: #a05c00;
-      border: 1px solid rgba(219, 135, 197, 0.3);
+      border: 1px solid rgba(240, 165, 0, 0.3);
     }
 
     .dvc-date {
@@ -2040,7 +2044,7 @@
       padding: 7px 16px;
       border-radius: 8px;
       border: 1px solid var(--purple);
-      background: rgba(83, 74, 183, 0.1);
+      background: rgba(14, 124, 123, 0.1);
       color: var(--purple);
       font-family: 'DM Sans', sans-serif;
       font-size: 12px;
@@ -2056,7 +2060,7 @@
       background: var(--purple);
       color: white;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(83, 74, 183, 0.35);
+      box-shadow: 0 4px 12px rgba(14, 124, 123, 0.35);
     }
 
     .dvc-view-btn:active {
@@ -2104,8 +2108,8 @@
 
     /* MediVault header banner */
     .mv-banner {
-      background: linear-gradient(135deg, rgba(83, 74, 183, 0.2), rgba(184, 86, 163, 0.15));
-      border: 1px solid rgba(83, 74, 183, 0.25);
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.2), rgba(224, 85, 85, 0.15));
+      border: 1px solid rgba(14, 124, 123, 0.25);
       border-radius: var(--radius-sm);
       padding: 12px 14px;
       margin-bottom: 14px;
@@ -2283,14 +2287,14 @@
 
     /* Normal upcoming follow-up */
     .fu-card.fu-upcoming {
-      background: linear-gradient(135deg, rgba(83, 74, 183, 0.13), rgba(26, 95, 191, 0.10));
-      border-color: rgba(83, 74, 183, 0.28);
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.13), rgba(26, 95, 191, 0.10));
+      border-color: rgba(14, 124, 123, 0.28);
     }
 
     /* Tomorrow — highlighted reminder */
     .fu-card.fu-tomorrow {
-      background: linear-gradient(135deg, rgba(219, 135, 197, 0.18), rgba(83, 74, 183, 0.14));
-      border-color: rgba(219, 135, 197, 0.45);
+      background: linear-gradient(135deg, rgba(240, 165, 0, 0.18), rgba(14, 124, 123, 0.14));
+      border-color: rgba(240, 165, 0, 0.45);
       animation: fu-glow 2.4s ease-in-out infinite;
     }
 
@@ -2298,18 +2302,18 @@
 
       0%,
       100% {
-        box-shadow: 0 0 0 0 rgba(219, 135, 197, 0);
+        box-shadow: 0 0 0 0 rgba(240, 165, 0, 0);
       }
 
       50% {
-        box-shadow: 0 0 0 4px rgba(219, 135, 197, 0.18);
+        box-shadow: 0 0 0 4px rgba(240, 165, 0, 0.18);
       }
     }
 
     /* Overdue */
     .fu-card.fu-overdue {
-      background: linear-gradient(135deg, rgba(184, 86, 163, 0.14), rgba(184, 86, 163, 0.07));
-      border-color: rgba(184, 86, 163, 0.35);
+      background: linear-gradient(135deg, rgba(224, 85, 85, 0.14), rgba(224, 85, 85, 0.07));
+      border-color: rgba(224, 85, 85, 0.35);
     }
 
     .fu-card-icon {

@@ -15,32 +15,33 @@
     ═══════════════════════════════════════════════════════ */
     :root {
       /* Brand colours */
-      --teal: #765568;
-      --teal-light: #E0F5F2;
-      --teal-mid: #1051f6;
-      --amber: #db87c5;
+      --teal: #0E7C7B;
+      --teal-light: #D0EFEF;
+      --teal-mid: #0E7C7B;
+      --amber: #F0A500;
       --amber-light: #FEF3E8;
-      --red: #b856a3;
+      --red: #E05555;
       --red-light: #FDEAEA;
       --blue: #1A5FBF;
       --blue-light: #E8F0FB;
-      --purple: #534AB7;
-      --purple-light: #EEEDFE;
+      --purple: #0E7C7B;
+      --purple-light: #D0EFEF;
       --green: #2ECC8A;
       --green-light: rgba(46, 204, 138, 0.12);
 
       /* Surfaces */
-      --surface: #1A1625;
-      --card: #211a2e;
-      --card-2: #262134;
+      --surface: #0D1B2A;
+      --card: #132030;
+      --card-2: #172636;
 
       /* Typography */
-      --text: #F0EBF5;
-      --text-2: #9B8EA9;
-      --text-3: #C88553;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
 
       /* Borders & effects */
-      --border: rgba(200, 180, 220, 0.13);
+      --border: rgba(14, 124, 123, 0.18);
+      --border-glow: rgba(14, 124, 123, 0.40);
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
       /* Radii */
@@ -3249,6 +3250,10 @@
       const reg = SH().getQueue();
       const doctorDept = currentDoctorProfile.specialization;
       const tokens = new Set(PATIENTS_LIVE.map(p => SH().tokenToNum(p.token)));
+      // Statuses that came from the shared queue (written on a previous session/
+      // by exportSharedQueue) are authoritative — map them onto patientStatuses
+      // so "Being Served" / "Completed" / "No-Show" survive a logout+login.
+      const VALID_STATUSES = ['Waiting', 'Calling', 'Serving', 'Completed', 'No-Show', 'Emergency'];
       reg.forEach(entry => {
         const num = entry.tokenNum || SH().tokenToNum(entry.token);
         if (!num || tokens.has(num)) return;
@@ -3258,14 +3263,16 @@
         tokens.add(num);
         const g = entry.gender || 'M';
         const names = (entry.name || 'Patient').split(' ');
+        const id = 'q-' + num;
+        const restoredStatus = VALID_STATUSES.includes(entry.status) ? entry.status : (entry.emg ? 'Emergency' : 'Waiting');
         PATIENTS_LIVE.push({
-          id: 'q-' + num,
+          id,
           token: entry.token || SH().formatToken(num),
           name: entry.name || 'Registered Patient',
           age: entry.age || '—',
           gender: g,
           dept: entry.dept || 'General OPD',
-          status: entry.emg ? 'Emergency' : 'Waiting',
+          status: restoredStatus,
           wait: '~5m',
           phone: entry.phone || '—',
           complaint: entry.complaint || 'Registered via Smart Heal patient app.',
@@ -3273,9 +3280,13 @@
           initials: (names[0][0] || 'P') + (names[1] ? names[1][0] : ''),
           emg: !!entry.emg,
           allergies: entry.allergies || 'Not recorded',
+          registeredAt: entry.registeredAt || Date.now(),
           vault: [], history: [], drugs: [],
           source: 'patient'
         });
+        // Make sure patientStatus(p) reflects the restored status immediately
+        // (patientStatuses takes precedence over p.status in patientStatus()).
+        if (!(id in patientStatuses)) patientStatuses[id] = restoredStatus;
       });
       PATIENTS_LIVE.sort((a, b) => SH().tokenToNum(a.token) - SH().tokenToNum(b.token));
     }
@@ -3287,19 +3298,41 @@
         ? (currentDoctorProfile.name.startsWith('Dr') ? currentDoctorProfile.name : 'Dr. ' + currentDoctorProfile.name)
         : null;
 
-      const list = PATIENTS_LIVE.map(p => ({
-        tokenNum: SH().tokenToNum(p.token),
-        token: p.token,
-        name: p.name,
-        dept: p.dept,
-        emg: !!p.emg,
-        status: patientStatus(p),
-        age: p.age,
-        gender: p.gender,
-        phone: p.phone,
-        doctor: docName  // real logged-in doctor name, readable by patient dashboard
-      }));
-      SH().setQueue(list);
+      // Read the FULL shared queue (other departments' patients live here too —
+      // this doctor's PATIENTS_LIVE only ever holds their own department).
+      const fullQueue = SH().getQueue();
+
+      const myList = PATIENTS_LIVE.map(p => {
+        const num = SH().tokenToNum(p.token);
+        const existing = fullQueue.find(f => (f.tokenNum || SH().tokenToNum(f.token)) === num) || {};
+        return {
+          ...existing,
+          tokenNum: num,
+          token: p.token,
+          name: p.name,
+          dept: p.dept,
+          emg: !!p.emg,
+          status: patientStatus(p),
+          age: p.age,
+          gender: p.gender,
+          phone: p.phone,
+          complaint: p.complaint || existing.complaint || 'Registered via Smart Heal patient app.',
+          allergies: p.allergies || existing.allergies || 'Not recorded',
+          // Preserve original registration timestamp — never lose it on persist
+          registeredAt: existing.registeredAt || p.registeredAt || Date.now(),
+          doctor: docName  // real logged-in doctor name, readable by patient dashboard
+        };
+      });
+      const myTokens = new Set(myList.map(e => e.tokenNum));
+
+      // Keep every queue entry that doesn't belong to THIS doctor's department
+      // (other departments' active registrations must never be wiped out).
+      const others = fullQueue.filter(e => {
+        const num = e.tokenNum || SH().tokenToNum(e.token);
+        return !myTokens.has(num);
+      });
+
+      SH().setQueue([...others, ...myList]);
 
       // Also write a lightweight key so the patient dashboard can look up the attending
       // doctor by department without scanning the full queue.
