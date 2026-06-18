@@ -2541,6 +2541,7 @@
 
 
 
+        <script type="module" src="smart-heal-sync.js"></script>
         <script>
           // ── CLOCK ──
           function updateClock() {
@@ -4134,13 +4135,19 @@
           setInterval(loadDoctorManagement, 10000);
 
           // Auto-load on DOMContentLoaded
-          document.addEventListener('DOMContentLoaded', loadApplications);
-          // Immediate call for when script runs after DOM is ready
-          if (document.readyState !== 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
             loadApplications();
             loadDashboardStats();
             loadDoctorManagement();
-          }
+            
+            // START FIREBASE REAL-TIME SYNC
+            setTimeout(() => {
+              if (window.SmartHealSync) {
+                console.log("Admin Dashboard connecting to Firebase...");
+                window.SmartHealSync.initRealTimeSync(refreshDashboard);
+              }
+            }, 800);
+          });
         </script>
 
         <!-- ADMIN TOAST -->

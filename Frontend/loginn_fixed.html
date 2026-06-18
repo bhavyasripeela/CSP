@@ -192,7 +192,6 @@
             flex: 1;
             display: flex;
             flex-direction: row;
-            /* LEFT panel + RIGHT panel side by side */
             align-items: center;
             justify-content: center;
             max-width: 1100px;
@@ -211,7 +210,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* vertically align with the card */
             padding-right: 0;
             animation: fadeSlideUp 0.6s ease both;
         }
@@ -242,17 +240,8 @@
         }
 
         @keyframes pulseDot {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.5;
-                transform: scale(0.7);
-            }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
         }
 
         .lp-title {
@@ -275,13 +264,8 @@
         }
 
         @keyframes shimmerText {
-            from {
-                background-position: 0% center;
-            }
-
-            to {
-                background-position: 200% center;
-            }
+            from { background-position: 0% center; }
+            to { background-position: 200% center; }
         }
 
         .lp-sub {
@@ -523,15 +507,8 @@
         }
 
         @keyframes iconBounce {
-            from {
-                transform: scale(0.7);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .card-role-eyebrow {
@@ -695,21 +672,10 @@
             transition: background 0.3s;
         }
 
-        .pw-bar.s1 {
-            background: var(--red);
-        }
-
-        .pw-bar.s2 {
-            background: var(--amber);
-        }
-
-        .pw-bar.s3 {
-            background: var(--teal-mid);
-        }
-
-        .pw-bar.s4 {
-            background: var(--green);
-        }
+        .pw-bar.s1 { background: var(--red); }
+        .pw-bar.s2 { background: var(--amber); }
+        .pw-bar.s3 { background: var(--teal-mid); }
+        .pw-bar.s4 { background: var(--green); }
 
         .pw-strength-lbl {
             font-size: 10px;
@@ -807,9 +773,7 @@
             transition: all 0.2s;
             letter-spacing: 0.01em;
             color: #ffffff !important;
-            /* always white — no exceptions */
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-            /* crisp on any gradient */
         }
 
         .login-btn::after {
@@ -856,9 +820,7 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         /* Error / success messages */
@@ -901,7 +863,7 @@
             color: var(--teal-mid);
         }
 
-        /* Switch prompt (New user? / Already have account?) */
+        /* Switch prompt */
         .switch-prompt {
             margin-top: 20px;
             text-align: center;
@@ -1110,59 +1072,23 @@
 
         /* ── KEYFRAMES ── */
         @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { transform: translateY(24px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            15% {
-                transform: translateX(-7px);
-            }
-
-            30% {
-                transform: translateX(7px);
-            }
-
-            45% {
-                transform: translateX(-5px);
-            }
-
-            60% {
-                transform: translateX(5px);
-            }
-
-            75% {
-                transform: translateX(-3px);
-            }
-
-            90% {
-                transform: translateX(3px);
-            }
+            0%, 100% { transform: translateX(0); }
+            15% { transform: translateX(-7px); }
+            30% { transform: translateX(7px); }
+            45% { transform: translateX(-5px); }
+            60% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+            90% { transform: translateX(3px); }
         }
 
         /* ── RESPONSIVE ── */
@@ -1173,13 +1099,11 @@
                 padding: 32px 24px 48px;
                 gap: 32px;
             }
-
             .left-panel {
                 padding-right: 0;
                 max-width: 520px;
                 width: 100%;
             }
-
             .right-panel {
                 width: 100%;
                 max-width: 480px;
@@ -1187,34 +1111,13 @@
         }
 
         @media(max-width:600px) {
-            .navbar {
-                padding: 0 16px;
-            }
-
-            .login-wrap {
-                padding: 24px 16px 48px;
-            }
-
-            .login-card {
-                padding: 26px 20px 24px;
-            }
-
-            .field-row {
-                grid-template-columns: 1fr;
-            }
-
-            .footer {
-                padding: 20px 16px;
-            }
-
-            .footer-inner {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .lp-title {
-                letter-spacing: -1.5px;
-            }
+            .navbar { padding: 0 16px; }
+            .login-wrap { padding: 24px 16px 48px; }
+            .login-card { padding: 26px 20px 24px; }
+            .field-row { grid-template-columns: 1fr; }
+            .footer { padding: 20px 16px; }
+            .footer-inner { flex-direction: column; align-items: flex-start; }
+            .lp-title { letter-spacing: -1.5px; }
         }
     </style>
 </head>
@@ -1230,7 +1133,6 @@
 
     <div class="page">
 
-        <!-- ── NAVBAR (no back button) ── -->
         <nav class="navbar">
             <div>
                 <div class="nav-brand">Smart<span>Heal</span></div>
@@ -1240,7 +1142,6 @@
 
         <main class="login-wrap">
 
-            <!-- ══ LEFT PANEL ══ -->
             <div class="left-panel">
                 <div class="lp-eyebrow">
                     <div class="dot"></div>Secure Portal Access
@@ -1248,13 +1149,44 @@
                 <h1 class="lp-title">Welcome to<br><span class="shimmer">SmartHeal</span></h1>
                 <p class="lp-sub" id="lpSub">Sign in or create your account to access queue tracking, health records,
                     and hospital services — all in one place.</p>
+
+                <div class="role-pills">
+                    <div class="role-pill rp-patient active" onclick="selectRole('patient', this)">
+                        <div class="rp-icon">🏥</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Patient Portal</div>
+                            <div class="rp-desc">Book appointments & view records</div>
+                        </div>
+                        <div class="rp-check">✓</div>
+                    </div>
+                    <div class="role-pill rp-doctor" onclick="selectRole('doctor', this)">
+                        <div class="rp-icon">👨‍⚕️</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Doctor Portal</div>
+                            <div class="rp-desc">Manage queues & prescriptions</div>
+                        </div>
+                        <div class="rp-check"></div>
+                    </div>
+                    <div class="role-pill rp-admin" onclick="selectRole('admin', this)">
+                        <div class="rp-icon">🛡️</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Admin Portal</div>
+                            <div class="rp-desc">Hospital monitoring & settings</div>
+                        </div>
+                        <div class="rp-check"></div>
+                    </div>
+                </div>
+
+                <div class="sec-badges">
+                    <span class="sec-badge">🔒 256-bit Encrypted</span>
+                    <span class="sec-badge">🛡️ HIPAA Compliant</span>
+                    <span class="sec-badge">✓ Gov. Approved</span>
+                </div>
             </div>
 
-            <!-- ══ RIGHT PANEL ══ -->
             <div class="right-panel">
                 <div class="card-views">
 
-                    <!-- ════════ LOGIN CARD ════════ -->
                     <div class="card-view active" id="viewLogin">
                         <div class="login-card" id="loginCard">
                             <div class="card-corner-glow" id="loginCorner"></div>
@@ -1265,7 +1197,6 @@
                             <div class="card-role-sub" id="cardSub">New to SmartHeal? Create your free account in
                                 seconds.</div>
 
-                            <!-- Login / Register tab (patient only) -->
                             <div class="auth-tabs" id="authTabs">
                                 <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign
                                     In</button>
@@ -1273,20 +1204,18 @@
                                     Account</button>
                             </div>
 
-                            <!-- Username field -->
                             <div class="field-group">
-                                <label class="field-label" id="idLabel"><span id="idLabelIcon">👤</span> <span
-                                        id="idLabelText">Username</span></label>
+                                <label class="field-label" id="idLabel"><span id="idLabelIcon">📧</span> <span
+                                        id="idLabelText">Email Address</span></label>
                                 <div class="field-wrap">
-                                    <input class="field-input has-icon" type="text" id="idInput"
-                                        placeholder="Enter your username" autocomplete="username" spellcheck="false" />
-                                    <span class="field-icon" id="idFieldIcon">👤</span>
+                                    <input class="field-input has-icon" type="email" id="idInput"
+                                        placeholder="Enter your email" autocomplete="email" spellcheck="false" />
+                                    <span class="field-icon" id="idFieldIcon">📧</span>
                                 </div>
-                                <div class="field-hint" id="idHint">Use the username you created during registration.
+                                <div class="field-hint" id="idHint">Use the email you registered with.
                                 </div>
                             </div>
 
-                            <!-- Password field -->
                             <div class="field-group">
                                 <label class="field-label"><span>🔑</span> Password</label>
                                 <div class="field-wrap">
@@ -1298,10 +1227,10 @@
                                 </div>
                             </div>
 
-                            <!-- Remember + Forgot (login only) -->
                             <div class="form-row" id="rememberRow">
                                 <label class="remember"><input type="checkbox" id="rememberMe" /><span
                                         class="remember-lbl">Remember me</span></label>
+                                <a class="forgot-link" onclick="handleForgot()">Forgot password?</a>
                             </div>
 
                             <button class="login-btn" id="loginBtn" onclick="handleLogin()">
@@ -1313,16 +1242,48 @@
                             <div class="msg-box error" id="loginError"><span>⚠️</span><span id="loginErrorText">Invalid
                                     credentials.</span></div>
 
-                            <!-- Switch to register -->
                             <div class="switch-prompt" id="loginSwitchPrompt">
                                 <span class="sp-text">New to SmartHeal?</span>
                                 <button class="sp-link" onclick="switchTab('register')">Create a free account →</button>
                             </div>
-                        </div><!-- end loginCard -->
-                    </div><!-- end viewLogin -->
+                        </div><div class="demo-section">
+                            <div class="demo-toggle" id="demoToggleLogin" onclick="toggleDemo('Login')">
+                                <span>Demo Accounts</span>
+                                <span class="chev">▼</span>
+                            </div>
+                            <div class="demo-body" id="demoBodyLogin">
+                                <div class="demo-inner">
+                                    <div class="demo-role-title">Patients</div>
+                                    <div class="demo-cred" onclick="fillCreds('ravi@smartheal.com', 'patient123', 'patient')">
+                                        <div class="dc-left">
+                                            <div class="dc-name">Ravi Kumar (Patient)</div>
+                                            <div class="dc-id">ravi@smartheal.com</div>
+                                        </div>
+                                        <div class="dc-use">Use →</div>
+                                    </div>
 
-                    <!-- ════════ REGISTER CARD ════════ -->
-                    <div class="card-view" id="viewRegister">
+                                    <div class="demo-role-title">Doctors</div>
+                                    <div class="demo-cred" onclick="fillCreds('doctor@smartheal.com', 'doctor123', 'doctor')">
+                                        <div class="dc-left">
+                                            <div class="dc-name">Dr. Priya Sharma</div>
+                                            <div class="dc-id">doctor@smartheal.com</div>
+                                        </div>
+                                        <div class="dc-use">Use →</div>
+                                    </div>
+
+                                    <div class="demo-role-title">Admin</div>
+                                    <div class="demo-cred" onclick="fillCreds('admin@smartheal.com', 'admin2025', 'admin')">
+                                        <div class="dc-left">
+                                            <div class="dc-name">Hospital Admin</div>
+                                            <div class="dc-id">admin@smartheal.com</div>
+                                        </div>
+                                        <div class="dc-use">Use →</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><div class="card-view" id="viewRegister">
                         <div class="login-card" id="registerCard"
                             style="--card-accent:linear-gradient(90deg,var(--teal),var(--blue));">
                             <div class="card-corner-glow" style="background:var(--teal);"></div>
@@ -1336,7 +1297,6 @@
                                     style="color:var(--amber);background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">Sign
                                     in instead →</button></div>
 
-                            <!-- Progress steps -->
                             <div style="display:flex;gap:5px;margin-bottom:22px;" id="regStepBar">
                                 <div style="flex:1;height:3px;border-radius:2px;background:var(--teal-mid);transition:background 0.3s;"
                                     id="step1bar"></div>
@@ -1348,7 +1308,6 @@
                             <div style="font-size:10px;color:var(--text-3);margin-bottom:16px;" id="regStepLabel">Step 1
                                 of 3 — Personal details</div>
 
-                            <!-- STEP 1: Personal details -->
                             <div id="regStep1">
                                 <div class="field-row">
                                     <div class="field-group">
@@ -1399,15 +1358,13 @@
                                 </button>
                             </div>
 
-                            <!-- STEP 2: Account credentials -->
                             <div id="regStep2" style="display:none;">
                                 <div class="field-group">
-                                    <label class="field-label">🪪 Username</label>
-                                    <div class="field-wrap"><input class="field-input has-icon" type="text"
-                                            id="regUsername" placeholder="e.g. ravi_kumar" autocomplete="username"
-                                            spellcheck="false" /><span class="field-icon">🪪</span></div>
-                                    <div class="field-hint">Lowercase letters, numbers and underscores only. You'll use
-                                        this to log in.</div>
+                                    <label class="field-label">📧 Email Address</label>
+                                    <div class="field-wrap"><input class="field-input has-icon" type="email"
+                                            id="regUsername" placeholder="e.g. ravi@smartheal.com" autocomplete="email"
+                                            spellcheck="false" /><span class="field-icon">📧</span></div>
+                                    <div class="field-hint">We will use this email for your account and password resets.</div>
                                 </div>
                                 <div class="field-group">
                                     <label class="field-label">🔑 Password</label>
@@ -1452,7 +1409,6 @@
                                 </div>
                             </div>
 
-                            <!-- STEP 3: Confirm & submit -->
                             <div id="regStep3" style="display:none;">
                                 <div
                                     style="background:#0d2233;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;">
@@ -1485,7 +1441,6 @@
                                 </div>
                             </div>
 
-                            <!-- Success state -->
                             <div id="regSuccess" style="display:none;text-align:center;padding:16px 0;">
                                 <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">🎉</div>
                                 <div
@@ -1499,13 +1454,7 @@
                                     onclick="goToLoginAfterReg()">Sign In Now →</button>
                             </div>
 
-                        </div><!-- end registerCard -->
-                    </div><!-- end viewRegister -->
-
-                </div><!-- end card-views -->
-            </div><!-- end right-panel -->
-
-        </main>
+                        </div></div></div></div></main>
 
         <footer class="footer">
             <div class="footer-inner">
@@ -1522,7 +1471,11 @@
 
     </div>
 
-    <script>
+    <script type="module">
+        import { auth, db } from '../Backend/firebase-config.js';
+        import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
         // ══════════════════════════════════════════
         // ROLE CONFIG
         // ══════════════════════════════════════════
@@ -1530,8 +1483,8 @@
             patient: {
                 icon: '🏥', eyebrow: 'Patient Portal', eyebrowColor: 'var(--teal)',
                 title: 'Sign in', sub: 'New to SmartHeal? Create your free account in seconds.',
-                idLabelText: 'Username', idPlaceholder: 'Enter your username',
-                idFieldIcon: '👤', idHint: 'Use the username you set during registration.',
+                idLabelText: 'Email Address', idPlaceholder: 'Enter your email',
+                idFieldIcon: '📧', idHint: 'Use the email address you set during registration.',
                 btnText: 'Sign In to Patient Portal',
                 accentBar: 'linear-gradient(90deg,var(--teal),var(--blue))',
                 cornerGlow: 'var(--teal)',
@@ -1541,14 +1494,14 @@
                 btnGradient: 'linear-gradient(135deg, #0E7C7B, #1A5FBF)',
                 redirect: 'hospiiiii.html',
                 showTabs: true,
-                validUsers: ['ravi_kumar', 'anita_sharma', 'demo', 'patient'],
+                validUsers: ['ravi@smartheal.com', 'anita@smartheal.com', 'demo@smartheal.com', 'patient@smartheal.com'],
                 validPass: ['patient123', 'test1234', 'demo', 'patient']
             },
             doctor: {
                 icon: '👨‍⚕️', eyebrow: 'Doctor Portal', eyebrowColor: 'var(--teal)',
-                title: 'Sign-in', sub: 'Enter your Doctor ID issued by hospital administration.',
-                idLabelText: 'Doctor ID', idPlaceholder: 'e.g. DOC-2024-PS01',
-                idFieldIcon: '🩺', idHint: 'Use the Doctor ID from your appointment letter or hospital directory.',
+                title: 'Sign-in', sub: 'Enter your registered doctor email address.',
+                idLabelText: 'Doctor Email', idPlaceholder: 'doctor@smartheal.com',
+                idFieldIcon: '🩺', idHint: 'Use the email linked to your hospital profile.',
                 btnText: 'Sign In  ',
                 accentBar: 'linear-gradient(90deg,var(--teal),var(--amber))',
                 cornerGlow: 'var(--teal)',
@@ -1558,14 +1511,14 @@
                 btnGradient: 'linear-gradient(135deg, #0E7C7B, #0a5a59)',
                 redirect: 'doctor-fixed.html',
                 showTabs: false,
-                validUsers: ['DOC-2024-PS01', 'DOC-2024-RG02', 'DOCTOR', 'doctor'],
-                validPass: ['doctor123', 'secure456', 'demo', 'doctor']
+                validUsers: ['doctor@smartheal.com', 'DOC-2024-PS01', 'DOC-2024-RG02'],
+                validPass: ['doctor123', 'secure456', 'demo']
             },
             admin: {
                 icon: '🛡️', eyebrow: 'Admin Portal', eyebrowColor: 'var(--amber)',
                 title: ' Sign-in', sub: 'Restricted access. Administrator credentials required.',
-                idLabelText: 'Administrator ID', idPlaceholder: 'e.g. ADMIN-001',
-                idFieldIcon: '🔐',
+                idLabelText: 'Admin Email', idPlaceholder: 'admin@smartheal.com',
+                idFieldIcon: '🔐', idHint: 'Use your official administrator email.',
                 btnText: 'Sign In ',
                 accentBar: 'linear-gradient(90deg,var(--amber),var(--red))',
                 cornerGlow: 'var(--amber)',
@@ -1575,8 +1528,8 @@
                 btnGradient: 'linear-gradient(135deg, #b87d00, #F0A500)',
                 redirect: 'admin.html',
                 showTabs: false,
-                validUsers: ['ADMIN-001', 'ADMIN-002', 'ADMIN', 'admin'],
-                validPass: ['admin2025', 'admin123', 'demo', 'admin']
+                validUsers: ['admin@smartheal.com', 'ADMIN-001', 'ADMIN-002'],
+                validPass: ['admin2025', 'admin123', 'demo']
             }
         };
 
@@ -1691,32 +1644,12 @@
         }
 
         // ══ LOGIN HANDLER ══
-        // ══════════════════════════════════════════════════════════
-        // RESTORE ACTIVE QUEUE SESSION ON LOGIN
-        //
-        //   Login
-        //     ↓
-        //   Get patient account ID/email/phone
-        //     ↓
-        //   Search active queue records (hospitalQueue)
-        //     ↓
-        //   Find patient's latest active registration
-        //     ↓
-        //   Restore: Token, Department, Queue Position, Status
-        //
-        // currentTokenData only needs { token, department } — once the
-        // patient app (hospiiiii.html) loads, restoreTokenData() reads this,
-        // and syncMyTokenStatus() / updatePopupInfo() derive the live Queue
-        // Position and Status directly from hospitalQueue.
-        // ══════════════════════════════════════════════════════════
         function restoreActiveQueueSession(patient) {
             try {
                 const phone = String(patient.phone || '').replace(/\D/g, '');
                 if (!phone) { localStorage.removeItem('currentTokenData'); return; }
 
                 const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
-
-                // "Active" = still in the queue pipeline (not finished/no-show)
                 const ACTIVE_STATUSES = ['Waiting', 'Calling', 'Serving', 'Emergency'];
 
                 const myActive = queue
@@ -1727,13 +1660,11 @@
                 if (myActive.length > 0) {
                     const latest = myActive[0];
 
-                    // Restore Token + Department for the patient app
                     localStorage.setItem('currentTokenData', JSON.stringify({
                         token: latest.token,
                         department: latest.dept
                     }));
 
-                    // Queue Position — how many active patients are ahead in this dept
                     const deptQueue = queue.filter(e =>
                         (e.dept || 'General OPD') === latest.dept
                         && ACTIVE_STATUSES.includes(e.status || 'Waiting')
@@ -1743,7 +1674,6 @@
                     console.log(`[SmartHeal] Restored active registration — Token ${latest.token}, ` +
                         `Dept ${latest.dept}, Position ${position || '?'}, Status ${latest.status || 'Waiting'}`);
                 } else {
-                    // No active registration for this patient — clear any stale token
                     localStorage.removeItem('currentTokenData');
                 }
             } catch (e) {
@@ -1751,128 +1681,82 @@
             }
         }
 
-        function handleLogin() {
-            const id = document.getElementById('idInput').value.trim();
+        async function handleLogin() {
+            const email = document.getElementById('idInput').value.trim();
             const pw = document.getElementById('pwInput').value.trim();
             const btn = document.getElementById('loginBtn');
             const r = ROLES[currentRole];
             hideMsg('loginError');
-            if (!id || !pw) { showMsg('loginError', 'error', '⚠️', 'Please fill in both fields.'); return; }
+
+            if (!email || !pw) { showMsg('loginError', 'error', '⚠️', 'Please fill in both fields.'); return; }
             btn.classList.add('loading');
-            setTimeout(() => {
-                btn.classList.remove('loading');
 
-                // ── PATIENT LOGIN ──
-                if (currentRole === 'patient') {
-                    const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
-                    const found = stored.find(u => u.username.toLowerCase() === id.toLowerCase() && u.password === pw);
-                    if (found) {
-                        localStorage.setItem('currentPatient', JSON.stringify(found));
-                        restoreActiveQueueSession(found);
-                        loginSuccess(btn, r.redirect, id);
+            try {
+                // 1. Check credentials against Firebase Auth
+                const userCredential = await signInWithEmailAndPassword(auth, email, pw);
+                const user = userCredential.user;
+
+                // 2. Fetch the user's basic role
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    
+                    // 3. Security Check
+                    if (userData.role !== currentRole) {
+                        btn.classList.remove('loading');
+                        showMsg('loginError', 'error', '⛔', `Access denied. Your account is registered as a ${userData.role}.`);
+                        shake(document.getElementById('loginCard'));
                         return;
                     }
-                    // Demo credentials
-                    const vi = r.validUsers.findIndex(v => v.toLowerCase() === id.toLowerCase());
-                    if (vi >= 0 && r.validPass.includes(pw)) {
-                        let first = 'Demo';
-                        let last = 'Patient';
-                        if (id.toLowerCase() === 'ravi_kumar') { first = 'Ravi'; last = 'Kumar'; }
-                        else if (id.toLowerCase() === 'anita_sharma') { first = 'Anita'; last = 'Sharma'; }
-                        const demoPatient = {
-                            username: id,
-                            first: first,
-                            last: last,
-                            phone: '9876543210',
-                            age: '30',
-                            gender: 'Male'
-                        };
-                        localStorage.setItem('currentPatient', JSON.stringify(demoPatient));
-                        restoreActiveQueueSession(demoPatient);
-                        loginSuccess(btn, r.redirect, id);
-                    } else {
-                        showMsg('loginError', 'error', '⚠️',
-                            r.validUsers.some(v => v.toLowerCase() === id.toLowerCase())
-                                ? 'Incorrect password. Please try again.'
-                                : `No account found for "${id}". You can create one below.`);
-                        shake(document.getElementById('loginCard'));
-                    }
-                    return;
-                }
 
-                // ── DOCTOR LOGIN — with approval check ──
-                if (currentRole === 'doctor') {
-                    // Normalise entered ID (trim, uppercase)
-                    const enteredId = id.toUpperCase().trim();
-
-                    // Check applied doctors in localStorage
-                    const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-                    const found = doctors.find(d =>
-                        d.doctorId && d.doctorId.toUpperCase() === enteredId
-                        && d.password === pw
-                    );
-                    if (found) {
-                        // ── APPROVAL GATE: rejected ──
-                        if (found.status === 'rejected') {
-                            showMsg('loginError', 'error', '❌',
-                                'Your application was rejected. Please contact hospital administration.');
-                            shake(document.getElementById('loginCard'));
-                            return;
+                    // 4. Save session
+                    localStorage.setItem('currentUser', user.uid);
+                    
+                    // 5. THE FIX: Fetch the FULL profile so the dashboard can auto-fill the forms!
+                    if (currentRole === 'patient') {
+                        const patientDoc = await getDoc(doc(db, "patients", user.uid));
+                        if (patientDoc.exists()) {
+                            const pData = patientDoc.data();
+                            // Map the database fields to the exact names the frontend expects
+                            pData.first = pData.firstName;
+                            pData.last = pData.lastName;
+                            localStorage.setItem('currentPatient', JSON.stringify(pData));
                         }
-                        // ── APPROVAL GATE: pending ──
-                        if (!found.approved || found.status === 'pending') {
-                            showMsg('loginError', 'warning', '⏳',
-                                'Your account is awaiting administrator approval. You will be notified once approved.');
-                            return;
+                    } else if (currentRole === 'doctor') {
+                        const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
+                        if (doctorDoc.exists()) {
+                            localStorage.setItem('currentDoctor', JSON.stringify(doctorDoc.data()));
                         }
-                        // ── Approved — store doctor session and redirect ──
-                        localStorage.setItem('currentUser', found.uid || enteredId);
-                        localStorage.setItem('currentDoctor', JSON.stringify(found));
-                        console.log('[SmartHeal] Doctor login success:', found.name || enteredId, '| doctorId:', found.doctorId);
-                        loginSuccess(btn, r.redirect, enteredId);
-                        return;
                     }
-                    // Check if the doctorId exists but password is wrong
-                    const idExists = doctors.find(d => d.doctorId && d.doctorId.toUpperCase() === enteredId);
-                    if (idExists) {
-                        showMsg('loginError', 'error', '⚠️', 'Incorrect password. Please try again.');
-                        shake(document.getElementById('loginCard'));
-                        return;
-                    }
-                    // Fall back to hard-coded demo doctor credentials
-                    const vi = r.validUsers.findIndex(v => v.toUpperCase() === enteredId);
-                    if (vi >= 0 && r.validPass.includes(pw)) {
-                        loginSuccess(btn, r.redirect, enteredId);
-                    } else {
-                        showMsg('loginError', 'error', '⚠️', `Doctor ID "${enteredId}" not found. Apply via the link below or check with administration.`);
-                        shake(document.getElementById('loginCard'));
-                    }
-                    return;
-                }
+                    
+                    btn.classList.remove('loading');
+                    loginSuccess(btn, r.redirect, user.uid);
 
-                // ── ADMIN LOGIN ──
-                const vi = r.validUsers.findIndex(v => v.toLowerCase() === id.toLowerCase());
-                if (vi >= 0 && r.validPass.includes(pw)) {
-                    loginSuccess(btn, r.redirect, id);
                 } else {
-                    showMsg('loginError', 'error', '⚠️',
-                        r.validUsers.some(v => v.toLowerCase() === id.toLowerCase())
-                            ? 'Incorrect password. Please try again.'
-                            : `No account found for "${id}". Check your ID.`);
-                    shake(document.getElementById('loginCard'));
+                    btn.classList.remove('loading');
+                    showMsg('loginError', 'error', '⚠️', 'Profile not found in database. Please register.');
                 }
-            }, 1400);
+
+            } catch (error) {
+                btn.classList.remove('loading');
+                let errorMsg = "Invalid credentials. Please try again.";
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    errorMsg = "Incorrect email or password.";
+                }
+                showMsg('loginError', 'error', '⚠️', errorMsg);
+                shake(document.getElementById('loginCard'));
+                console.error("Firebase Login Error: ", error);
+            }
         }
 
         function loginSuccess(btn, redirect, id) {
-            // Set session data BEFORE redirect to avoid race condition
             localStorage.setItem("currentUser", id);
             btn.style.background = 'linear-gradient(135deg,var(--green),#1db87a)';
             document.getElementById('loginBtnText').textContent = '✓ Authenticated';
             setTimeout(() => { window.location.href = redirect; }, 900);
         }
 
-        // ══ FORGOT ══
         function updateDoctorApplyLink() {
             const existing = document.getElementById('doctor-apply-link');
             if (existing) existing.remove();
@@ -1895,7 +1779,6 @@
             showMsg('loginError', 'info', 'ℹ️', msgs[currentRole]);
         }
 
-        // ══ MSG HELPERS ══
         function showMsg(id, type, icon, text) {
             const el = document.getElementById(id);
             el.className = `msg-box ${type} show`;
@@ -1903,13 +1786,11 @@
         }
         function hideMsg(id) { document.getElementById(id).classList.remove('show'); }
 
-        // ══ SHAKE ══
         function shake(el) {
             el.style.animation = 'none'; void el.offsetWidth;
             el.style.animation = 'shake 0.4s ease';
         }
 
-        // ══ DEMO CREDS ══
         function toggleDemo(suffix) {
             const toggle = document.getElementById('demoToggle' + suffix);
             const body = document.getElementById('demoBody' + suffix);
@@ -1934,9 +1815,6 @@
             }, 180);
         }
 
-        // ══════════════════════════════════════════
-        // REGISTRATION FLOW
-        // ══════════════════════════════════════════
         function goStep(step) {
             regStep = step;
             [1, 2, 3].forEach(s => {
@@ -1974,8 +1852,8 @@
                 if (!uname || !pw || !conf) {
                     showMsg('regError2', 'error', '⚠️', 'Please fill in all credential fields.'); return;
                 }
-                if (!/^[a-z0-9_]{3,20}$/.test(uname)) {
-                    showMsg('regError2', 'error', '⚠️', 'Username: 3–20 chars, lowercase letters, numbers and underscores only.'); return;
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(uname)) {
+                    showMsg('regError2', 'error', '⚠️', 'Please enter a valid email address.'); return;
                 }
                 if (pw.length < 6) {
                     showMsg('regError2', 'error', '⚠️', 'Password must be at least 6 characters.'); return;
@@ -1983,50 +1861,78 @@
                 if (pw !== conf) {
                     showMsg('regError2', 'error', '⚠️', 'Passwords do not match.'); return;
                 }
-                // Check if username already taken
                 const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
                 if (stored.some(u => u.username.toLowerCase() === uname.toLowerCase())) {
-                    showMsg('regError2', 'error', '⚠️', 'That username is already taken. Please choose another.'); return;
+                    showMsg('regError2', 'error', '⚠️', 'That email is already registered. Please sign in.'); return;
                 }
                 regData.username = uname; regData.password = pw;
-                // Build review
+                
                 const rb = document.getElementById('reviewBlock');
                 rb.innerHTML = [
                     ['👤 Full name', regData.first + ' ' + regData.last],
                     ['📱 Mobile', regData.phone],
                     ['🎂 Age / Gender', regData.age + ' · ' + regData.gender],
-                    ['🪪 Username', regData.username],
+                    ['📧 Email', regData.username],
                     ['🔑 Password', '••••••••']
                 ].map(([k, v]) => `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:12px;">${k}</span><span style="color:var(--text);font-size:12px;font-weight:500;">${v}</span></div>`).join('');
                 goStep(3);
             }
         }
 
-        function submitRegister() {
+        async function submitRegister() {
             if (!document.getElementById('termsCheck').checked) {
                 showMsg('regError3', 'error', '⚠️', 'Please accept the Terms of Service to continue.'); return;
             }
             const btn = document.getElementById('submitRegBtn');
             btn.classList.add('loading');
-            setTimeout(() => {
+
+            try {
+                // 1. Create the secure user account in Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, regData.username, regData.password);
+                const user = userCredential.user;
+
+                // 2. Save their Role in the 'users' collection (Phase 3)
+                await setDoc(doc(db, "users", user.uid), {
+                    name: regData.first + ' ' + regData.last,
+                    email: regData.username,
+                    role: 'patient',
+                    createdAt: new Date().toISOString()
+                });
+
+                // 3. Save their full profile in the 'patients' collection (Phase 4)
+                await setDoc(doc(db, "patients", user.uid), {
+                    uid: user.uid,
+                    firstName: regData.first,
+                    lastName: regData.last,
+                    name: regData.first + ' ' + regData.last,
+                    email: regData.username,
+                    phone: regData.phone,
+                    age: regData.age,
+                    gender: regData.gender,
+                    createdAt: new Date().toISOString()
+                });
+
+                // 4. Show the success screen
                 btn.classList.remove('loading');
-                // Save to localStorage
-                const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
-                stored.push({ username: regData.username, password: regData.password, first: regData.first, last: regData.last, phone: regData.phone, age: regData.age, gender: regData.gender, createdAt: new Date().toISOString() });
-                localStorage.setItem('smartheal_users', JSON.stringify(stored));
-                // Show success
                 document.getElementById('regStep3').style.display = 'none';
                 document.getElementById('regStepBar').style.display = 'none';
                 document.getElementById('regStepLabel').style.display = 'none';
                 document.getElementById('welcomeName').textContent = regData.first + ' ' + regData.last;
                 document.getElementById('regSuccess').style.display = 'block';
                 regData = {};
-            }, 1600);
+
+            } catch (error) {
+                btn.classList.remove('loading');
+                let errorMsg = "Failed to create account.";
+                if (error.code === 'auth/email-already-in-use') errorMsg = "This email is already registered.";
+                if (error.code === 'auth/weak-password') errorMsg = "Password must be at least 6 characters.";
+                showMsg('regError3', 'error', '⚠️', errorMsg);
+                console.error("Firebase Registration Error: ", error);
+            }
         }
 
         function goToLoginAfterReg() {
             showLogin();
-            // Pre-fill username
             setTimeout(() => {
                 document.getElementById('idInput').value = regData.username;
                 document.getElementById('idInput').style.borderColor = 'var(--green)';
@@ -2034,7 +1940,6 @@
             }, 100);
         }
 
-        // ══ PASSWORD STRENGTH ══
         function checkStrength(pw) {
             const bars = [document.getElementById('pb1'), document.getElementById('pb2'), document.getElementById('pb3'), document.getElementById('pb4')];
             bars.forEach(b => { b.className = 'pw-bar'; });
@@ -2049,15 +1954,12 @@
             document.getElementById('pwStrengthLbl').textContent = pw.length === 0 ? 'Enter a password' : (score <= 1 ? 'Too short' : lbls[score - 1]);
         }
 
-        // ══ ENTER KEY ══
         document.addEventListener('keydown', e => { if (e.key === 'Enter') { if (currentTab === 'login') handleLogin(); } });
 
-        // ══ URL PARAM — auto-activate role from ?role=xxx ══
         window.addEventListener('DOMContentLoaded', () => {
             const saved = new URLSearchParams(window.location.search).get('role');
             if (saved && ROLES[saved]) {
                 currentRole = saved;
-                // Visually activate the matching role pill
                 const pillMap = { patient: 0, doctor: 1, admin: 2 };
                 const pills = document.querySelectorAll('.role-pill');
                 if (pills[pillMap[saved]]) {
@@ -2073,6 +1975,21 @@
             }
             console.log('[SmartHeal] Login page loaded. Role:', currentRole);
         });
+
+        // Expose functions to HTML buttons
+        window.applyRole = applyRole;
+        window.selectRole = selectRole;
+        window.switchTab = switchTab;
+        window.showLogin = showLogin;
+        window.togglePw = togglePw;
+        window.handleLogin = handleLogin;
+        window.goStep = goStep;
+        window.nextStep = nextStep;
+        window.submitRegister = submitRegister;
+        window.goToLoginAfterReg = goToLoginAfterReg;
+        window.checkStrength = checkStrength;
+        window.toggleDemo = toggleDemo;
+        window.fillCreds = fillCreds;
     </script>
 </body>
 

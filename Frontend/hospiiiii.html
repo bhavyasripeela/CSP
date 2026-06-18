@@ -3099,7 +3099,19 @@
 
     </div><!-- end page-wrap -->
 
-    <script src="smart-heal-sync.js"></script>
+    <script type="module" src="smart-heal-sync.js"></script>
+    <script>
+    // Start listening for live Firebase updates
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (window.SmartHealSync && window.SmartHealSync.initRealTimeSync) {
+          console.log("Patient Dashboard connected to live Firebase Sync...");
+          // We call this to silently pull live data into local memory
+          window.SmartHealSync.initRealTimeSync();
+        }
+      }, 1000);
+    });
+  </script>
     <script>
       // ── STATE ──
       let currentLang = 'en';
