@@ -240,8 +240,17 @@
         }
 
         @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.7); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.7);
+            }
         }
 
         .lp-title {
@@ -264,8 +273,13 @@
         }
 
         @keyframes shimmerText {
-            from { background-position: 0% center; }
-            to { background-position: 200% center; }
+            from {
+                background-position: 0% center;
+            }
+
+            to {
+                background-position: 200% center;
+            }
         }
 
         .lp-sub {
@@ -507,8 +521,15 @@
         }
 
         @keyframes iconBounce {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .card-role-eyebrow {
@@ -672,10 +693,21 @@
             transition: background 0.3s;
         }
 
-        .pw-bar.s1 { background: var(--red); }
-        .pw-bar.s2 { background: var(--amber); }
-        .pw-bar.s3 { background: var(--teal-mid); }
-        .pw-bar.s4 { background: var(--green); }
+        .pw-bar.s1 {
+            background: var(--red);
+        }
+
+        .pw-bar.s2 {
+            background: var(--amber);
+        }
+
+        .pw-bar.s3 {
+            background: var(--teal-mid);
+        }
+
+        .pw-bar.s4 {
+            background: var(--green);
+        }
 
         .pw-strength-lbl {
             font-size: 10px;
@@ -820,7 +852,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Error / success messages */
@@ -1072,23 +1106,59 @@
 
         /* ── KEYFRAMES ── */
         @keyframes fadeSlideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes fadeSlideUp {
-            from { transform: translateY(24px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(24px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            15% { transform: translateX(-7px); }
-            30% { transform: translateX(7px); }
-            45% { transform: translateX(-5px); }
-            60% { transform: translateX(5px); }
-            75% { transform: translateX(-3px); }
-            90% { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            15% {
+                transform: translateX(-7px);
+            }
+
+            30% {
+                transform: translateX(7px);
+            }
+
+            45% {
+                transform: translateX(-5px);
+            }
+
+            60% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-3px);
+            }
+
+            90% {
+                transform: translateX(3px);
+            }
         }
 
         /* ── RESPONSIVE ── */
@@ -1099,11 +1169,13 @@
                 padding: 32px 24px 48px;
                 gap: 32px;
             }
+
             .left-panel {
                 padding-right: 0;
                 max-width: 520px;
                 width: 100%;
             }
+
             .right-panel {
                 width: 100%;
                 max-width: 480px;
@@ -1111,13 +1183,34 @@
         }
 
         @media(max-width:600px) {
-            .navbar { padding: 0 16px; }
-            .login-wrap { padding: 24px 16px 48px; }
-            .login-card { padding: 26px 20px 24px; }
-            .field-row { grid-template-columns: 1fr; }
-            .footer { padding: 20px 16px; }
-            .footer-inner { flex-direction: column; align-items: flex-start; }
-            .lp-title { letter-spacing: -1.5px; }
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .login-wrap {
+                padding: 24px 16px 48px;
+            }
+
+            .login-card {
+                padding: 26px 20px 24px;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                padding: 20px 16px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .lp-title {
+                letter-spacing: -1.5px;
+            }
         }
     </style>
 </head>
@@ -1246,7 +1339,8 @@
                                 <span class="sp-text">New to SmartHeal?</span>
                                 <button class="sp-link" onclick="switchTab('register')">Create a free account →</button>
                             </div>
-                        </div><div class="demo-section">
+                        </div>
+                        <div class="demo-section">
                             <div class="demo-toggle" id="demoToggleLogin" onclick="toggleDemo('Login')">
                                 <span>Demo Accounts</span>
                                 <span class="chev">▼</span>
@@ -1254,7 +1348,8 @@
                             <div class="demo-body" id="demoBodyLogin">
                                 <div class="demo-inner">
                                     <div class="demo-role-title">Patients</div>
-                                    <div class="demo-cred" onclick="fillCreds('ravi@smartheal.com', 'patient123', 'patient')">
+                                    <div class="demo-cred"
+                                        onclick="fillCreds('ravi@smartheal.com', 'patient123', 'patient')">
                                         <div class="dc-left">
                                             <div class="dc-name">Ravi Kumar (Patient)</div>
                                             <div class="dc-id">ravi@smartheal.com</div>
@@ -1263,7 +1358,8 @@
                                     </div>
 
                                     <div class="demo-role-title">Doctors</div>
-                                    <div class="demo-cred" onclick="fillCreds('doctor@smartheal.com', 'doctor123', 'doctor')">
+                                    <div class="demo-cred"
+                                        onclick="fillCreds('doctor@smartheal.com', 'doctor123', 'doctor')">
                                         <div class="dc-left">
                                             <div class="dc-name">Dr. Priya Sharma</div>
                                             <div class="dc-id">doctor@smartheal.com</div>
@@ -1272,7 +1368,8 @@
                                     </div>
 
                                     <div class="demo-role-title">Admin</div>
-                                    <div class="demo-cred" onclick="fillCreds('admin@smartheal.com', 'admin2025', 'admin')">
+                                    <div class="demo-cred"
+                                        onclick="fillCreds('admin@smartheal.com', 'admin2025', 'admin')">
                                         <div class="dc-left">
                                             <div class="dc-name">Hospital Admin</div>
                                             <div class="dc-id">admin@smartheal.com</div>
@@ -1283,7 +1380,8 @@
                             </div>
                         </div>
 
-                    </div><div class="card-view" id="viewRegister">
+                    </div>
+                    <div class="card-view" id="viewRegister">
                         <div class="login-card" id="registerCard"
                             style="--card-accent:linear-gradient(90deg,var(--teal),var(--blue));">
                             <div class="card-corner-glow" style="background:var(--teal);"></div>
@@ -1364,7 +1462,8 @@
                                     <div class="field-wrap"><input class="field-input has-icon" type="email"
                                             id="regUsername" placeholder="e.g. ravi@smartheal.com" autocomplete="email"
                                             spellcheck="false" /><span class="field-icon">📧</span></div>
-                                    <div class="field-hint">We will use this email for your account and password resets.</div>
+                                    <div class="field-hint">We will use this email for your account and password resets.
+                                    </div>
                                 </div>
                                 <div class="field-group">
                                     <label class="field-label">🔑 Password</label>
@@ -1454,7 +1553,11 @@
                                     onclick="goToLoginAfterReg()">Sign In Now →</button>
                             </div>
 
-                        </div></div></div></div></main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
 
         <footer class="footer">
             <div class="footer-inner">
@@ -1698,10 +1801,10 @@
 
                 // 2. Fetch the user's basic role
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-                
+
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    
+
                     // 3. Security Check
                     if (userData.role !== currentRole) {
                         btn.classList.remove('loading');
@@ -1712,7 +1815,7 @@
 
                     // 4. Save session
                     localStorage.setItem('currentUser', user.uid);
-                    
+
                     // 5. THE FIX: Fetch the FULL profile so the dashboard can auto-fill the forms!
                     if (currentRole === 'patient') {
                         const patientDoc = await getDoc(doc(db, "patients", user.uid));
@@ -1729,7 +1832,7 @@
                             localStorage.setItem('currentDoctor', JSON.stringify(doctorDoc.data()));
                         }
                     }
-                    
+
                     btn.classList.remove('loading');
                     loginSuccess(btn, r.redirect, user.uid);
 
@@ -1862,11 +1965,11 @@
                     showMsg('regError2', 'error', '⚠️', 'Passwords do not match.'); return;
                 }
                 const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
-                if (stored.some(u => u.username.toLowerCase() === uname.toLowerCase())) {
+                if (stored.some(u => (u.username || u.email || '').toLowerCase() === uname.toLowerCase())) {
                     showMsg('regError2', 'error', '⚠️', 'That email is already registered. Please sign in.'); return;
                 }
                 regData.username = uname; regData.password = pw;
-                
+
                 const rb = document.getElementById('reviewBlock');
                 rb.innerHTML = [
                     ['👤 Full name', regData.first + ' ' + regData.last],

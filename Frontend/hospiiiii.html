@@ -3106,12 +3106,17 @@
         setTimeout(() => {
           if (window.SmartHealSync && window.SmartHealSync.initRealTimeSync) {
             console.log("Patient Dashboard connected to live Firebase Sync...");
+<<<<<<< HEAD
             // Pass a callback to instantly auto-refresh the Patient UI!
             window.SmartHealSync.initRealTimeSync(() => {
               if (typeof renderVisitHistory === 'function') renderVisitHistory();
               if (typeof checkFollowupAlerts === 'function') checkFollowupAlerts();
               if (typeof syncMyTokenStatus === 'function') syncMyTokenStatus();
             });
+=======
+            // We call this to silently pull live data into local memory
+            window.SmartHealSync.initRealTimeSync();
+>>>>>>> d2da868 (fixed patient dashboard bugs)
           }
         }, 1000);
       });
@@ -3383,7 +3388,13 @@
         const saved = localStorage.getItem('arogyaq-lang');
         if (saved) { currentLang = saved; document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); goTo('screen-home'); }
       }
-      function chooseLang(lang) { currentLang = lang; localStorage.setItem('arogyaq-lang', lang); document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); goTo('screen-home'); }
+      function chooseLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('arogyaq-lang', lang);
+        document.getElementById('lang-overlay').classList.add('hidden');
+        applyLang();
+        goTo('screen-home');
+      }
       function setLangFromSettings(lang) { currentLang = lang; localStorage.setItem('arogyaq-lang', lang); applyLang(); }
 
       // ── NAVIGATION ──
@@ -4121,7 +4132,7 @@
               ${mime === 'application/pdf'
                 ? '<iframe src="' + doc.dataUrl + '" width="100%" style="height:calc(100vh - 46px);border:none;"></iframe>'
                 : '<img src="' + doc.dataUrl + '" style="max-height:calc(100vh - 60px);object-fit:contain;margin:10px;">'}
-              </body></html>`);
+              <\/body><\/html>`);
             win.document.close();
           }
         } else {
