@@ -2650,9 +2650,6 @@
 </head>
 
 <body>
-  <!-- ═══════════════════════════════
-       TOP NAV BAR
-  ═══════════════════════════════ -->
   <header class="topbar">
     <div class="topbar-brand">Smart<span>Heal</span></div>
     <div class="topbar-search-wrap">
@@ -2684,15 +2681,10 @@
     </button>
   </header>
 
-  <!-- ═══════════════════════════════
-       PAGE LAYOUT
-  ═══════════════════════════════ -->
   <div class="page-wrap" id="page-wrap">
 
-    <!-- ═══════════ LEFT SIDEBAR ═══════════ -->
     <aside class="left-sidebar" id="left-sidebar">
 
-      <!-- Doctor Profile Card — populated dynamically from localStorage.currentDoctor -->
       <div class="profile-card" id="profile-card" onclick="openProfileModal()" title="View profile details"
         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openProfileModal()">
         <div class="profile-top">
@@ -2717,7 +2709,6 @@
         <div class="profile-view-hint">👆 Click to view full profile</div>
       </div>
 
-      <!-- Overview Metrics -->
       <div>
         <div class="card-title">Today's Overview</div>
         <div class="metrics-grid">
@@ -2740,7 +2731,6 @@
         </div>
       </div>
 
-      <!-- Sidebar Navigation -->
       <div>
         <div class="card-title">Navigation</div>
         <div class="sb-nav-item active" onclick="scrollToSection('queue')">
@@ -2764,7 +2754,6 @@
         </div>
       </div>
 
-      <!-- Notifications (sidebar panel) -->
       <div id="sb-notif-panel" style="display:none;">
         <div class="card-title" style="margin-bottom:10px;">🔔 Notifications</div>
         <div class="notif-list" id="notif-list"></div>
@@ -2772,10 +2761,8 @@
 
     </aside>
 
-    <!-- ═══════════ MIDDLE MAIN ═══════════ -->
     <main class="main-content" id="main-content">
 
-      <!-- Emergency Alert Banner -->
       <div class="emg-panel hidden" id="emg-panel">
         <div class="emg-icon">🚨</div>
         <div class="emg-text">
@@ -2785,7 +2772,6 @@
         <button class="emg-btn" onclick="serveEmergency()">Attend Now</button>
       </div>
 
-      <!-- Queue Table -->
       <div id="queue-section">
         <div class="queue-header">
           <div class="queue-title">Today's Patient Queue</div>
@@ -2821,17 +2807,13 @@
 
     </main>
 
-    <!-- ═══════════ RIGHT PANEL ═══════════ -->
     <aside class="right-panel" id="right-panel">
-      <!-- Empty state -->
       <div class="rp-empty" id="rp-empty">
         <div class="rp-empty-icon">🩺</div>
         <div class="rp-empty-text">Select a patient from the queue<br>to view details & manage consultation</div>
       </div>
 
-      <!-- Patient Details Workspace (hidden until patient selected) -->
       <div id="rp-workspace" style="display:none; flex-direction:column; height:100%;">
-        <!-- Tabs -->
         <div class="rp-tabs" id="rp-tabs">
           <div class="rp-tab active" onclick="switchRPTab('overview')">Overview</div>
           <div class="rp-tab" onclick="switchRPTab('vault')">MediVault</div>
@@ -2840,10 +2822,8 @@
           <div class="rp-tab" onclick="switchRPTab('followup')">Follow-up</div>
         </div>
 
-        <!-- Tab Body -->
         <div class="rp-body">
 
-          <!-- Overview Tab -->
           <div class="rp-section active" id="tab-overview">
             <div class="patient-overview-card" id="patient-overview-card">
               <div class="po-header">
@@ -2892,7 +2872,6 @@
               </div>
             </div>
 
-            <!-- Status Controls -->
             <div class="card-title" style="margin-bottom:8px;">Appointment Controls</div>
             <div class="status-controls">
               <button class="status-btn btn-serve" onclick="updatePatientStatus('Serving')">✅ Serve Now</button>
@@ -2903,7 +2882,6 @@
               <button class="status-btn btn-emg-mark" onclick="markPatientEmergency()">🚨 Mark Emergency</button>
             </div>
 
-            <!-- Symptoms / Chief Complaint -->
             <div class="card-title" style="margin-bottom:6px;">Chief Complaint</div>
             <div
               style="background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:14px;"
@@ -2911,11 +2889,9 @@
               —
             </div>
 
-            <!-- Recent History (static mock from patient object) -->
             <div class="card-title" style="margin-bottom:6px;">Recent Visit History</div>
             <div id="recent-history" style="display:flex;flex-direction:column;gap:6px;"></div>
 
-            <!-- Previous Visits (auto-tracked Visit History system) -->
             <div class="prev-visits-section">
               <div class="card-title" style="margin-bottom:6px;">
                 Previous Visits
@@ -2927,13 +2903,11 @@
             </div>
           </div>
 
-          <!-- MediVault Tab -->
           <div class="rp-section" id="tab-vault">
             <div class="card-title" style="margin-bottom:10px;">Medical Documents</div>
             <div class="vault-files" id="vault-files"></div>
           </div>
 
-          <!-- Notes Tab -->
           <div class="rp-section" id="tab-notes">
             <div class="card-title" style="margin-bottom:8px;">Consultation Notes</div>
             <div class="notes-templates">
@@ -2948,7 +2922,6 @@
             <button class="save-notes-btn" onclick="saveNotes()">💾 Save Notes</button>
           </div>
 
-          <!-- Prescription Tab -->
           <div class="rp-section" id="tab-prescription">
             <div class="card-title" style="margin-bottom:10px;">Prescription Management</div>
             <div class="rx-drugs" id="rx-drugs"></div>
@@ -2970,7 +2943,6 @@
             <button class="print-rx-btn" onclick="printPrescription()">🖨️ Generate & Print Prescription</button>
           </div>
 
-          <!-- Follow-up Tab -->
           <div class="rp-section" id="tab-followup">
             <div class="card-title" style="margin-bottom:10px;">Follow-up Scheduler</div>
             <div class="followup-form">
@@ -3014,14 +2986,9 @@
             </div>
           </div>
 
-        </div><!-- /rp-body -->
-      </div><!-- /rp-workspace -->
-    </aside>
+        </div></div></aside>
 
-  </div><!-- /page-wrap -->
-
-  <!-- Mobile bottom tabs -->
-  <div class="mobile-tabs">
+  </div><div class="mobile-tabs">
     <div class="mob-tab active" onclick="mobileSwitchTab('queue')">
       <span class="mob-tab-icon">📋</span> Queue
     </div>
@@ -3036,7 +3003,6 @@
     </div>
   </div>
 
-  <!-- Print Prescription Modal -->
   <div class="modal-overlay hidden" id="rx-modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -3051,7 +3017,6 @@
     </div>
   </div>
 
-  <!-- Vault File Viewer Modal -->
   <div class="modal-overlay hidden" id="vault-modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -3066,16 +3031,11 @@
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast">
     <span class="toast-icon" id="toast-icon">✅</span>
     <span id="toast-msg">Action completed.</span>
   </div>
 
-  <script src="js/smart-heal-sync.js"></script>
-  <!-- ═══════════════════════════════
-       JAVASCRIPT
-  ═══════════════════════════════ -->
   <script type="module" src="smart-heal-sync.js"></script>
   <script>
     // Start listening for live Firebase updates
@@ -3083,8 +3043,7 @@
       setTimeout(() => {
         if (window.SmartHealSync && window.SmartHealSync.initRealTimeSync) {
           console.log("Doctor Dashboard connected to live Firebase Sync...");
-          // We call this to silently pull live data into local memory
-          window.SmartHealSync.initRealTimeSync();
+          window.SmartHealSync.initRealTimeSync(window.syncFromPatientAssistant);
         }
       }, 1000);
     });
@@ -4458,11 +4417,9 @@
       }
     });
   </script>
-  <!-- ═══════════ DOCTOR PROFILE MODAL ═══════════ -->
   <div class="profile-modal-overlay" id="profileModalOverlay" onclick="handleProfileOverlayClick(event)">
     <div class="profile-modal" id="profileModal" role="dialog" aria-modal="true" aria-label="Doctor profile details">
 
-      <!-- Hero Banner -->
       <div class="pm-hero">
         <button class="pm-close" onclick="closeProfileModal()" title="Close" aria-label="Close profile">✕</button>
         <div class="pm-avatar-lg" id="pm-avatar">??</div>
@@ -4474,14 +4431,11 @@
         </div>
       </div>
 
-      <!-- Body -->
       <div class="pm-body">
         <div class="pm-section-label">Doctor Information</div>
 
-        <!-- VIEW ROWS (hidden during edit) -->
         <div class="pm-view-rows" id="pm-view-rows">
 
-          <!-- Doctor ID -->
           <div class="pm-row">
             <div class="pm-row-icon teal">🪪</div>
             <div class="pm-row-content">
@@ -4492,7 +4446,6 @@
               title="Copy Doctor ID">Copy</button>
           </div>
 
-          <!-- Specialization -->
           <div class="pm-row">
             <div class="pm-row-icon purple">🩺</div>
             <div class="pm-row-content">
@@ -4501,7 +4454,6 @@
             </div>
           </div>
 
-          <!-- Email -->
           <div class="pm-row">
             <div class="pm-row-icon amber">📧</div>
             <div class="pm-row-content">
@@ -4512,7 +4464,6 @@
               title="Copy Email">Copy</button>
           </div>
 
-          <!-- Phone -->
           <div class="pm-row">
             <div class="pm-row-icon green">📱</div>
             <div class="pm-row-content">
@@ -4526,7 +4477,6 @@
           <div class="pm-divider"></div>
           <div class="pm-section-label">Account</div>
 
-          <!-- License -->
           <div class="pm-row">
             <div class="pm-row-icon teal">📋</div>
             <div class="pm-row-content">
@@ -4535,10 +4485,7 @@
             </div>
           </div>
 
-        </div><!-- /pm-view-rows -->
-
-        <!-- EDIT PANEL (shown during edit) -->
-        <div class="pm-edit-panel" id="pm-edit-panel">
+        </div><div class="pm-edit-panel" id="pm-edit-panel">
 
           <div class="pm-edit-field">
             <label class="pm-edit-label" for="pm-edit-name">Full Name</label>
@@ -4567,10 +4514,7 @@
             <button class="pm-cancel-btn" onclick="cancelProfileEdit()">Cancel</button>
           </div>
 
-        </div><!-- /pm-edit-panel -->
-
-        <!-- Footer actions -->
-        <div class="pm-footer-actions" id="pm-footer-actions">
+        </div><div class="pm-footer-actions" id="pm-footer-actions">
           <button class="pm-action-btn edit-profile" id="pm-edit-btn" onclick="openProfileEdit()">
             ✏️ Edit Profile
           </button>

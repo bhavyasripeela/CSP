@@ -3,7 +3,7 @@ import { collection, doc, setDoc, onSnapshot, writeBatch } from "https://www.gst
 
 window.SmartHealSync = {
 
-    // ── PHASE 8: REAL-TIME SYNCHRONIZATION ──
+    // ── PHASE 8 & 14: REAL-TIME SYNCHRONIZATION ──
     // Call this when a dashboard loads to listen for live updates across devices
     initRealTimeSync(onDataChangedCallback) {
         console.log("[SmartHeal Sync] Starting Real-Time Firestore Listeners...");
@@ -32,15 +32,30 @@ window.SmartHealSync = {
                 localStorage.setItem("smartheal_tokenCounter", String(docSnap.data().count || 0));
             }
         });
+
+        // Listen to Feedback (Phase 14 - Admin Dashboard)
+        onSnapshot(collection(db, "feedback"), (snapshot) => {
+            const feedbacks = [];
+            snapshot.forEach(doc => feedbacks.push(doc.data()));
+            // Sort by newest first
+            feedbacks.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+            localStorage.setItem("smartheal_feedbacks", JSON.stringify(feedbacks));
+            if (onDataChangedCallback) onDataChangedCallback();
+        });
     },
 
     getQueue() {
-        return JSON.parse(localStorage.getItem("hospitalQueue") || "[]");
+        return JSON.parse(
+            localStorage.getItem("hospitalQueue") || "[]"
+        );
     },
 
     async setQueue(queue) {
-        // Instant UI update
-        localStorage.setItem("hospitalQueue", JSON.stringify(queue));
+        // Local Cache Update
+        localStorage.setItem(
+            "hospitalQueue",
+            JSON.stringify(queue)
+        );
 
         // Background sync to Firestore (Phase 6)
         try {
@@ -58,7 +73,10 @@ window.SmartHealSync = {
     },
 
     tokenToNum(token) {
-        return parseInt(String(token).replace("#", ""), 10);
+        return parseInt(
+            String(token).replace("#", ""),
+            10
+        );
     },
 
     formatToken(num) {
@@ -66,11 +84,19 @@ window.SmartHealSync = {
     },
 
     getDoctorState() {
-        return JSON.parse(localStorage.getItem("doctorState") || "{}");
+        return JSON.parse(
+            localStorage.getItem("doctorState") || "{}"
+        );
     },
 
     async saveDoctorState(state) {
-        localStorage.setItem("doctorState", JSON.stringify(state));
+        // Local Cache Update
+        localStorage.setItem(
+            "doctorState",
+            JSON.stringify(state)
+        );
+
+        // Firebase Sync
         try {
             const uid = localStorage.getItem("currentUser") || "unknown";
             await setDoc(doc(db, "doctors", uid), { state: state }, { merge: true });
@@ -78,9 +104,16 @@ window.SmartHealSync = {
     },
 
     async addDoctorFollowup(followup) {
-        const arr = JSON.parse(localStorage.getItem("doctorFollowups") || "[]");
+        const arr = JSON.parse(
+            localStorage.getItem("doctorFollowups") || "[]"
+        );
+
         arr.push(followup);
-        localStorage.setItem("doctorFollowups", JSON.stringify(arr));
+
+        localStorage.setItem(
+            "doctorFollowups",
+            JSON.stringify(arr)
+        );
 
         // Phase 12: Follow-Up System
         try {
@@ -90,22 +123,33 @@ window.SmartHealSync = {
     },
 
     getDoctorFollowups() {
-        return JSON.parse(localStorage.getItem("doctorFollowups") || "[]");
+        return JSON.parse(
+            localStorage.getItem("doctorFollowups") || "[]"
+        );
     },
 
     // ── Token counter (shared between patient app and doctor dashboard) ──
     getTokenCounter() {
-        return parseInt(localStorage.getItem("smartheal_tokenCounter") || "0", 10);
+        return parseInt(
+            localStorage.getItem("smartheal_tokenCounter") || "0",
+            10
+        );
     },
 
     async setTokenCounter(val) {
-        localStorage.setItem("smartheal_tokenCounter", String(val));
+        // Local Cache Update
+        localStorage.setItem(
+            "smartheal_tokenCounter",
+            String(val)
+        );
+
+        // Firebase Sync
         try {
             await setDoc(doc(db, "departmentCounters", "global"), { count: parseInt(val, 10) }, { merge: true });
         } catch (e) { console.error(e); }
     },
 
-    // ── Now-serving / calling ──
+    // ── Now-serving / calling (written by doctor dashboard, read by patient app) ──
     getNowServing() {
         return localStorage.getItem("smartheal_nowServing") || null;
     },
@@ -115,6 +159,7 @@ window.SmartHealSync = {
             localStorage.removeItem("smartheal_nowServing");
         } else {
             localStorage.setItem("smartheal_nowServing", String(val));
+            // Firebase Sync
             try {
                 await setDoc(doc(db, "system", "status"), { nowServing: String(val) }, { merge: true });
             } catch (e) { console.error(e); }
@@ -130,21 +175,28 @@ window.SmartHealSync = {
             localStorage.removeItem("smartheal_calling");
         } else {
             localStorage.setItem("smartheal_calling", String(val));
+            // Firebase Sync
             try {
                 await setDoc(doc(db, "system", "status"), { calling: String(val) }, { merge: true });
             } catch (e) { console.error(e); }
         }
     },
 
-    // ── Health records ──
+    // ── Health records (doctor writes, shared across sessions) ──
     getHealthRecords() {
-        return JSON.parse(localStorage.getItem("smartheal_healthRecords") || "[]");
+        return JSON.parse(
+            localStorage.getItem("smartheal_healthRecords") || "[]"
+        );
     },
 
     async appendHealthRecord(record) {
         const records = this.getHealthRecords();
         records.push(record);
-        localStorage.setItem("smartheal_healthRecords", JSON.stringify(records));
+        // Local Cache Update
+        localStorage.setItem(
+            "smartheal_healthRecords",
+            JSON.stringify(records)
+        );
 
         // Phase 11: MediVault Storage
         try {
@@ -153,13 +205,22 @@ window.SmartHealSync = {
         } catch (e) { console.error(e); }
     },
 
-    // ── Visit History ──
+    // ── Visit History (auto-created on registration, keyed by phone) ──
+
     getAllVisits() {
-        return JSON.parse(localStorage.getItem("smartheal_visitHistory") || "[]");
+        return JSON.parse(
+            localStorage.getItem("smartheal_visitHistory") || "[]"
+        );
     },
 
     async saveAllVisits(visits) {
-        localStorage.setItem("smartheal_visitHistory", JSON.stringify(visits));
+        // Local Cache Update
+        localStorage.setItem(
+            "smartheal_visitHistory",
+            JSON.stringify(visits)
+        );
+
+        // Firebase Sync
         try {
             const batch = writeBatch(db);
             visits.forEach(v => {
@@ -170,11 +231,16 @@ window.SmartHealSync = {
         } catch (e) { console.error(e); }
     },
 
+    /**
+     * Create a new visit record when a token is issued.
+     * phone is the primary key for grouping visits across sessions.
+     */
     createVisit(visitData) {
         const visits = this.getAllVisits();
         const newVisit = {
             visitId: "VIS-" + String(visits.length + 1).padStart(3, "0") + "-" + Date.now().toString().slice(-4),
             createdAt: Date.now(),
+            // future-compatible fields default to null
             doctor: visitData.doctor || null,
             consultationNote: visitData.consultationNote || null,
             prescription: visitData.prescription || null,
@@ -182,8 +248,8 @@ window.SmartHealSync = {
             ...visitData
         };
         visits.push(newVisit);
-        this.saveAllVisits(visits); 
-        
+        this.saveAllVisits(visits);
+
         // Phase 10: Store Consultation Notes
         if (newVisit.consultationNote) {
             setDoc(doc(db, "consultationNotes", newVisit.visitId), {
@@ -196,6 +262,10 @@ window.SmartHealSync = {
         return newVisit;
     },
 
+    /**
+     * Retrieve all visits for a given phone number (primary key).
+     * Sorted most-recent first.
+     */
     getVisitsByPhone(phone) {
         if (!phone || phone === "—") return [];
         const norm = String(phone).replace(/\D/g, "");
@@ -204,13 +274,16 @@ window.SmartHealSync = {
             .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     },
 
+    /**
+     * Attach consultation data to an existing visit after doctor completes it.
+     */
     attachConsultationToVisit(visitId, patch) {
         const visits = this.getAllVisits();
         const idx = visits.findIndex(v => v.visitId === visitId);
         if (idx !== -1) {
             visits[idx] = { ...visits[idx], ...patch };
             this.saveAllVisits(visits);
-            
+
             // Phase 10: Store individual Consultation Note updates
             if (patch.consultationNote) {
                 setDoc(doc(db, "consultationNotes", visitId), {
@@ -222,11 +295,28 @@ window.SmartHealSync = {
         }
     },
 
+    /**
+     * Return all visits for a given phone that have a followUpDate set.
+     * Used by the patient dashboard to render follow-up reminder cards.
+     * Sorted by followUpDate ascending (soonest first).
+     */
     getUpcomingFollowUps(phone) {
         if (!phone || phone === "—") return [];
         const norm = String(phone).replace(/\D/g, "");
         return this.getAllVisits()
-            .filter(v => String(v.phone || "").replace(/\D/g, "") === norm && v.followUpDate)
+            .filter(v =>
+                String(v.phone || "").replace(/\D/g, "") === norm &&
+                v.followUpDate
+            )
             .sort((a, b) => (a.followUpDate > b.followUpDate ? 1 : -1));
+    },
+
+    // ── PHASE 14: Feedback System ──
+    async submitFeedback(feedbackData) {
+        try {
+            const docId = `FB-${Date.now()}`;
+            await setDoc(doc(db, "feedback", docId), feedbackData);
+        } catch (e) { console.error("Firebase Feedback Error:", e); }
     }
+
 };

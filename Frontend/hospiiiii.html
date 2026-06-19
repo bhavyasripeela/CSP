@@ -3101,17 +3101,21 @@
 
     <script type="module" src="smart-heal-sync.js"></script>
     <script>
-    // Start listening for live Firebase updates
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        if (window.SmartHealSync && window.SmartHealSync.initRealTimeSync) {
-          console.log("Patient Dashboard connected to live Firebase Sync...");
-          // We call this to silently pull live data into local memory
-          window.SmartHealSync.initRealTimeSync();
-        }
-      }, 1000);
-    });
-  </script>
+      // Start listening for live Firebase updates
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          if (window.SmartHealSync && window.SmartHealSync.initRealTimeSync) {
+            console.log("Patient Dashboard connected to live Firebase Sync...");
+            // Pass a callback to instantly auto-refresh the Patient UI!
+            window.SmartHealSync.initRealTimeSync(() => {
+              if (typeof renderVisitHistory === 'function') renderVisitHistory();
+              if (typeof checkFollowupAlerts === 'function') checkFollowupAlerts();
+              if (typeof syncMyTokenStatus === 'function') syncMyTokenStatus();
+            });
+          }
+        }, 1000);
+      });
+    </script>
     <script>
       // ── STATE ──
       let currentLang = 'en';
@@ -3886,9 +3890,15 @@
         };
 
         // Persist to localStorage
+        // Persist to localStorage
         const existing = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
         existing.unshift(record);
         localStorage.setItem('smartheal_feedbacks', JSON.stringify(existing));
+
+        // Push to Firebase Cloud!
+        if (window.SmartHealSync && window.SmartHealSync.submitFeedback) {
+            window.SmartHealSync.submitFeedback(record);
+        }
 
         // Show success screen
         document.getElementById('feedback-form').style.display = 'none';
@@ -4191,7 +4201,7 @@
           const dept = v.department || v.dept || 'General OPD';
           const token = v.token ? `Token #${String(v.token).replace('#', '')}` : '—';
           const doctor = v.doctor ? `<div class="visit-card-row">Doctor: <strong>${escFu(v.doctor)}</strong></div>` : '';
-          const notes = v.consultationNote ? `<div class="visit-card-notes">📝 ${escFu(v.consultationNote)}</div>` : '';
+          const notes = v.consultationNote ? `<div class="visit-card-notes" style="white-space: pre-line;">📝 ${escFu(v.consultationNote)}</div>` : '';
           return `
             <div class="visit-card">
               <div class="visit-card-header">
