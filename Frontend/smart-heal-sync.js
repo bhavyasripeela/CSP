@@ -33,6 +33,20 @@ window.SmartHealSync = {
             }
         });
 
+        // Listen to Doctor Applications (Phase 2)
+        onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
+            const apps = [];
+            snapshot.forEach(doc => apps.push(doc.data()));
+            
+            // Save full list for admin dashboard
+            localStorage.setItem("doctorApplications", JSON.stringify(apps));
+            
+            // Save approved list for the doctor login verification system
+            const approvedDoctors = apps.filter(a => a.status === 'approved' && a.approved === true);
+            localStorage.setItem("smartheal_doctors", JSON.stringify(approvedDoctors));
+            
+            if (onDataChangedCallback) onDataChangedCallback();
+        });
         // Listen to Feedback (Phase 14 - Admin Dashboard)
         onSnapshot(collection(db, "feedback"), (snapshot) => {
             const feedbacks = [];
@@ -309,6 +323,17 @@ window.SmartHealSync = {
                 v.followUpDate
             )
             .sort((a, b) => (a.followUpDate > b.followUpDate ? 1 : -1));
+    },
+    // ── PHASE 2: Doctor Applications & Approvals ──
+    async updateDoctorApplication(appData) {
+        try {
+            // Ensure the application has a unique ID
+            const docId = appData.uid || appData.id || `DOC-${Date.now()}`;
+            appData.uid = docId; 
+            
+            // Push to Firebase Cloud
+            await setDoc(doc(db, "doctorApplications", docId), appData, { merge: true });
+        } catch (e) { console.error("Firebase Doctor App Sync Error:", e); }
     },
 
     // ── PHASE 14: Feedback System ──

@@ -978,6 +978,8 @@
     </div>
   </div>
 
+  <!-- SMARTHEAL CLOUD SYNC -->
+  <script type="module" src="smart-heal-sync.js"></script>
   <script>
     // ── STATE ──
     let appData = {};
@@ -1138,6 +1140,12 @@
         existing.push(application);
         localStorage.setItem('doctorApplications', JSON.stringify(existing));
         console.log('[SmartHeal] Application saved:', application);
+
+        // ── PHASE 2: Push new application to Firebase Cloud ──
+        if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
+            window.SmartHealSync.updateDoctorApplication(application);
+            console.log("Application sent to cloud!");
+        }
 
         // ── Save to smartheal_doctors (for login lookup) ──
         const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');

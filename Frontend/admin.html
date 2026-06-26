@@ -4028,6 +4028,10 @@
               doctors[di].role = 'doctor';
             }
             localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+            // Push the approved status up to the Cloud!
+            if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
+                window.SmartHealSync.updateDoctorApplication(apps[i]);
+            }
 
             console.log('[SmartHeal Admin] Approved doctor uid:', uid, '| name:', apps[i].name, '| doctorId:', doctorId);
             showAdminToast('t-success', '✅', `Dr. ${apps[i].name || apps[i].fullName} approved — Doctor ID: ${doctorId}`);
@@ -4054,6 +4058,10 @@
               doctors[di].status = 'rejected';
             }
             localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+            // Push the rejected status up to the Cloud!
+            if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
+                window.SmartHealSync.updateDoctorApplication(apps[i]);
+            }
 
             console.log('[SmartHeal Admin] Rejected doctor uid:', uid, '| name:', apps[i].name);
             showAdminToast('t-reject', '❌', `Application for ${apps[i].name || apps[i].fullName} rejected.`);
