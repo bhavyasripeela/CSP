@@ -940,7 +940,7 @@
         <div class="msg-box error" id="submit-error"><span>⚠️</span><span id="submit-error-text">Something went
             wrong.</span></div>
 
-        <button class="submit-btn" id="submitBtn" onclick="submitApplication()">
+        <button class="submit-btn" id="submitBtn" onclick="window.submitApplication()">
           <span class="btn-main-text">Submit Application</span>
           <div class="btn-spinner"></div>
         </button>
@@ -978,14 +978,11 @@
     </div>
   </div>
 
-  <!-- SMARTHEAL CLOUD SYNC -->
-  <script type="module" src="smart-heal-sync.js"></script>
+  <!-- UI SCRIPT (NO FIREBASE) -->
   <script>
-    // ── STATE ──
-    let appData = {};
+    window.appData = {};
     let currentStep = 1;
 
-    // ── STEP NAV ──
     function goStep(n) {
       if (n === 2 && !validateStep1()) return;
       if (n === 3 && !validateStep2()) return;
@@ -1010,7 +1007,6 @@
       }
     }
 
-    // ── VALIDATION ──
     function showErr(id, show) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('show', show);
@@ -1030,7 +1026,7 @@
       const eL = !lname; markField('ap-lname', eL); showErr('err-lname', eL); if (eL) ok = false;
       const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); markField('ap-email', eE); showErr('err-email', eE); if (eE) ok = false;
       const ePh = !/^\d{10}$/.test(phone); markField('ap-phone', ePh); showErr('err-phone', ePh); if (ePh) ok = false;
-      if (ok) appData = { ...appData, fname, lname, email, phone };
+      if (ok) window.appData = { ...window.appData, fname, lname, email, phone };
       return ok;
     }
 
@@ -1054,18 +1050,17 @@
       } else {
         document.getElementById('step2-error').classList.remove('show');
       }
-      if (ok) appData = { ...appData, spec, license, pw };
+      if (ok) window.appData = { ...window.appData, spec, license, pw };
       return ok;
     }
 
-    // ── REVIEW ──
     function buildReview() {
       const fields = [
-        ['Full Name', `${appData.fname} ${appData.lname}`],
-        ['Email', appData.email],
-        ['Phone', appData.phone],
-        ['Specialization', appData.spec],
-        ['License Number', appData.license],
+        ['Full Name', `${window.appData.fname} ${window.appData.lname}`],
+        ['Email', window.appData.email],
+        ['Phone', window.appData.phone],
+        ['Specialization', window.appData.spec],
+        ['License Number', window.appData.license],
         ['Password', '••••••••'],
       ];
       document.getElementById('review-content').innerHTML = fields.map(([l, v]) => `
@@ -1075,7 +1070,6 @@
       </div>`).join('');
     }
 
-    // ── PASSWORD STRENGTH ──
     function checkPwStrength(v) {
       const bars = [document.getElementById('ps1'), document.getElementById('ps2'), document.getElementById('ps3'), document.getElementById('ps4')];
       const lbl = document.getElementById('ps-lbl');
@@ -1097,79 +1091,48 @@
       inp.type = vis ? 'password' : 'text';
       btn.textContent = vis ? '👁️' : '🙈';
     }
+  </script>
 
-    // ── SUBMIT ──
-    function generateRefId() {
-      return 'APP-' + Date.now().toString().slice(-6);
-    }
+  <!-- PURE FIREBASE APPLICATION WORKFLOW -->
+  <script type="module">
+    import { auth, db } from '../Backend/firebase-config.js';
+    import { createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-    async function submitApplication() {
+    window.submitApplication = async function() {
       const btn = document.getElementById('submitBtn');
       btn.classList.add('loading');
+      const refId = 'APP-' + Date.now().toString().slice(-6);
 
-      // ── Duplicate email check ──
-      const existingDoctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-      if (existingDoctors.some(d => d.email && d.email.toLowerCase() === appData.email.toLowerCase())) {
-        btn.classList.remove('loading');
-        const errEl = document.getElementById('submit-error');
-        document.getElementById('submit-error-text').textContent = 'An application with this email already exists.';
-        errEl.classList.add('show');
-        return;
-      }
-
-      const refId = generateRefId();
-      const uid = 'LOCAL-' + refId;
-      const application = {
-        id: uid,
-        uid,
-        refId,
-        doctorId: appData.email, // <--- ADDED THIS
-        password: appData.pw,    // <--- ADDED THIS 
-        fullName: `${appData.fname} ${appData.lname}`,
-        name: `${appData.fname} ${appData.lname}`,
-        email: appData.email,
-        phone: appData.phone,
-        specialization: appData.spec,
-        licenseNumber: appData.license,
-        status: 'pending',
-        approved: false,
-        submittedAt: new Date().toISOString()
-      };
+      const data = window.appData;
 
       try {
-        // ── Save to doctorApplications ──
-        const existing = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-        existing.push(application);
-        localStorage.setItem('doctorApplications', JSON.stringify(existing));
-        console.log('[SmartHeal] Application saved:', application);
+        // 1. CREATE SECURE FIREBASE AUTH ACCOUNT FIRST
+        const userCred = await createUserWithEmailAndPassword(auth, data.email, data.pw);
+        const uid = userCred.user.uid;
 
-        // ── PHASE 2: Push new application to Firebase Cloud ──
-        if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
-            window.SmartHealSync.updateDoctorApplication(application);
-            console.log("Application sent to cloud!");
-        }
-
-        // ── Save to smartheal_doctors (for login lookup) ──
-        const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-        doctors.push({
-          uid,
-          id: uid,
-          username: appData.email,   // login uses email as username
-          password: appData.pw,
-          name: application.name,
-          fullName: application.fullName,
-          email: appData.email,
-          phone: appData.phone,
-          specialization: appData.spec,
-          licenseNumber: appData.license,
-          role: 'doctor',
-          approved: false,
+        // 2. BUILD THE APPLICATION DATA
+        const application = {
+          uid: uid,
+          refId: refId,
+          name: `${data.fname} ${data.lname}`,
+          email: data.email,
+          phone: data.phone,
+          specialization: data.spec,
+          licenseNumber: data.license,
           status: 'pending',
-          refId
-        });
-        localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
+          approved: false, // Locked until Admin approves!
+          role: 'doctor',
+          submittedAt: new Date().toISOString()
+        };
 
-        await new Promise(r => setTimeout(r, 1200)); // simulate network
+        // 3. PUSH TO FIRESTORE AS SINGLE SOURCE OF TRUTH
+        await setDoc(doc(db, "doctorApplications", uid), application);
+        await setDoc(doc(db, "doctors", uid), application);
+
+        // 4. IMMEDIATELY SIGN OUT (Forces them to wait for admin approval)
+        await signOut(auth);
+
         btn.classList.remove('loading');
         document.getElementById('app-ref-id').textContent = refId;
         document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
@@ -1177,15 +1140,13 @@
         document.getElementById('stepsBar').style.display = 'none';
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        console.log('[SmartHeal] Application submitted successfully. RefID:', refId);
       } catch (err) {
         btn.classList.remove('loading');
         const errEl = document.getElementById('submit-error');
-        document.getElementById('submit-error-text').textContent = err.message || 'Submission failed. Please try again.';
+        document.getElementById('submit-error-text').textContent = err.message || 'Submission failed. Try a different email.';
         errEl.classList.add('show');
-        console.error('[SmartHeal] Application submission error:', err);
       }
-    }
+    };
   </script>
 </body>
 

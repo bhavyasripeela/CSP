@@ -2234,7 +2234,7 @@
             </div>
           </div>
           <div class="doctor-grid" id="doctor-grid">
-            <div style="padding:32px;text-align:center;color:var(--text-2);font-size:14px);grid-column:1/-1">
+            <div style="padding:32px;text-align:center;color:var(--text-2);font-size:14px;grid-column:1/-1">
               No approved doctors yet. Approve applications from the Doctor Applications section.
             </div>
           </div>
@@ -2246,7 +2246,7 @@
               <div class="section-title">📝 Doctor Applications</div>
               <div class="section-sub" id="apps-section-sub">Loading applications…</div>
             </div>
-            <button class="section-action" onclick="loadApplications()">↻ Refresh</button>
+            <button class="section-action" onclick="window.renderApplications()">↻ Refresh</button>
           </div>
 
           <div class="app-counts-bar">
@@ -2274,13 +2274,13 @@
           </div>
 
           <div class="app-tabs">
-            <button class="app-tab active" id="atab-all" onclick="switchAppTab('all')">All<span class="tab-count"
+            <button class="app-tab active" id="atab-all" onclick="window.switchAppTab('all')">All<span class="tab-count"
                 id="tc-all">0</span></button>
-            <button class="app-tab" id="atab-pending" onclick="switchAppTab('pending')">Pending<span class="tab-count"
+            <button class="app-tab" id="atab-pending" onclick="window.switchAppTab('pending')">Pending<span class="tab-count"
                 id="tc-pending">0</span></button>
-            <button class="app-tab" id="atab-approved" onclick="switchAppTab('approved')">Approved<span
+            <button class="app-tab" id="atab-approved" onclick="window.switchAppTab('approved')">Approved<span
                 class="tab-count" id="tc-approved">0</span></button>
-            <button class="app-tab" id="atab-rejected" onclick="switchAppTab('rejected')">Rejected<span
+            <button class="app-tab" id="atab-rejected" onclick="window.switchAppTab('rejected')">Rejected<span
                 class="tab-count" id="tc-rejected">0</span></button>
           </div>
 
@@ -2517,8 +2517,12 @@
           </div>
         </section>
 
-        <script type="module" src="smart-heal-sync.js"></script>
         <script>
+          // ── GLOBALS ──
+          window.allApplications = [];
+          window.currentFilter = 'all';
+          window.toastTimeout = null;
+
           // ── CLOCK ──
           function updateClock() {
             const n = new Date();
@@ -2560,10 +2564,9 @@
 
             // ─────────────────────────────────────────────────────────
             // Card 2 — Active Doctors
-            // Source: smartheal_doctors (approved) + smartheal_docStatus (active toggle)
-            //         fallback: doctorApplications with approved === true
+            // Source: window.allApplications (approved) + smartheal_docStatus (active toggle)
             // ─────────────────────────────────────────────────────────
-            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            const apps = window.allApplications || [];
             const approvedDoctors = apps.filter(a => a.approved === true && a.status === 'approved');
             const totalApproved = approvedDoctors.length;
 
@@ -2698,7 +2701,7 @@
             document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
             el.classList.add('active');
             if (el.getAttribute('href') === '#feedback')  setTimeout(loadFeedbackCenter, 80);
-            if (el.getAttribute('href') === '#doctors')   setTimeout(loadDoctorManagement, 80);
+            if (el.getAttribute('href') === '#doctors')   setTimeout(window.loadDoctorManagement, 80);
             if (el.getAttribute('href') === '#analytics') setTimeout(() => { loadAnalytics(); _syncWaitTimeSpark(); }, 80);
           }
 
@@ -2717,25 +2720,24 @@
           }
 
           // ── REFRESH ENTIRE DASHBOARD (Overview "Refresh" button) ──
-          function refreshDashboard() {
+          window.refreshDashboard = function() {
             loadDashboardStats();    // also reloads feedback center summary
-            loadDoctorManagement();  // doctor management + delay table
-            loadApplications();      // doctor applications
+            if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            if(typeof window.renderApplications === 'function') window.renderApplications();
             loadFeedbackCenter();    // feedback center detail list
             loadAnalytics();         // reports & analytics
             _syncWaitTimeSpark();
-            showAdminToast('t-success', '✓', 'Dashboard refreshed.');
+            window.showAdminToast('t-success', '✓', 'Dashboard refreshed.');
           }
 
           // ── ADD DOCTOR → Doctor Applications workflow ──
           function goToApplications() {
             gotoSection('#applications');
-            loadApplications();
             setTimeout(() => {
               const pendingTab = document.getElementById('atab-pending');
-              if (pendingTab) switchAppTab('pending');
+              if (pendingTab) window.switchAppTab('pending');
             }, 100);
-            showAdminToast('t-info', '📋', 'Review pending applications to approve a new doctor.');
+            window.showAdminToast('t-info', '📋', 'Review pending applications to approve a new doctor.');
           }
 
           // ── DELAY MONITORING "View Full Report" → expanded analytics view ──
@@ -2743,7 +2745,7 @@
             gotoSection('#analytics');
             loadAnalytics();
             _syncWaitTimeSpark();
-            showAdminToast('t-info', '📈', 'Showing full analytics report.');
+            window.showAdminToast('t-info', '📈', 'Showing full analytics report.');
           }
 
           // ── FEEDBACK TABS ──
@@ -2905,7 +2907,7 @@
 
           function exportFeedbackCSV() {
             const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
-            if (!feedbacks.length) { showAdminToast('t-info', 'ℹ️', 'No feedback records to export.'); return; }
+            if (!feedbacks.length) { window.showAdminToast('t-info', 'ℹ️', 'No feedback records to export.'); return; }
             const header = ['Patient Name', 'Department', 'Token Number', 'Rating', 'Delay Category', 'Feedback Comment', 'Submission Date'];
             const rows = feedbacks.map(fb => [
               fb.name || '', fb.dept || '', fb.token || '', fb.rating || '',
@@ -2916,25 +2918,11 @@
             a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
             a.download = 'feedback-report.csv';
             a.click();
-            showAdminToast('t-success', '✓', 'Feedback report downloaded.');
+            window.showAdminToast('t-success', '✓', 'Feedback report downloaded.');
           }
 
-          // Load feedback center when DOM is ready + refresh when navigating to it
-          document.addEventListener('DOMContentLoaded', function () {
-            loadDashboardStats();
-            loadDoctorManagement();
-            document.querySelectorAll('a.sb-link').forEach(link => {
-              link.addEventListener('click', () => {
-                const href = link.getAttribute('href');
-                if (href === '#feedback') setTimeout(loadFeedbackCenter, 50);
-                if (href === '#doctors') setTimeout(loadDoctorManagement, 50);
-              });
-            });
-          });
+          // ── DOCTOR MANAGEMENT — Real Data from Firebase Sync ────────
 
-          // ── DOCTOR MANAGEMENT — real data ──────────────────────────
-
-          // Gradient palette for avatars (cycles by index)
           const DOC_GRADIENTS = [
             'linear-gradient(135deg,#1051f6,#534AB7)',
             'linear-gradient(135deg,#b856a3,#765568)',
@@ -2948,8 +2936,6 @@
             'linear-gradient(135deg,#E8873A,#1051f6)',
           ];
 
-          // In-memory status store (persists across re-renders within session)
-          // Shape: { [uid]: 'active' | 'break' | 'off' }
           const docStatusStore = JSON.parse(localStorage.getItem('smartheal_docStatus') || '{}');
 
           function saveDocStatus() {
@@ -2971,22 +2957,19 @@
             return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2);
           }
 
-          function loadDoctorManagement() {
-            // ── Source: doctorApplications filtered to approved ──
-            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+          window.loadDoctorManagement = function() {
+            // Source: Firebase live synced applications
+            const apps = window.allApplications || [];
             const approved = apps.filter(a => a.approved === true && a.status === 'approved');
 
             const total = approved.length;
             const grid = document.getElementById('doctor-grid');
             const sub = document.getElementById('doc-section-sub');
 
-            // Update section subtitle
             if (sub) sub.textContent = `${total} doctor${total !== 1 ? 's' : ''} registered · ${total} active today`;
 
-            // ── Build cards ──
             if (total === 0) {
               if (grid) grid.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-2);font-size:14px;grid-column:1/-1">No approved doctors yet. Approve applications from the Doctor Applications section.</div>';
-              // Zero out stats
               ['doc-stat-on', 'doc-stat-break', 'doc-stat-off', 'doc-stat-emg', 'doc-stat-patients'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = '0';
@@ -2995,7 +2978,6 @@
               return;
             }
 
-            // Count by status
             let onCount = 0, breakCount = 0, offCount = 0, emgCount = 0;
 
             const cards = approved.map((doc, idx) => {
@@ -3005,10 +2987,9 @@
               const docId = doc.doctorId || '—';
               const gradient = DOC_GRADIENTS[idx % DOC_GRADIENTS.length];
               const initials = docInitials(name);
-              const status = getDocStatus(uid);     // 'active' | 'break' | 'off'
+              const status = getDocStatus(uid); 
               const isOn = status === 'active';
 
-              // Count
               if (status === 'active') onCount++;
               else if (status === 'break') breakCount++;
               else offCount++;
@@ -3046,7 +3027,6 @@
 
             if (grid) grid.innerHTML = cards;
 
-            // ── Update stats bar ──
             const setS = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
             setS('doc-stat-on', onCount);
             setS('doc-stat-break', breakCount);
@@ -3054,16 +3034,14 @@
             setS('doc-stat-emg', emgCount);
             setS('doc-stat-patients', '—');
 
-            // ── Populate delay table ──
             renderDelayTable(approved);
           }
 
-          function toggleDocStatus(btn) {
+          window.toggleDocStatus = function(btn) {
             const uid = btn.dataset.uid;
             const card = btn.closest('.doctor-card');
             if (!card) return;
 
-            // Cycle: active → break → off → active
             const cur = card.dataset.status || 'active';
             const next = cur === 'active' ? 'off' : 'active';
 
@@ -3079,7 +3057,6 @@
             if (badge) { badge.className = `status-badge ${next}`; badge.textContent = next === 'active' ? '● Active' : next === 'break' ? '● On Break' : '● Off Duty'; }
             if (dot) { dot.className = `status-dot ${next}`; }
 
-            // Recount and update stats bar
             const cards = document.querySelectorAll('#doctor-grid .doctor-card');
             let on = 0, br = 0, off = 0;
             cards.forEach(c => {
@@ -3092,7 +3069,6 @@
             setS('doc-stat-on', on);
             setS('doc-stat-break', br);
             setS('doc-stat-off', off);
-            // keep KPI card in sync
             loadDashboardStats();
           }
 
@@ -3100,17 +3076,7 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
           }
 
-          // ── DELAY MONITORING — live queue/wait stats per department ──
-          // Data sources:
-          //   hospitalQueue          → current queue records (status, dept, token, timestamps)
-          //   smartheal_visitHistory → completed/attended visits (createdAt + completedAt/attendedAt = "called" time)
-          //   smartheal_nowServing / smartheal_calling → token currently being served/called
-          //
-          // Wait-time formula: Called Time − Registration Time
-          //   Registration Time = createdAt / registeredAt / timestamp
-          //   Called Time       = calledAt / attendedAt / completedAt
-          //
-          // Status thresholds (avg wait): 0–15 Normal · 15–30 Busy · 30–45 Delayed · 45+ Critical
+          // ── DELAY MONITORING ───────────────────────────────────────
           function renderDelayTable(approved) {
             const tbody = document.getElementById('delay-table-body');
             if (!tbody) return;
@@ -3130,7 +3096,6 @@
             const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
             const getCalled = r => r.calledAt || r.attendedAt || r.completedAt;
 
-            // ── Per-department "In Queue" — count of patients currently waiting ──
             function queueCountFor(dept) {
               return queue.filter(p => {
                 if (normDept(p.dept || p.department || p.specialization || '') !== dept) return false;
@@ -3144,7 +3109,6 @@
               }).length;
             }
 
-            // ── Per-department average wait time (minutes) — today's records only ──
             function avgWaitFor(dept) {
               const records = [];
               visits.forEach(v => {
@@ -3164,13 +3128,12 @@
               });
 
               const mins = records.map(r => (new Date(getCalled(r)).getTime() - new Date(getStart(r)).getTime()) / 60000)
-                .filter(m => m >= 0 && m < 300); // sanity cap at 5h
+                .filter(m => m >= 0 && m < 300);
 
-              if (!mins.length) return null; // "Not Available"
+              if (!mins.length) return null;
               return Math.round(mins.reduce((a, b) => a + b, 0) / mins.length);
             }
 
-            // ── Status classification from avg wait time ──
             function statusFor(avgMin) {
               if (avgMin === null) return { label: 'Normal', badge: 'resolved', tier: 'low' };
               if (avgMin <= 15) return { label: 'Normal', badge: 'resolved', tier: 'low' };
@@ -3179,7 +3142,6 @@
               return { label: 'Critical', badge: 'critical', tier: 'high' };
             }
 
-            // ── Build one row per approved doctor (dept-doctor mapping unchanged) ──
             const deptStats = [];
             tbody.innerHTML = approved.map(doc => {
               const name = escDr(doc.name || doc.fullName || 'Unknown');
@@ -3209,7 +3171,6 @@
             _renderDelaySummary(deptStats, visits, queue, todayStr);
           }
 
-          // ── Delay summary cards: Peak / Best / Hospital Average + Wait Trend Today ──
           function _renderDelaySummary(deptStats, visits, queue, todayStr) {
             const peakValEl = document.getElementById('delay-peak-val');
             const peakLblEl = document.getElementById('delay-peak-lbl');
@@ -3238,7 +3199,6 @@
               if (avgValEl)  avgValEl.textContent  = `${hospAvg} min`;
             }
 
-            // ── Wait Trend Today — average wait by 2-hour block, from real timestamps ──
             if (!trendEl) return;
 
             const blocks = [
@@ -3293,38 +3253,151 @@
             }).join('');
           }
 
-          // ── DOCTOR TOGGLES (legacy handler — no-op; toggleDocStatus handles real cards) ──
-          document.querySelectorAll('.tog').forEach(tog => {
-            tog.addEventListener('click', function () {
-              this.classList.toggle('on');
-              const card = this.closest('.doctor-card');
-              if (!card) return;
-              const badge = card.querySelector('.status-badge');
-              const dot = card.querySelector('.status-dot');
-              if (this.classList.contains('on')) {
-                badge.className = 'status-badge active'; badge.textContent = '● Active';
-                dot.className = 'status-dot active';
-              } else {
-                badge.className = 'status-badge off'; badge.textContent = '● Off Duty';
-                dot.className = 'status-dot off';
+          // ── SCROLL SPY (sidebar) ──
+          const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'analytics'];
+          window.addEventListener('scroll', () => {
+            const y = window.scrollY + 120;
+            sections.forEach(id => {
+              const el = document.getElementById(id);
+              if (!el) return;
+              if (el.offsetTop <= y && el.offsetTop + el.offsetHeight > y) {
+                document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+                const link = document.querySelector(`.sb-link[href="#${id}"]`);
+                if (link) link.classList.add('active');
               }
             });
+          }, { passive: true });
+
+          // ── RESPONSIVE MENU ──
+          const menuBtn = document.getElementById('menuBtn');
+          if (window.innerWidth <= 768 && menuBtn) menuBtn.style.display = 'block';
+          window.addEventListener('resize', () => {
+            if (menuBtn) menuBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
           });
 
-          // ── SCROLL ──
-          function scrollTo(id) {
-            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            document.querySelectorAll('.mn-item').forEach(i => i.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+          // ══════════════════════════════════════════════════════════
+          // DOCTOR APPLICATIONS — Firebase Implementation Helper
+          // ══════════════════════════════════════════════════════════
+          
+          window.switchAppTab = function(filter) {
+            window.currentFilter = filter;
+            document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.getElementById('atab-' + filter);
+            if (activeTab) activeTab.classList.add('active');
+            window.renderApplications();
           }
+
+          function getInitials(name) {
+            return (name || '').split(' ').filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+          }
+
+          function adminFmtDate(iso) {
+            if (!iso) return '—';
+            try { return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+            catch (_) { return iso; }
+          }
+
+          const AVATAR_GRADIENTS = [
+            'linear-gradient(135deg,#1051f6,#534AB7)',
+            'linear-gradient(135deg,#b856a3,#765568)',
+            'linear-gradient(135deg,#2ECC8A,#1051f6)',
+            'linear-gradient(135deg,#E8873A,#db87c5)',
+            'linear-gradient(135deg,#534AB7,#b856a3)',
+            'linear-gradient(135deg,#765568,#E8873A)',
+          ];
+
+          window.renderApplications = function() {
+            const list = document.getElementById('app-list');
+            if (!list) return;
+
+            const filtered = window.currentFilter === 'all'
+              ? window.allApplications
+              : window.allApplications.filter(a => a.status === window.currentFilter);
+
+            if (filtered.length === 0) {
+              const msgs = {
+                all: ['📋', 'No applications yet', 'Doctor applications will appear here once submitted.'],
+                pending: ['⏳', 'No pending applications', 'All applications have been reviewed.'],
+                approved: ['✅', 'No approved doctors yet', 'Approved applications will appear here.'],
+                rejected: ['❌', 'No rejected applications', 'Rejected applications will appear here.'],
+              };
+              const [icon, text, sub] = msgs[window.currentFilter] || msgs.all;
+              list.innerHTML = `<div class="app-empty">
+          <div class="app-empty-icon">${icon}</div>
+          <div class="app-empty-text">${text}</div>
+          <div class="app-empty-sub">${sub}</div>
+        </div>`;
+              return;
+            }
+
+            list.innerHTML = filtered.map((app, idx) => {
+              const initials = getInitials(app.name || app.fullName || '?');
+              const grad = AVATAR_GRADIENTS[idx % AVATAR_GRADIENTS.length];
+              const uid = app.uid;
+              const status = app.status || 'pending';
+
+              const statusBadge = status === 'approved'
+                ? '<span class="app-badge approved">✅ Approved</span>'
+                : status === 'rejected'
+                  ? '<span class="app-badge rejected">❌ Rejected</span>'
+                  : '<span class="app-badge pending">⏳ Pending</span>';
+
+              const actionBtns = status === 'pending'
+                ? `<button class="app-btn approve" onclick="window.approveDoctor('${uid}')">✅ Approve</button>
+             <button class="app-btn reject"  onclick="window.rejectDoctor('${uid}')">✗ Reject</button>`
+                : status === 'approved'
+                  ? `<button class="app-btn reject"    onclick="window.rejectDoctor('${uid}')">✗ Revoke</button>
+               <button class="app-btn reset-btn" onclick="window.resetDoctor('${uid}')">↺ Reset</button>`
+                  : `<button class="app-btn reset-btn" onclick="window.resetDoctor('${uid}')">↺ Reset to Pending</button>`;
+
+              return `
+        <div class="app-card" id="appcard-${uid}">
+          <div class="app-card-accent ${status}"></div>
+          <div class="app-avatar" style="background:${grad}">${initials}</div>
+          <div class="app-info">
+            <div class="app-name">
+              ${app.name || app.fullName || '—'}
+              ${statusBadge}
+            </div>
+            <div class="app-meta">
+              <span class="app-meta-item">🩺 ${app.specialization || '—'}</span>
+              <span class="app-meta-item">📧 ${app.email || '—'}</span>
+              <span class="app-meta-item">📞 ${app.phone || '—'}</span>
+              <span class="app-meta-item">🪪 ${app.licenseNumber || '—'}</span>
+              <span class="app-meta-item">📅 ${adminFmtDate(app.submittedAt)}</span>
+              ${app.doctorId ? `<span class="app-meta-item" style="color:#1051f6;font-family:monospace;font-weight:700;background:rgba(16,81,246,0.08);padding:2px 8px;border-radius:6px;">🆔 ${app.doctorId}</span>` : ''}
+              ${app.refId ? `<span class="app-meta-item" style="color:var(--text-3);font-family:monospace;">${app.refId}</span>` : ''}
+            </div>
+          </div>
+          <div class="app-actions">${actionBtns}</div>
+        </div>`;
+            }).join('');
+          }
+
+          window.showAdminToast = function(type, icon, msg) {
+            const t = document.getElementById('admin-toast');
+            if (!t) return;
+            document.getElementById('admin-toast-icon').textContent = icon;
+            document.getElementById('admin-toast-msg').textContent = msg;
+            t.className = `admin-toast ${type} show`;
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => t.classList.remove('show'), 3500);
+          }
+
+          // ── REAL-TIME UPDATES for Delay Monitoring ──
+          window.addEventListener('storage', function (e) {
+            if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications'].includes(e.key)) {
+              if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            }
+          });
+          setInterval(() => {
+              if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+          }, 10000);
 
           // ══════════════════════════════════════════════════════════
           // REPORTS & ANALYTICS — real SmartHeal data
           // ══════════════════════════════════════════════════════════
 
-          // ── Helpers ────────────────────────────────────────────────
-
-          /** True if a visit/queue record is an emergency. */
           function isEmergency(r) {
             return r.emergency === true
               || r.priority === 'emergency'
@@ -3332,29 +3405,22 @@
               || r.type === 'emergency';
           }
 
-          /** True if a visit is completed (consultation done). */
           function isCompleted(v) {
             return !!(v.consultationNote || v.prescription || v.completed === true
               || v.status === 'completed' || v.status === 'done');
           }
 
-          /**
-           * Return the YYYY-MM-DD string for a date offset from today.
-           * offset=0 → today, offset=-1 → yesterday, etc.
-           */
           function dateStr(offset) {
             const d = new Date();
             d.setDate(d.getDate() + offset);
             return d.toISOString().slice(0, 10);
           }
 
-          /** Short day label for a YYYY-MM-DD string. */
           function shortDay(ymd) {
             const d = new Date(ymd + 'T00:00:00');
             return d.toLocaleDateString('en-IN', { weekday: 'short' });
           }
 
-          /** Normalise a department/specialization string to a canonical name. */
           function normDept(raw) {
             if (!raw) return 'General OPD';
             const s = String(raw).trim().toLowerCase();
@@ -3370,11 +3436,8 @@
             if (s.includes('ophthal') || s.includes('eye')) return 'Ophthalmology';
             if (s.includes('urol')) return 'Urology';
             if (s.includes('general') || s.includes('opd')) return 'General OPD';
-            // Title-case unknown specialty rather than discarding it
             return raw.trim().replace(/\b\w/g, c => c.toUpperCase());
           }
-
-          // ── Main analytics loader ──────────────────────────────────
 
           function loadAnalytics() {
             const visits  = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
@@ -3386,7 +3449,6 @@
             _renderEmergencyTrends(visits, queue);
             _renderSatisfactionSpark(feedbacks);
 
-            // Update section subtitle
             const sub = document.querySelector('#analytics .section-sub');
             if (sub) {
               const now = new Date();
@@ -3394,26 +3456,22 @@
             }
           }
 
-          // ── ANALYTICS "Download Report" — full CSV from real SmartHeal data ──
           function exportAnalyticsReport() {
             const visits    = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
             const queue     = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
             const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
-            const doctors   = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-            const apps      = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+            const apps      = window.allApplications || [];
 
             const lines = [];
             const today = dateStr(0);
             const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
 
-            // Combine visits + queue (de-duplicated by token) for registration counts
             const allRecords = visits.slice();
             queue.forEach(p => {
               const dup = visits.some(v => v.token && v.token === p.token);
               if (!dup) allRecords.push(p);
             });
 
-            // ── Patient Registrations ──
             lines.push('PATIENT REGISTRATIONS');
             lines.push('Date,Total Registrations,Emergency Registrations');
             last7.forEach(d => {
@@ -3429,7 +3487,6 @@
             lines.push(`Total (7 days),${allRecords.length},${totalEmergencies}`);
             lines.push('');
 
-            // ── Department Statistics (today) ──
             lines.push('DEPARTMENT STATISTICS (TODAY)');
             lines.push('Department,Patients Today');
             const deptMap = {};
@@ -3445,7 +3502,6 @@
             if (Object.keys(deptMap).length === 0) lines.push('No registrations today,0');
             lines.push('');
 
-            // ── Emergency Statistics ──
             lines.push('EMERGENCY STATISTICS');
             lines.push('Metric,Value');
             lines.push(`Total emergencies (7 days),${totalEmergencies}`);
@@ -3466,7 +3522,6 @@
             lines.push(`Completed emergency consultations today,${doneEmgToday}`);
             lines.push('');
 
-            // ── Feedback Metrics ──
             lines.push('FEEDBACK METRICS');
             lines.push('Metric,Value');
             const ratedFeedbacks = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5);
@@ -3481,11 +3536,10 @@
             });
             lines.push('');
 
-            // ── Doctor Statistics ──
             lines.push('DOCTOR STATISTICS');
             lines.push('Metric,Value');
             const docStatusStoreLocal = JSON.parse(localStorage.getItem('smartheal_docStatus') || '{}');
-            const approvedDoctors = doctors.filter(d => d.status === 'approved' || !d.status);
+            const approvedDoctors = apps.filter(d => d.approved === true && d.status === 'approved');
             let onCount = 0, breakCount = 0, offCount = 0;
             approvedDoctors.forEach(d => {
               const st = docStatusStoreLocal[d.uid] || docStatusStoreLocal[d.id] || 'active';
@@ -3505,20 +3559,16 @@
             a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
             a.download = 'smartheal-analytics-report.csv';
             a.click();
-            showAdminToast('t-success', '✓', 'Analytics report downloaded.');
+            window.showAdminToast('t-success', '✓', 'Analytics report downloaded.');
           }
-
-          // ── 1. Patient Flow — Last 7 Days ─────────────────────────
 
           function _renderPatientFlowChart(visits, queue) {
             const bc = document.getElementById('patientFlowChart');
             const bl = document.getElementById('patientFlowLabels');
             if (!bc || !bl) return;
 
-            // Build last 7 days date strings (oldest → newest, today last)
-            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6)); // [today-6, … , today]
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6)); 
 
-            // Count per day from visitHistory (createdAt field)
             const opdCounts = new Array(7).fill(0);
             const emgCounts = new Array(7).fill(0);
 
@@ -3531,14 +3581,12 @@
               else opdCounts[idx]++;
             });
 
-            // Also absorb queue records that may not be in visitHistory yet
             queue.forEach(p => {
               const ts = p.createdAt || p.registeredAt || p.timestamp;
               if (!ts) return;
               const d = new Date(ts).toISOString().slice(0, 10);
               const idx = last7.indexOf(d);
               if (idx === -1) return;
-              // Only add if not already counted in visits (match by token)
               const alreadyCounted = visits.some(v => v.token && v.token === p.token
                 && v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === d);
               if (alreadyCounted) return;
@@ -3546,8 +3594,7 @@
               else opdCounts[idx]++;
             });
 
-            const maxVal = Math.max(...opdCounts, ...emgCounts, 1); // avoid /0
-            const totalThisWeek = opdCounts.reduce((a, b) => a + b, 0) + emgCounts.reduce((a, b) => a + b, 0);
+            const maxVal = Math.max(...opdCounts, ...emgCounts, 1); 
 
             bc.innerHTML = '';
             bl.innerHTML = '';
@@ -3580,17 +3627,7 @@
               lbl.textContent = label;
               bl.appendChild(lbl);
             });
-
-            // Update section sub if no data at all
-            if (totalThisWeek === 0) {
-              const sub = document.querySelector('#analytics .section-sub');
-              if (sub && !sub.textContent.includes('No registrations')) {
-                // Leave it — loadAnalytics already set it
-              }
-            }
           }
-
-          // ── 2. Department Load Today ───────────────────────────────
 
           function _renderDeptLoad(visits, queue) {
             const container = document.getElementById('deptLoadBars');
@@ -3599,7 +3636,6 @@
             const todayStr = dateStr(0);
             const deptMap = {};
 
-            // From visitHistory — today only
             visits.forEach(v => {
               if (!v.createdAt) return;
               if (new Date(v.createdAt).toISOString().slice(0, 10) !== todayStr) return;
@@ -3607,10 +3643,8 @@
               deptMap[dept] = (deptMap[dept] || 0) + 1;
             });
 
-            // From queue — absorb records not in visitHistory
             queue.forEach(p => {
               const ts = p.createdAt || p.registeredAt || p.timestamp;
-              // If no timestamp assume it's today (queue is cleared daily in most implementations)
               if (ts && new Date(ts).toISOString().slice(0, 10) !== todayStr) return;
               const alreadyCounted = visits.some(v => v.token && v.token === p.token);
               if (alreadyCounted) return;
@@ -3618,7 +3652,6 @@
               deptMap[dept] = (deptMap[dept] || 0) + 1;
             });
 
-            // Sort by count descending
             const sorted = Object.entries(deptMap).sort((a, b) => b[1] - a[1]);
 
             if (sorted.length === 0) {
@@ -3640,12 +3673,9 @@
             }).join('');
           }
 
-          // ── 3. Emergency Trends ────────────────────────────────────
-
           function _renderEmergencyTrends(visits, queue) {
             const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
 
-            // Per-day emergency counts from visitHistory
             const emgPerDay = new Array(7).fill(0);
             visits.forEach(v => {
               if (!isEmergency(v) || !v.createdAt) return;
@@ -3654,7 +3684,6 @@
               if (idx !== -1) emgPerDay[idx]++;
             });
 
-            // Absorb from queue
             queue.forEach(p => {
               if (!isEmergency(p)) return;
               const ts = p.createdAt || p.registeredAt || p.timestamp;
@@ -3669,7 +3698,6 @@
             const weekTotal = emgPerDay.reduce((a, b) => a + b, 0);
             const maxEmg = Math.max(...emgPerDay, 1);
 
-            // Spark bars
             const sparkBarsEl = document.getElementById('spark-emg-bars');
             if (sparkBarsEl) {
               sparkBarsEl.innerHTML = emgPerDay.map((c, i) => {
@@ -3684,11 +3712,9 @@
             if (totalEl) totalEl.textContent = weekTotal > 0 ? weekTotal : '0';
             if (subEl)   subEl.textContent   = weekTotal === 0 ? 'None this week' : 'Past 7 days';
 
-            // Bottom stats
             const safeSet = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
             safeSet('emg-stat-week', weekTotal > 0 ? weekTotal : 'None');
 
-            // Active = in queue with emergency flag
             const nowServing = localStorage.getItem('smartheal_nowServing');
             const calling    = localStorage.getItem('smartheal_calling');
             const activeEmg = queue.filter(p => {
@@ -3699,7 +3725,6 @@
               return !isServing && !isCalling && p.status !== 'completed' && p.status !== 'done';
             }).length;
 
-            // Completed = visitHistory emergency records with consultation note
             const todayStr = dateStr(0);
             const doneEmg = visits.filter(v =>
               isEmergency(v) && isCompleted(v)
@@ -3709,8 +3734,6 @@
             safeSet('emg-stat-active', activeEmg > 0 ? activeEmg : '0');
             safeSet('emg-stat-done',   doneEmg   > 0 ? doneEmg   : '0');
           }
-
-          // ── 4. Satisfaction sparkline (bars track last 7 days avg) ─
 
           function _renderSatisfactionSpark(feedbacks) {
             const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
@@ -3735,13 +3758,12 @@
             if (sparkBarsEl) {
               sparkBarsEl.innerHTML = dayAvgs.map((avg, i) => {
                 if (avg === null) return `<div class="spark-b" style="height:8%;opacity:0.25"></div>`;
-                const h = Math.max(8, Math.round((avg / 5) * 100)); // scale to 5-star max
+                const h = Math.max(8, Math.round((avg / 5) * 100)); 
                 const isPeak = avg === maxAvg && dayCounts[i] > 0;
                 return `<div class="spark-b${isPeak ? ' peak' : ''}" style="height:${h}%"></div>`;
               }).join('');
             }
 
-            // Overall avg (already computed by loadFeedbackCenter — just sync here)
             const totalCount = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).length;
             const totalSum   = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).reduce((a, fb) => a + fb.rating, 0);
             const overallAvg = totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '—';
@@ -3752,9 +3774,6 @@
             if (sparkSubEl) sparkSubEl.textContent = totalCount > 0 ? `${totalCount} review${totalCount !== 1 ? 's' : ''}` : 'No reviews yet';
           }
 
-          // ── 5. Average Wait Time spark (delegated to loadDashboardStats) ─
-          // The kpi-wait card is already computed in loadDashboardStats().
-          // Here we also populate the analytics spark-wait-val from the same calculation.
           function _syncWaitTimeSpark() {
             const visits   = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
             const todayStr = dateStr(0);
@@ -3782,356 +3801,11 @@
             }
           }
 
-          // ── Wire analytics sidebar nav click ──────────────────────
-          document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('a.sb-link').forEach(link => {
-              link.addEventListener('click', () => {
-                if (link.getAttribute('href') === '#analytics') {
-                  setTimeout(() => { loadAnalytics(); _syncWaitTimeSpark(); }, 80);
-                }
-              });
-            });
-            // Initial render on page load
-            loadAnalytics();
-            _syncWaitTimeSpark();
-          });
-          // Immediate call if DOM already ready
-          if (document.readyState !== 'loading') {
-            loadAnalytics();
-            _syncWaitTimeSpark();
-          }
-
-          // ── SCROLL SPY (sidebar) ──
-          const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'analytics'];
-          window.addEventListener('scroll', () => {
-            const y = window.scrollY + 120;
-            sections.forEach(id => {
-              const el = document.getElementById(id);
-              if (!el) return;
-              if (el.offsetTop <= y && el.offsetTop + el.offsetHeight > y) {
-                document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
-                const link = document.querySelector(`.sb-link[href="#${id}"]`);
-                if (link) link.classList.add('active');
-              }
-            });
-          }, { passive: true });
-
-          // ── RESPONSIVE MENU ──
-          const menuBtn = document.getElementById('menuBtn');
-          if (window.innerWidth <= 768 && menuBtn) menuBtn.style.display = 'block';
-          window.addEventListener('resize', () => {
-            if (menuBtn) menuBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
-          });
-
-          // ══════════════════════════════════════════════════
-          // DOCTOR APPLICATIONS — Admin Workflow
-          // ══════════════════════════════════════════════════
-
-          // ══════════════════════════════════════════════════════════
-          // DOCTOR APPLICATIONS — complete localStorage implementation
-          // ══════════════════════════════════════════════════════════
-          let allApplications = [];
-          let currentFilter = 'all';
-          let toastTimeout = null;
-
-          /* ── Load & render ─────────────────────────────────────── */
-          function loadApplications() {
-            allApplications = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-            // Normalize: ensure every record has a uid field we can key on
-            allApplications = allApplications.map(a => ({
-              ...a,
-              uid: a.uid || a.id || ('LOCAL-' + (a.refId || a.id || Date.now()))
-            }));
-            allApplications.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-
-            const pending = allApplications.filter(a => a.status === 'pending').length;
-            const approved = allApplications.filter(a => a.status === 'approved').length;
-            const rejected = allApplications.filter(a => a.status === 'rejected').length;
-
-            console.log('[SmartHeal Admin] Loaded applications:', allApplications.length);
-            console.log('[SmartHeal Admin] Pending count:', pending);
-            console.log('[SmartHeal Admin] Approved count:', approved);
-            console.log('[SmartHeal Admin] Rejected count:', rejected);
-
-            // Update count cards
-            safeText('count-pending', pending);
-            safeText('count-approved', approved);
-            safeText('count-rejected', rejected);
-
-            // Update tab counts
-            safeText('tc-all', allApplications.length);
-            safeText('tc-pending', pending);
-            safeText('tc-approved', approved);
-            safeText('tc-rejected', rejected);
-
-            // Update sidebar badge
-            const badge = document.getElementById('sb-pending-badge');
-            if (badge) {
-              badge.textContent = pending;
-              badge.style.display = pending > 0 ? 'inline-flex' : 'none';
-            }
-
-            // Update section subtitle
-            const sub = document.getElementById('apps-section-sub');
-            if (sub) sub.textContent = `${allApplications.length} total · ${pending} pending review`;
-
-            renderApplications();
-          }
-
-          function safeText(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = val;
-          }
-
-          /* ── Tab switching ──────────────────────────────────────── */
-          function switchAppTab(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
-            const activeTab = document.getElementById('atab-' + filter);
-            if (activeTab) activeTab.classList.add('active');
-            renderApplications();
-          }
-
-          /* ── Helpers ────────────────────────────────────────────── */
-          function getInitials(name) {
-            return (name || '').split(' ').filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join('');
-          }
-
-          function adminFmtDate(iso) {
-            if (!iso) return '—';
-            try { return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
-            catch (_) { return iso; }
-          }
-
-          const AVATAR_GRADIENTS = [
-            'linear-gradient(135deg,#1051f6,#534AB7)',
-            'linear-gradient(135deg,#b856a3,#765568)',
-            'linear-gradient(135deg,#2ECC8A,#1051f6)',
-            'linear-gradient(135deg,#E8873A,#db87c5)',
-            'linear-gradient(135deg,#534AB7,#b856a3)',
-            'linear-gradient(135deg,#765568,#E8873A)',
-          ];
-
-          /* ── Render cards ───────────────────────────────────────── */
-          function renderApplications() {
-            const list = document.getElementById('app-list');
-            if (!list) return;
-
-            const filtered = currentFilter === 'all'
-              ? allApplications
-              : allApplications.filter(a => a.status === currentFilter);
-
-            if (filtered.length === 0) {
-              const msgs = {
-                all: ['📋', 'No applications yet', 'Doctor applications will appear here once submitted.'],
-                pending: ['⏳', 'No pending applications', 'All applications have been reviewed.'],
-                approved: ['✅', 'No approved doctors yet', 'Approved applications will appear here.'],
-                rejected: ['❌', 'No rejected applications', 'Rejected applications will appear here.'],
-              };
-              const [icon, text, sub] = msgs[currentFilter] || msgs.all;
-              list.innerHTML = `<div class="app-empty">
-          <div class="app-empty-icon">${icon}</div>
-          <div class="app-empty-text">${text}</div>
-          <div class="app-empty-sub">${sub}</div>
-        </div>`;
-              return;
-            }
-
-            list.innerHTML = filtered.map((app, idx) => {
-              const initials = getInitials(app.name || app.fullName || '?');
-              const grad = AVATAR_GRADIENTS[idx % AVATAR_GRADIENTS.length];
-              const uid = app.uid;
-              const status = app.status || 'pending';
-
-              const statusBadge = status === 'approved'
-                ? '<span class="app-badge approved">✅ Approved</span>'
-                : status === 'rejected'
-                  ? '<span class="app-badge rejected">❌ Rejected</span>'
-                  : '<span class="app-badge pending">⏳ Pending</span>';
-
-              const actionBtns = status === 'pending'
-                ? `<button class="app-btn approve" onclick="approveDoctor('${uid}')">✅ Approve</button>
-             <button class="app-btn reject"  onclick="rejectDoctor('${uid}')">✗ Reject</button>`
-                : status === 'approved'
-                  ? `<button class="app-btn reject"    onclick="rejectDoctor('${uid}')">✗ Revoke</button>
-               <button class="app-btn reset-btn" onclick="resetDoctor('${uid}')">↺ Reset</button>`
-                  : `<button class="app-btn reset-btn" onclick="resetDoctor('${uid}')">↺ Reset to Pending</button>`;
-
-              return `
-        <div class="app-card" id="appcard-${uid}">
-          <div class="app-card-accent ${status}"></div>
-          <div class="app-avatar" style="background:${grad}">${initials}</div>
-          <div class="app-info">
-            <div class="app-name">
-              ${app.name || app.fullName || '—'}
-              ${statusBadge}
-            </div>
-            <div class="app-meta">
-              <span class="app-meta-item">🩺 ${app.specialization || '—'}</span>
-              <span class="app-meta-item">📧 ${app.email || '—'}</span>
-              <span class="app-meta-item">📞 ${app.phone || '—'}</span>
-              <span class="app-meta-item">🪪 ${app.licenseNumber || '—'}</span>
-              <span class="app-meta-item">📅 ${adminFmtDate(app.submittedAt)}</span>
-              ${app.doctorId ? `<span class="app-meta-item" style="color:#1051f6;font-family:monospace;font-weight:700;background:rgba(16,81,246,0.08);padding:2px 8px;border-radius:6px;">🆔 ${app.doctorId}</span>` : ''}
-              ${app.refId ? `<span class="app-meta-item" style="color:var(--text-3);font-family:monospace;">${app.refId}</span>` : ''}
-            </div>
-          </div>
-          <div class="app-actions">${actionBtns}</div>
-        </div>`;
-            }).join('');
-          }
-
-          /* ── Doctor ID generator ────────────────────────────────── */
-          function generateDoctorId() {
-            const allApps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-            // Find the highest existing DOCxxxx number
-            let maxNum = 1000;
-            allApps.forEach(a => {
-              if (a.doctorId && /^DOC\d+$/.test(a.doctorId)) {
-                const n = parseInt(a.doctorId.replace('DOC', ''), 10);
-                if (n > maxNum) maxNum = n;
-              }
-            });
-            // Also check smartheal_doctors for any IDs assigned there
-            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-            doctors.forEach(d => {
-              if (d.doctorId && /^DOC\d+$/.test(d.doctorId)) {
-                const n = parseInt(d.doctorId.replace('DOC', ''), 10);
-                if (n > maxNum) maxNum = n;
-              }
-            });
-            return 'DOC' + (maxNum + 1);
-          }
-
-          /* ── Approve ────────────────────────────────────────────── */
-          function approveDoctor(uid) {
-            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
-            if (i < 0) { console.warn('[SmartHeal Admin] approveDoctor: uid not found:', uid); return; }
-
-            // Assign Doctor ID only if not already assigned
-            const doctorId = apps[i].doctorId || generateDoctorId();
-
-            apps[i].status = 'approved';
-            apps[i].approved = true;
-            apps[i].doctorId = doctorId;
-            apps[i].approvedAt = new Date().toISOString();
-            localStorage.setItem('doctorApplications', JSON.stringify(apps));
-
-            // Update smartheal_doctors entry so login check passes
-            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
-            if (di >= 0) {
-              doctors[di].approved = true;
-              doctors[di].status = 'approved';
-              doctors[di].doctorId = doctorId;
-              doctors[di].role = 'doctor';
-            }
-            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
-            // Push the approved status up to the Cloud!
-            if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
-                window.SmartHealSync.updateDoctorApplication(apps[i]);
-            }
-
-            console.log('[SmartHeal Admin] Approved doctor uid:', uid, '| name:', apps[i].name, '| doctorId:', doctorId);
-            showAdminToast('t-success', '✅', `Dr. ${apps[i].name || apps[i].fullName} approved — Doctor ID: ${doctorId}`);
-            loadApplications();
-            loadDoctorManagement();
-            loadDashboardStats();
-          }
-
-          /* ── Reject ─────────────────────────────────────────────── */
-          function rejectDoctor(uid) {
-            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
-            if (i < 0) { console.warn('[SmartHeal Admin] rejectDoctor: uid not found:', uid); return; }
-
-            apps[i].status = 'rejected';
-            apps[i].approved = false;
-            apps[i].rejectedAt = new Date().toISOString();
-            localStorage.setItem('doctorApplications', JSON.stringify(apps));
-
-            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
-            if (di >= 0) {
-              doctors[di].approved = false;
-              doctors[di].status = 'rejected';
-            }
-            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
-            // Push the rejected status up to the Cloud!
-            if (window.SmartHealSync && window.SmartHealSync.updateDoctorApplication) {
-                window.SmartHealSync.updateDoctorApplication(apps[i]);
-            }
-
-            console.log('[SmartHeal Admin] Rejected doctor uid:', uid, '| name:', apps[i].name);
-            showAdminToast('t-reject', '❌', `Application for ${apps[i].name || apps[i].fullName} rejected.`);
-            loadApplications();
-            loadDoctorManagement();
-            loadDashboardStats();
-          }
-
-          /* ── Reset to pending ───────────────────────────────────── */
-          function resetDoctor(uid) {
-            const apps = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-            const i = apps.findIndex(a => a.uid === uid || a.id === uid);
-            if (i < 0) { console.warn('[SmartHeal Admin] resetDoctor: uid not found:', uid); return; }
-
-            apps[i].status = 'pending';
-            apps[i].approved = false;
-            delete apps[i].approvedAt;
-            delete apps[i].rejectedAt;
-            delete apps[i].doctorId;
-            localStorage.setItem('doctorApplications', JSON.stringify(apps));
-
-            const doctors = JSON.parse(localStorage.getItem('smartheal_doctors') || '[]');
-            const di = doctors.findIndex(d => d.uid === uid || d.id === uid);
-            if (di >= 0) {
-              doctors[di].approved = false;
-              doctors[di].status = 'pending';
-            }
-            localStorage.setItem('smartheal_doctors', JSON.stringify(doctors));
-
-            console.log('[SmartHeal Admin] Reset doctor uid:', uid, 'back to pending');
-            showAdminToast('t-info', '↺', `Application reset to pending.`);
-            loadApplications();
-          }
-
-          /* ── Toast ──────────────────────────────────────────────── */
-          function showAdminToast(type, icon, msg) {
-            const t = document.getElementById('admin-toast');
-            if (!t) return;
-            document.getElementById('admin-toast-icon').textContent = icon;
-            document.getElementById('admin-toast-msg').textContent = msg;
-            t.className = `admin-toast ${type} show`;
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => t.classList.remove('show'), 3500);
-          }
-
-          // ── REAL-TIME UPDATES for Delay Monitoring ──
-          // Refresh when queue/visit data changes in another tab (patient registers,
-          // doctor calls patient, consultation completes), and poll periodically as
-          // a fallback for same-tab changes (no full page reload).
-          window.addEventListener('storage', function (e) {
-            if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications'].includes(e.key)) {
-              loadDoctorManagement();
-            }
-          });
-          setInterval(loadDoctorManagement, 10000);
-
-          // Auto-load on DOMContentLoaded
+          // Initial calls that depend on window.allApplications
           document.addEventListener('DOMContentLoaded', () => {
-            loadApplications();
-            loadDashboardStats();
-            loadDoctorManagement();
-            
-            // START FIREBASE REAL-TIME SYNC
-            setTimeout(() => {
-              if (window.SmartHealSync) {
-                console.log("Admin Dashboard connecting to Firebase...");
-                window.SmartHealSync.initRealTimeSync(refreshDashboard);
-              }
-            }, 800);
+             // UI scripts rely on the new Firestore SSoT, which populates via module script
           });
+
         </script>
 
         <div class="admin-toast" id="admin-toast">
@@ -4139,6 +3813,75 @@
           <span id="admin-toast-msg">Done</span>
         </div>
 
+  <script type="module">
+    import { db } from '../Backend/firebase-config.js';
+    import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    // 1. LIVE FIRESTORE SYNC (Bypasses LocalStorage entirely)
+    onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
+        const apps = [];
+        snapshot.forEach(doc => apps.push(doc.data()));
+        
+        // Push directly to UI
+        window.allApplications = apps.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+        
+        const pending = apps.filter(a => a.status === 'pending').length;
+        if(document.getElementById('count-pending')) document.getElementById('count-pending').textContent = pending;
+        if(document.getElementById('count-approved')) document.getElementById('count-approved').textContent = apps.filter(a => a.status === 'approved').length;
+        if(document.getElementById('count-rejected')) document.getElementById('count-rejected').textContent = apps.filter(a => a.status === 'rejected').length;
+        
+        const badge = document.getElementById('sb-pending-badge');
+        if (badge) {
+            badge.textContent = pending;
+            badge.style.display = pending > 0 ? 'inline-flex' : 'none';
+        }
+        
+        // Refresh the tables
+        if(typeof window.renderApplications === 'function') window.renderApplications();
+        if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+        if(typeof window.refreshDashboard === 'function') window.refreshDashboard();
+    });
+
+    // 2. FIRESTORE APPROVAL ACTION
+    window.approveDoctor = async function(uid) {
+        try {
+            // Generate Doctor ID safely
+            const apps = window.allApplications || [];
+            let maxNum = 1000;
+            apps.forEach(a => {
+                if (a.doctorId && /^DOC\d+$/.test(a.doctorId)) {
+                    const n = parseInt(a.doctorId.replace('DOC', ''), 10);
+                    if (n > maxNum) maxNum = n;
+                }
+            });
+            const doctorId = 'DOC' + (maxNum + 1);
+
+            await updateDoc(doc(db, "doctorApplications", uid), { status: 'approved', approved: true, doctorId: doctorId, approvedAt: new Date().toISOString() });
+            await updateDoc(doc(db, "doctors", uid), { status: 'approved', approved: true, doctorId: doctorId, role: 'doctor' });
+            
+            window.showAdminToast('t-success', '✅', `Doctor approved — ID: ${doctorId}`);
+        } catch(e) { console.error("Approval error:", e); }
+    };
+
+    // 3. FIRESTORE REJECT ACTION
+    window.rejectDoctor = async function(uid) {
+        try {
+            await updateDoc(doc(db, "doctorApplications", uid), { status: 'rejected', approved: false, rejectedAt: new Date().toISOString() });
+            await updateDoc(doc(db, "doctors", uid), { status: 'rejected', approved: false });
+            
+            window.showAdminToast('t-reject', '❌', 'Doctor rejected.');
+        } catch(e) { console.error("Reject error:", e); }
+    };
+
+    // 4. FIRESTORE RESET ACTION
+    window.resetDoctor = async function(uid) {
+         try {
+            await updateDoc(doc(db, "doctorApplications", uid), { status: 'pending', approved: false });
+            await updateDoc(doc(db, "doctors", uid), { status: 'pending', approved: false });
+            window.showAdminToast('t-info', '↺', `Application reset to pending.`);
+         } catch(e) { console.error("Reset error:", e); }
+    }
+  </script>
 </body>
 
 </html>
