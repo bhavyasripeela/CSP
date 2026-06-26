@@ -3550,13 +3550,31 @@
         const fname = document.getElementById('fname').value.trim();
         const dept = document.getElementById('dept').value;
         if (!fname || !dept) { alert(currentLang === 'te' ? 'పేరు మరియు విభాగం నమోదు చేయండి.' : 'Please fill in name and department.'); return; }
-        deptCounters[dept]++;
-        localStorage.setItem(
-          "deptCounters",
-          JSON.stringify(deptCounters)
-        );
-
-        const tokenNum = deptCounters[dept];
+        
+        // --- NEW CLOUD-SYNCED TOKEN LOGIC ---
+        let tokenNum = 1;
+        if (window.SmartHealSync) {
+            // Look at the live Firebase cloud queue
+            const sharedQueue = window.SmartHealSync.getQueue();
+            // Filter down to ONLY this specific department
+            const deptQueue = sharedQueue.filter(e => (e.dept || 'General OPD') === dept);
+            
+            let maxNum = 0;
+            deptQueue.forEach(p => {
+                const num = parseInt(String(p.token).replace('#', ''), 10);
+                if (!isNaN(num) && num > maxNum) {
+                    maxNum = num;
+                }
+            });
+            // The new token is the highest existing cloud token + 1
+            tokenNum = maxNum + 1;
+        } else {
+            // Fallback if offline
+            if (!deptCounters[dept]) deptCounters[dept] = 0;
+            deptCounters[dept]++;
+            tokenNum = deptCounters[dept];
+            localStorage.setItem("deptCounters", JSON.stringify(deptCounters));
+        }
 
         const token = '#' + pad(tokenNum);
         const lname = document.getElementById('lname').value.trim();
