@@ -3383,7 +3383,13 @@
         const saved = localStorage.getItem('arogyaq-lang');
         if (saved) { currentLang = saved; document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); goTo('screen-home'); }
       }
-      function chooseLang(lang) { currentLang = lang; localStorage.setItem('arogyaq-lang', lang); document.getElementById('lang-overlay').classList.add('hidden'); applyLang(); goTo('screen-home'); }
+      function chooseLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('arogyaq-lang', lang);
+        document.getElementById('lang-overlay').classList.add('hidden');
+        applyLang();
+        goTo('screen-home');
+      }
       function setLangFromSettings(lang) { currentLang = lang; localStorage.setItem('arogyaq-lang', lang); applyLang(); }
 
       // ── NAVIGATION ──
@@ -4139,7 +4145,7 @@
               ${mime === 'application/pdf'
                 ? '<iframe src="' + doc.dataUrl + '" width="100%" style="height:calc(100vh - 46px);border:none;"></iframe>'
                 : '<img src="' + doc.dataUrl + '" style="max-height:calc(100vh - 60px);object-fit:contain;margin:10px;">'}
-              </body></html>`);
+              <\/body><\/html>`);
             win.document.close();
           }
         } else {
