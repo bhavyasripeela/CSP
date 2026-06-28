@@ -4,3 +4,56 @@ Application Reference ID
 APP-908113(srinivasarao)
 Application Reference ID
 APP-548381(Priya)
+1. Open Command Prompt
+
+Go to your project:
+
+cd C:\Users\bhavy\OneDrive\Desktop\FCSP
+2. Start the server
+
+If python works:
+
+python -m http.server 8000
+
+If that doesn't work:
+
+py -m http.server 8000
+
+You should see:
+
+Serving HTTP on 0.0.0.0 port 8000 ...
+
+Keep this CMD window open.
+
+3. Open in your browser
+
+Login page:
+
+http://localhost:8000/Frontend/loginn_fixed.html
+
+Doctor Apply page:
+
+http://localhost:8000/Frontend/doctor-apply.html
+
+Admin Dashboard:
+
+http://localhost:8000/Frontend/admin.html
+
+Patient Dashboard (if needed):
+
+http://localhost:8000/Frontend/hospiiiii.html
+
+Doctor Dashboard (if needed):
+
+http://localhost:8000/Frontend/doctor-fixed.html
+4. To stop the server
+
+In the Command Prompt running the server, press:
+
+Ctrl + C
+
+Then press:
+
+Y
+
+(if prompted) and hit Enter.

@@ -3815,7 +3815,7 @@
 
   <script type="module">
     import { db } from '../Backend/firebase-config.js';
-    import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { collection, onSnapshot, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
     // 1. LIVE FIRESTORE SYNC (Bypasses LocalStorage entirely)
     onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
@@ -3858,6 +3858,19 @@
 
             await updateDoc(doc(db, "doctorApplications", uid), { status: 'approved', approved: true, doctorId: doctorId, approvedAt: new Date().toISOString() });
             await updateDoc(doc(db, "doctors", uid), { status: 'approved', approved: true, doctorId: doctorId, role: 'doctor' });
+
+            // Write the users/{uid} document that handleLogin() looks up on every login
+            const appData = (window.allApplications || []).find(a => a.uid === uid) || {};
+            await setDoc(doc(db, "users", uid), {
+                uid: uid,
+                role: 'doctor',
+                approved: true,
+                doctorId: doctorId,
+                name: appData.name || '',
+                specialization: appData.specialization || '',
+                email: appData.email || '',
+                updatedAt: new Date().toISOString()
+            });
             
             window.showAdminToast('t-success', '✅', `Doctor approved — ID: ${doctorId}`);
         } catch(e) { console.error("Approval error:", e); }
