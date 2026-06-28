@@ -1,5 +1,5 @@
 import { db } from '../Backend/firebase-config.js';
-import { collection, doc, setDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { collection, doc, setDoc, onSnapshot, writeBatch, runTransaction, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 window.SmartHealSync = {
 
@@ -7,6 +7,11 @@ window.SmartHealSync = {
     // Call this when a dashboard loads to listen for live updates across devices
     initRealTimeSync(onDataChangedCallback) {
         console.log("[SmartHeal Sync] Starting Real-Time Firestore Listeners...");
+
+        // ── PHASE 6: AUTOMATIC DAILY QUEUE ARCHIVE & RESET ──
+        // Runs once per calendar day, race-safe across simultaneous devices (see
+        // checkAndRunDailyReset for the Firestore-transaction explanation).
+        this.checkAndRunDailyReset().catch(e => console.error("[SmartHeal Sync] Daily reset check failed:", e));
 
         // Listen to Queue Records (Phase 6)
         onSnapshot(collection(db, "queueRecords"), (snapshot) => {
@@ -56,6 +61,143 @@ window.SmartHealSync = {
             localStorage.setItem("smartheal_feedbacks", JSON.stringify(feedbacks));
             if (onDataChangedCallback) onDataChangedCallback();
         });
+    },
+
+    // ── PHASE 6: AUTOMATIC DAILY QUEUE ARCHIVE & RESET ──
+    // Called once at the top of initRealTimeSync(), from every dashboard that
+    // loads SmartHealSync (Patient + Doctor; Admin sees the result for free via
+    // its existing localStorage/"storage"-event read path — no changes needed there).
+    //
+    // Race-safety across simultaneous devices: rather than "check date, then write",
+    // which has a gap where two tabs could both see a stale date and both archive,
+    // this uses a single Firestore transaction that reads system/queueState and
+    // writes the new queueDate IN THE SAME ATOMIC OPERATION. Firestore serializes
+    // transactions server-side, so whichever client's transaction commits first
+    // "claims" today's reset and the loser's transaction simply sees the already-
+    // updated date and does nothing further. No separate lock document is needed.
+    async checkAndRunDailyReset() {
+        const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+        const stateRef = doc(db, "system", "queueState");
+
+        let iAmResponsibleForReset = false;
+        let yesterdayStr = null;
+
+        try {
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(stateRef);
+                const storedDate = snap.exists() ? snap.data().queueDate : null;
+
+                if (storedDate === todayStr) {
+                    // Someone already claimed/finished today's reset (or it's not a new day).
+                    return;
+                }
+
+                // Stale or missing — claim today's reset right now, atomically.
+                yesterdayStr = storedDate; // may be null on very first run ever
+                iAmResponsibleForReset = true;
+                tx.set(stateRef, { queueDate: todayStr, lastResetAt: Date.now() }, { merge: true });
+            });
+        } catch (e) {
+            console.error("[SmartHeal Sync] Daily reset transaction failed:", e);
+            return;
+        }
+
+        if (!iAmResponsibleForReset) return;
+
+        console.log(`[SmartHeal Sync] New day detected (${todayStr}). Archiving and resetting live queue...`);
+
+        try {
+            // 1 & 2. Read today's live queue once from Firestore, archive it under
+            //    yesterday's date (if any), then delete every record to reset the queue.
+            //    Read directly from Firestore rather than the localStorage cache — on a
+            //    fresh page load the onSnapshot listener may not have populated
+            //    hospitalQueue yet (same race already documented near confirmLogout()'s
+            //    cleanup comments).
+            const queueSnap = await getDocs(collection(db, "queueRecords"));
+            const liveQueue = [];
+            queueSnap.forEach(d => liveQueue.push(d.data()));
+
+            if (yesterdayStr && liveQueue.length > 0) {
+                // Group by department so the Admin Archived Queue view can render
+                // "YYYY-MM-DD → Cardiology / General OPD / ENT / ..." directly.
+                const departments = {};
+                liveQueue.forEach(record => {
+                    const dept = record.dept || 'General OPD';
+                    if (!departments[dept]) departments[dept] = [];
+                    departments[dept].push(record);
+                });
+
+                await setDoc(
+                    doc(db, "archivedQueue", yesterdayStr),
+                    { date: yesterdayStr, departments, archivedAt: Date.now() },
+                    { merge: true }
+                );
+            }
+
+            const delBatch = writeBatch(db);
+            queueSnap.forEach(d => delBatch.delete(d.ref));
+            await delBatch.commit();
+            localStorage.setItem("hospitalQueue", "[]");
+
+            // 3. Reset department/global token counters (display stat; live numbering
+            //    is actually derived from the now-empty queue, but reset explicitly anyway).
+            localStorage.setItem("deptCounters", "{}");
+            localStorage.setItem("smartheal_tokenCounter", "0");
+            await setDoc(doc(db, "departmentCounters", "global"), { count: 0 }, { merge: true });
+
+            // 4. Clear temporary patient + doctor queue state ONLY.
+            //    NOT visit history, NOT MediVault, NOT consultation notes/
+            //    prescriptions/follow-ups, and critically NOT doctor profile/
+            //    account data (name, specialization, email, doctorId, status,
+            //    approved, role) — those live in the SAME doctors/{uid} document
+            //    as the queue-state "state" field, so this reset deliberately
+            //    never writes to the "doctors" collection at all.
+            // NOTE: localStorage is per-browser, so this only clears the winning
+            // client's own copy of currentTokenData/doctorState. That's sufficient:
+            // every OTHER patient's stale currentTokenData now points at a token
+            // that no longer exists in the (just-emptied) live queue, so submitReg()'s
+            // duplicate-guard finds no match and registration proceeds normally.
+            // Every OTHER doctor's own doctorState clears the same way on their own
+            // next page load (loadPersistedState() reads localStorage, which starts
+            // empty for a session that hasn't run yet), and their next
+            // saveDoctorState() call merges fresh empty state into ONLY the "state"
+            // field of their own doctors/{uid} doc — profile fields are untouched
+            // because saveDoctorState() always writes with { merge: true }.
+            localStorage.removeItem("currentTokenData");
+            localStorage.removeItem("doctorState");
+
+            console.log("[SmartHeal Sync] Daily archive & reset complete.");
+        } catch (e) {
+            console.error("[SmartHeal Sync] Daily reset execution failed partway through:", e);
+        }
+    },
+
+    /**
+     * Retrieve an archived day's queue, grouped by department:
+     * { "General OPD": [...], "Cardiology": [...], ... }
+     * Used by an Admin "Archived Queue" view rendered as date → department.
+     */
+    async getArchivedQueue(dateStr) {
+        try {
+            const snap = await getDoc(doc(db, "archivedQueue", dateStr));
+            return snap.exists() ? (snap.data().departments || {}) : {};
+        } catch (e) {
+            console.error("[SmartHeal Sync] Failed to load archive for", dateStr, e);
+            return {};
+        }
+    },
+
+    /** List all archived dates (newest first), for populating an admin date picker. */
+    async listArchivedDates() {
+        try {
+            const snap = await getDocs(collection(db, "archivedQueue"));
+            const dates = [];
+            snap.forEach(d => dates.push(d.id));
+            return dates.sort().reverse();
+        } catch (e) {
+            console.error("[SmartHeal Sync] Failed to list archived dates:", e);
+            return [];
+        }
     },
 
     getQueue() {
