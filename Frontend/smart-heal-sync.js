@@ -13,7 +13,7 @@ window.SmartHealSync = {
             const liveQueue = [];
             snapshot.forEach(doc => liveQueue.push(doc.data()));
             liveQueue.sort((a, b) => (a.registeredAt || 0) - (b.registeredAt || 0));
-            
+
             localStorage.setItem("hospitalQueue", JSON.stringify(liveQueue));
             if (onDataChangedCallback) onDataChangedCallback();
         });
@@ -37,14 +37,14 @@ window.SmartHealSync = {
         onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
             const apps = [];
             snapshot.forEach(doc => apps.push(doc.data()));
-            
+
             // Save full list for admin dashboard
             localStorage.setItem("doctorApplications", JSON.stringify(apps));
-            
+
             // Save approved list for the doctor login verification system
             const approvedDoctors = apps.filter(a => a.status === 'approved' && a.approved === true);
             localStorage.setItem("smartheal_doctors", JSON.stringify(approvedDoctors));
-            
+
             if (onDataChangedCallback) onDataChangedCallback();
         });
         // Listen to Feedback (Phase 14 - Admin Dashboard)
@@ -75,8 +75,11 @@ window.SmartHealSync = {
         try {
             const batch = writeBatch(db);
             queue.forEach(record => {
-                // Create a unique document ID for each queue entry
-                const docId = `Q-${record.token}-${record.phone || 'NA'}`.replace(/[^a-zA-Z0-9-]/g, '');
+                // Use tokenNum + registeredAt for a unique, stable ID per patient.
+                // Phone-based IDs caused collisions when phone was missing (all became Q-001-NA).
+                const tokenPart = String(record.tokenNum || record.token).replace(/[^a-zA-Z0-9]/g, '');
+                const timePart = String(record.registeredAt || Date.now());
+                const docId = `Q-${tokenPart}-${timePart}`;
                 const docRef = doc(db, "queueRecords", docId);
                 batch.set(docRef, record, { merge: true });
             });
@@ -329,8 +332,8 @@ window.SmartHealSync = {
         try {
             // Ensure the application has a unique ID
             const docId = appData.uid || appData.id || `DOC-${Date.now()}`;
-            appData.uid = docId; 
-            
+            appData.uid = docId;
+
             // Push to Firebase Cloud
             await setDoc(doc(db, "doctorApplications", docId), appData, { merge: true });
         } catch (e) { console.error("Firebase Doctor App Sync Error:", e); }

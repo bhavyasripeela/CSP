@@ -2986,9 +2986,12 @@
             </div>
           </div>
 
-        </div></div></aside>
+        </div>
+      </div>
+    </aside>
 
-  </div><div class="mobile-tabs">
+  </div>
+  <div class="mobile-tabs">
     <div class="mob-tab active" onclick="mobileSwitchTab('queue')">
       <span class="mob-tab-icon">📋</span> Queue
     </div>
@@ -3234,7 +3237,7 @@
         tokens.add(num);
         const g = entry.gender || 'M';
         const names = (entry.name || 'Patient').split(' ');
-        const id = 'q-' + num;
+        const id = 'q-' + num + '-' + (entry.dept || 'General OPD').replace(/\s+/g, '') + '-' + (entry.registeredAt || 0);
         const restoredStatus = VALID_STATUSES.includes(entry.status) ? entry.status : (entry.emg ? 'Emergency' : 'Waiting');
         PATIENTS_LIVE.push({
           id,
@@ -4485,7 +4488,8 @@
             </div>
           </div>
 
-        </div><div class="pm-edit-panel" id="pm-edit-panel">
+        </div>
+        <div class="pm-edit-panel" id="pm-edit-panel">
 
           <div class="pm-edit-field">
             <label class="pm-edit-label" for="pm-edit-name">Full Name</label>
@@ -4514,7 +4518,8 @@
             <button class="pm-cancel-btn" onclick="cancelProfileEdit()">Cancel</button>
           </div>
 
-        </div><div class="pm-footer-actions" id="pm-footer-actions">
+        </div>
+        <div class="pm-footer-actions" id="pm-footer-actions">
           <button class="pm-action-btn edit-profile" id="pm-edit-btn" onclick="openProfileEdit()">
             ✏️ Edit Profile
           </button>

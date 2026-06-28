@@ -3078,7 +3078,7 @@
 
         <!-- Big token display -->
         <div class="rp-token-display">
-          <div class="rp-token-num" id="rp-token-num">A102</div>
+          <div class="rp-token-num" id="rp-token-num">--</div>
           <div class="rp-token-badge" id="rp-token-status">Waiting</div>
         </div>
 
@@ -3287,13 +3287,26 @@
         const phone = document.getElementById('phone').value.trim();
 
         const q = SH().getQueue();
-        const num = SH().tokenToNum(token);
-        if (!q.some(e => (e.tokenNum || SH().tokenToNum(e.token)) === num)) {
+
+        // Duplicate guard: only block if the exact same token AND department
+        // already exists in the queue with an active status.
+        // Do NOT compare tokenNum globally — #001 in Cardiology and #001 in
+        // General OPD are two different patients and must both be allowed.
+        const ACTIVE_STATUSES = ['Waiting', 'Emergency', 'Calling', 'Serving'];
+        const isDuplicate = q.some(e =>
+          e.token === token &&
+          e.dept === dept &&
+          ACTIVE_STATUSES.includes(e.status)
+        );
+
+        if (!isDuplicate) {
+          const num = SH().tokenToNum(token);
           q.push({
             tokenNum: num,
             token,
             name: fullName,
             dept,
+            status: isEmg ? 'Emergency' : 'Waiting',
             emg: isEmg,
             age: age || '—',
             gender: gender || 'M',
@@ -3556,30 +3569,53 @@
         const fname = document.getElementById('fname').value.trim();
         const dept = document.getElementById('dept').value;
         if (!fname || !dept) { alert(currentLang === 'te' ? 'పేరు మరియు విభాగం నమోదు చేయండి.' : 'Please fill in name and department.'); return; }
-        
+
+        // ── Duplicate active token guard ──
+        // A patient may hold only one active token at a time.
+        // Check localStorage (survives logout) and cross-reference with the live queue.
+        const _ACTIVE = ['Waiting', 'Emergency', 'Calling', 'Serving'];
+        const _savedTD = (() => { try { return JSON.parse(localStorage.getItem('currentTokenData')); } catch (_) { return null; } })();
+        if (_savedTD && _savedTD.token) {
+          const _liveQ = SH() ? SH().getQueue() : [];
+          const _existing = _liveQ.find(e => e.token === _savedTD.token && _ACTIVE.includes(e.status));
+          if (_existing) {
+            // Restore in-memory state in case it was lost after a page reload
+            currentToken = _savedTD.token;
+            currentDept = _savedTD.department;
+            // Show the existing token details and abort new registration
+            const _msg = currentLang === 'te'
+              ? `మీకు ఇప్పటికే సక్రియ టోకెన్ ఉంది: ${_savedTD.token} (${_savedTD.department}). సంప్రదింపు పూర్తయిన తర్వాత మళ్ళీ నమోదు చేయండి.`
+              : `You already have an active token: ${_savedTD.token} (${_savedTD.department}). You can register again only after your consultation is completed.`;
+            alert(_msg);
+            // Navigate back to home so the patient can see their active token card
+            goTo('screen-home');
+            return;
+          }
+        }
+
         // --- NEW CLOUD-SYNCED TOKEN LOGIC ---
         let tokenNum = 1;
         if (window.SmartHealSync) {
-            // Look at the live Firebase cloud queue
-            const sharedQueue = window.SmartHealSync.getQueue();
-            // Filter down to ONLY this specific department
-            const deptQueue = sharedQueue.filter(e => (e.dept || 'General OPD') === dept);
-            
-            let maxNum = 0;
-            deptQueue.forEach(p => {
-                const num = parseInt(String(p.token).replace('#', ''), 10);
-                if (!isNaN(num) && num > maxNum) {
-                    maxNum = num;
-                }
-            });
-            // The new token is the highest existing cloud token + 1
-            tokenNum = maxNum + 1;
+          // Look at the live Firebase cloud queue
+          const sharedQueue = window.SmartHealSync.getQueue();
+          // Filter down to ONLY this specific department
+          const deptQueue = sharedQueue.filter(e => (e.dept || 'General OPD') === dept);
+
+          let maxNum = 0;
+          deptQueue.forEach(p => {
+            const num = parseInt(String(p.token).replace('#', ''), 10);
+            if (!isNaN(num) && num > maxNum) {
+              maxNum = num;
+            }
+          });
+          // The new token is the highest existing cloud token + 1
+          tokenNum = maxNum + 1;
         } else {
-            // Fallback if offline
-            if (!deptCounters[dept]) deptCounters[dept] = 0;
-            deptCounters[dept]++;
-            tokenNum = deptCounters[dept];
-            localStorage.setItem("deptCounters", JSON.stringify(deptCounters));
+          // Fallback if offline
+          if (!deptCounters[dept]) deptCounters[dept] = 0;
+          deptCounters[dept]++;
+          tokenNum = deptCounters[dept];
+          localStorage.setItem("deptCounters", JSON.stringify(deptCounters));
         }
 
         const token = '#' + pad(tokenNum);
@@ -3590,7 +3626,8 @@
           "currentTokenData",
           JSON.stringify({
             token: token,
-            department: dept
+            department: dept,
+            uid: localStorage.getItem('currentUser') || ''
           })
         );
         tokenHistory.unshift({ name: fullName, dept, token, emg: emergencyOn });
@@ -3642,6 +3679,16 @@
         }
 
         const tokenData = JSON.parse(saved);
+
+        // If the saved token belongs to a different user session, don't restore it
+        const currentUid = localStorage.getItem('currentUser') || '';
+        if (tokenData.uid && currentUid && tokenData.uid !== currentUid) {
+          localStorage.removeItem('currentTokenData');
+          document.getElementById('rp-token-num').textContent = '--';
+          document.getElementById('rp-dept-val').textContent = '--';
+          document.getElementById('rp-doctor-val').textContent = '--';
+          return;
+        }
 
         currentToken = tokenData.token;
         currentDept = tokenData.department;
@@ -3921,7 +3968,7 @@
 
         // Push to Firebase Cloud!
         if (window.SmartHealSync && window.SmartHealSync.submitFeedback) {
-            window.SmartHealSync.submitFeedback(record);
+          window.SmartHealSync.submitFeedback(record);
         }
 
         // Show success screen
@@ -4457,7 +4504,7 @@
           if (SH()) {
             try {
               const q = SH().getQueue();
-              const entry = q.find(e => e.token === currentToken);
+              const entry = q.find(e => e.token === currentToken && e.dept === currentDept);
               if (entry && entry.doctor) doctor = entry.doctor;
             } catch (_) { }
             // 2. Fallback: smartheal_doctorOnDuty keyed by department
@@ -4566,18 +4613,39 @@
 
         try {
           const q = SH().getQueue();
-          const entry = q.find(e => e.token === currentToken);
+          const entry = q.find(e => e.token === currentToken && e.dept === currentDept);
           if (!entry) return;
 
           const s = entry.status || 'Waiting';
+
+          // When the doctor marks Completed or No-Show, clear the active token entirely.
+          // This is the ONLY place currentTokenData should be removed (not on logout).
+          if (s === 'Completed' || s === 'No-Show') {
+            localStorage.removeItem('currentTokenData');
+            currentToken = null;
+            currentDept = null;
+            // Reset right panel to idle state
+            document.getElementById('rp-token-num').textContent = '--';
+            document.getElementById('rp-dept-val').textContent = '--';
+            document.getElementById('rp-doctor-val').textContent = '--';
+            badge.textContent = s === 'Completed' ? 'Completed' : 'No-Show';
+            badge.className = 'rp-token-badge ' + (s === 'Completed' ? 'status-completed' : 'status-noshow');
+            // Hide the your-token bar
+            const ytBar = document.getElementById('your-token-bar');
+            if (ytBar) ytBar.style.display = 'none';
+            // Reset home token chip
+            const tcVal = document.getElementById('tc-val');
+            const tcDept = document.getElementById('tc-dept');
+            if (tcVal) tcVal.textContent = '--';
+            if (tcDept) tcDept.textContent = '--';
+            return;
+          }
 
           // Map internal status string → display label + CSS class
           const STATUS_MAP = {
             'Waiting': { label: 'Waiting', cls: '' },
             'Calling': { label: 'Being Called', cls: 'status-calling' },
             'Serving': { label: 'Being Served', cls: 'status-serving' },
-            'Completed': { label: 'Completed', cls: 'status-completed' },
-            'No-Show': { label: 'No-Show', cls: 'status-noshow' },
             'Emergency': { label: 'Emergency', cls: 'status-calling' }
           };
           const mapped = STATUS_MAP[s] || { label: s, cls: '' };
@@ -4695,9 +4763,16 @@
 
         // ── Clear ONLY session/patient data ──
         // DO NOT clear: deptCounters, queue, department stats
+        // DO NOT clear currentTokenData on logout — it must survive so the patient
+        // sees their active token after logging back in.
+        // The ONLY valid cleanup path is syncMyTokenStatus(), which runs on a 3-second
+        // poll and removes currentTokenData when the doctor marks Completed or No-Show.
+        // We cannot check "is the token in the queue right now?" here because
+        // hospitalQueue in localStorage is populated by an onSnapshot listener that
+        // requires a 1-second delay + a Firestore round-trip. At logout time the
+        // queue is unreliable and will appear empty, causing false-positive deletions.
         localStorage.removeItem('currentUser');
         localStorage.removeItem('currentPatient');
-        localStorage.removeItem('currentTokenData');
         localStorage.removeItem('arogyaq-lang'); // optional: reset language
 
         // Hide the button row, show success message
