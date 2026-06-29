@@ -2276,8 +2276,8 @@
           <div class="app-tabs">
             <button class="app-tab active" id="atab-all" onclick="window.switchAppTab('all')">All<span class="tab-count"
                 id="tc-all">0</span></button>
-            <button class="app-tab" id="atab-pending" onclick="window.switchAppTab('pending')">Pending<span class="tab-count"
-                id="tc-pending">0</span></button>
+            <button class="app-tab" id="atab-pending" onclick="window.switchAppTab('pending')">Pending<span
+                class="tab-count" id="tc-pending">0</span></button>
             <button class="app-tab" id="atab-approved" onclick="window.switchAppTab('approved')">Approved<span
                 class="tab-count" id="tc-approved">0</span></button>
             <button class="app-tab" id="atab-rejected" onclick="window.switchAppTab('rejected')">Rejected<span
@@ -2398,7 +2398,7 @@
                   </tr>
                 </thead>
                 <tbody id="delay-table-body">
-                  </tbody>
+                </tbody>
               </table>
             </div>
             <div class="delay-summary">
@@ -2419,7 +2419,7 @@
                   style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">
                   Wait Trend Today</div>
                 <div class="delay-trend" id="delay-trend-body">
-                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2495,7 +2495,8 @@
                 <div class="spark-card">
                   <div class="spark-label">Satisfaction</div>
                   <div class="spark-val" style="color:var(--green)" id="spark-satisfaction">—</div>
-                  <div class="spark-sub" style="color:var(--green)" id="spark-satisfaction-sub">Based on patient feedback</div>
+                  <div class="spark-sub" style="color:var(--green)" id="spark-satisfaction-sub">Based on patient
+                    feedback</div>
                   <div class="spark-bars" id="spark-satisfaction-bars">
                     <div class="spark-b" style="height:20%"></div>
                     <div class="spark-b" style="height:20%"></div>
@@ -2509,9 +2510,12 @@
               </div>
               <div class="divider"></div>
               <div style="display:flex;flex-direction:column;gap:8px;">
-                <div class="flex-between text-sm"><span>Total emergencies this week</span><span class="font-bold" style="font-size:14px;" id="emg-stat-week">—</span></div>
-                <div class="flex-between text-sm"><span>Active (in queue / being seen)</span><span style="color:var(--orange);font-weight:600;" id="emg-stat-active">—</span></div>
-                <div class="flex-between text-sm"><span>Completed consultations</span><span style="color:var(--green);font-weight:600;" id="emg-stat-done">—</span></div>
+                <div class="flex-between text-sm"><span>Total emergencies this week</span><span class="font-bold"
+                    style="font-size:14px;" id="emg-stat-week">—</span></div>
+                <div class="flex-between text-sm"><span>Active (in queue / being seen)</span><span
+                    style="color:var(--orange);font-weight:600;" id="emg-stat-active">—</span></div>
+                <div class="flex-between text-sm"><span>Completed consultations</span><span
+                    style="color:var(--green);font-weight:600;" id="emg-stat-done">—</span></div>
               </div>
             </div>
           </div>
@@ -2700,8 +2704,8 @@
           function setActive(el) {
             document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
             el.classList.add('active');
-            if (el.getAttribute('href') === '#feedback')  setTimeout(loadFeedbackCenter, 80);
-            if (el.getAttribute('href') === '#doctors')   setTimeout(window.loadDoctorManagement, 80);
+            if (el.getAttribute('href') === '#feedback') setTimeout(loadFeedbackCenter, 80);
+            if (el.getAttribute('href') === '#doctors') setTimeout(window.loadDoctorManagement, 80);
             if (el.getAttribute('href') === '#analytics') setTimeout(() => { loadAnalytics(); _syncWaitTimeSpark(); }, 80);
           }
 
@@ -2720,10 +2724,10 @@
           }
 
           // ── REFRESH ENTIRE DASHBOARD (Overview "Refresh" button) ──
-          window.refreshDashboard = function() {
+          window.refreshDashboard = function () {
             loadDashboardStats();    // also reloads feedback center summary
-            if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
-            if(typeof window.renderApplications === 'function') window.renderApplications();
+            if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            if (typeof window.renderApplications === 'function') window.renderApplications();
             loadFeedbackCenter();    // feedback center detail list
             loadAnalytics();         // reports & analytics
             _syncWaitTimeSpark();
@@ -2957,7 +2961,7 @@
             return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2);
           }
 
-          window.loadDoctorManagement = function() {
+          window.loadDoctorManagement = function () {
             // Source: Firebase live synced applications
             const apps = window.allApplications || [];
             const approved = apps.filter(a => a.approved === true && a.status === 'approved');
@@ -2987,7 +2991,7 @@
               const docId = doc.doctorId || '—';
               const gradient = DOC_GRADIENTS[idx % DOC_GRADIENTS.length];
               const initials = docInitials(name);
-              const status = getDocStatus(uid); 
+              const status = getDocStatus(uid);
               const isOn = status === 'active';
 
               if (status === 'active') onCount++;
@@ -3037,7 +3041,7 @@
             renderDelayTable(approved);
           }
 
-          window.toggleDocStatus = function(btn) {
+          window.toggleDocStatus = function (btn) {
             const uid = btn.dataset.uid;
             const card = btn.closest('.doctor-card');
             if (!card) return;
@@ -3088,9 +3092,9 @@
             }
 
             const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
-            const queue  = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
             const nowServing = localStorage.getItem('smartheal_nowServing');
-            const calling    = localStorage.getItem('smartheal_calling');
+            const calling = localStorage.getItem('smartheal_calling');
             const todayStr = dateStr(0);
 
             const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
@@ -3176,8 +3180,8 @@
             const peakLblEl = document.getElementById('delay-peak-lbl');
             const bestValEl = document.getElementById('delay-best-val');
             const bestLblEl = document.getElementById('delay-best-lbl');
-            const avgValEl  = document.getElementById('delay-avg-val');
-            const trendEl   = document.getElementById('delay-trend-body');
+            const avgValEl = document.getElementById('delay-avg-val');
+            const trendEl = document.getElementById('delay-trend-body');
 
             const withData = (deptStats || []).filter(d => d.avgMin !== null);
 
@@ -3186,7 +3190,7 @@
               if (peakLblEl) peakLblEl.textContent = 'Peak wait time (no data yet)';
               if (bestValEl) bestValEl.textContent = '—';
               if (bestLblEl) bestLblEl.textContent = 'Best wait time (no data yet)';
-              if (avgValEl)  avgValEl.textContent  = 'Not Available';
+              if (avgValEl) avgValEl.textContent = 'Not Available';
             } else {
               const peak = withData.reduce((a, b) => b.avgMin > a.avgMin ? b : a);
               const best = withData.reduce((a, b) => b.avgMin < a.avgMin ? b : a);
@@ -3196,16 +3200,16 @@
               if (peakLblEl) peakLblEl.textContent = `Peak wait time (${peak.dept})`;
               if (bestValEl) bestValEl.textContent = `${best.avgMin} min`;
               if (bestLblEl) bestLblEl.textContent = `Best wait time (${best.dept})`;
-              if (avgValEl)  avgValEl.textContent  = `${hospAvg} min`;
+              if (avgValEl) avgValEl.textContent = `${hospAvg} min`;
             }
 
             if (!trendEl) return;
 
             const blocks = [
-              { label: '8 AM',  start: 8,  end: 10 },
+              { label: '8 AM', start: 8, end: 10 },
               { label: '10 AM', start: 10, end: 12 },
               { label: '12 PM', start: 12, end: 14 },
-              { label: '2 PM',  start: 14, end: 16 },
+              { label: '2 PM', start: 14, end: 16 },
             ];
 
             const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
@@ -3278,8 +3282,8 @@
           // ══════════════════════════════════════════════════════════
           // DOCTOR APPLICATIONS — Firebase Implementation Helper
           // ══════════════════════════════════════════════════════════
-          
-          window.switchAppTab = function(filter) {
+
+          window.switchAppTab = function (filter) {
             window.currentFilter = filter;
             document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
             const activeTab = document.getElementById('atab-' + filter);
@@ -3306,7 +3310,7 @@
             'linear-gradient(135deg,#765568,#E8873A)',
           ];
 
-          window.renderApplications = function() {
+          window.renderApplications = function () {
             const list = document.getElementById('app-list');
             if (!list) return;
 
@@ -3374,7 +3378,7 @@
             }).join('');
           }
 
-          window.showAdminToast = function(type, icon, msg) {
+          window.showAdminToast = function (type, icon, msg) {
             const t = document.getElementById('admin-toast');
             if (!t) return;
             document.getElementById('admin-toast-icon').textContent = icon;
@@ -3387,11 +3391,11 @@
           // ── REAL-TIME UPDATES for Delay Monitoring ──
           window.addEventListener('storage', function (e) {
             if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications'].includes(e.key)) {
-              if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+              if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
             }
           });
           setInterval(() => {
-              if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
           }, 10000);
 
           // ══════════════════════════════════════════════════════════
@@ -3440,8 +3444,8 @@
           }
 
           function loadAnalytics() {
-            const visits  = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
-            const queue   = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
             const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
 
             _renderPatientFlowChart(visits, queue);
@@ -3457,10 +3461,10 @@
           }
 
           function exportAnalyticsReport() {
-            const visits    = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
-            const queue     = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+            const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
             const feedbacks = JSON.parse(localStorage.getItem('smartheal_feedbacks') || '[]');
-            const apps      = window.allApplications || [];
+            const apps = window.allApplications || [];
 
             const lines = [];
             const today = dateStr(0);
@@ -3506,7 +3510,7 @@
             lines.push('Metric,Value');
             lines.push(`Total emergencies (7 days),${totalEmergencies}`);
             const nowServing = localStorage.getItem('smartheal_nowServing');
-            const calling    = localStorage.getItem('smartheal_calling');
+            const calling = localStorage.getItem('smartheal_calling');
             const activeEmg = queue.filter(p => {
               if (!isEmergency(p)) return false;
               const tok = String(p.token || '').replace('#', '');
@@ -3567,7 +3571,7 @@
             const bl = document.getElementById('patientFlowLabels');
             if (!bc || !bl) return;
 
-            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6)); 
+            const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
 
             const opdCounts = new Array(7).fill(0);
             const emgCounts = new Array(7).fill(0);
@@ -3594,7 +3598,7 @@
               else opdCounts[idx]++;
             });
 
-            const maxVal = Math.max(...opdCounts, ...emgCounts, 1); 
+            const maxVal = Math.max(...opdCounts, ...emgCounts, 1);
 
             bc.innerHTML = '';
             bl.innerHTML = '';
@@ -3708,20 +3712,20 @@
             }
 
             const totalEl = document.getElementById('spark-emg-total');
-            const subEl   = document.getElementById('spark-emg-sub');
+            const subEl = document.getElementById('spark-emg-sub');
             if (totalEl) totalEl.textContent = weekTotal > 0 ? weekTotal : '0';
-            if (subEl)   subEl.textContent   = weekTotal === 0 ? 'None this week' : 'Past 7 days';
+            if (subEl) subEl.textContent = weekTotal === 0 ? 'None this week' : 'Past 7 days';
 
             const safeSet = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
             safeSet('emg-stat-week', weekTotal > 0 ? weekTotal : 'None');
 
             const nowServing = localStorage.getItem('smartheal_nowServing');
-            const calling    = localStorage.getItem('smartheal_calling');
+            const calling = localStorage.getItem('smartheal_calling');
             const activeEmg = queue.filter(p => {
               if (!isEmergency(p)) return false;
               const tok = String(p.token || '').replace('#', '');
-              const isServing  = nowServing && String(nowServing).replace('#', '') === tok;
-              const isCalling  = calling    && String(calling).replace('#', '')    === tok;
+              const isServing = nowServing && String(nowServing).replace('#', '') === tok;
+              const isCalling = calling && String(calling).replace('#', '') === tok;
               return !isServing && !isCalling && p.status !== 'completed' && p.status !== 'done';
             }).length;
 
@@ -3732,12 +3736,12 @@
             ).length;
 
             safeSet('emg-stat-active', activeEmg > 0 ? activeEmg : '0');
-            safeSet('emg-stat-done',   doneEmg   > 0 ? doneEmg   : '0');
+            safeSet('emg-stat-done', doneEmg > 0 ? doneEmg : '0');
           }
 
           function _renderSatisfactionSpark(feedbacks) {
             const last7 = Array.from({ length: 7 }, (_, i) => dateStr(i - 6));
-            const daySums   = new Array(7).fill(0);
+            const daySums = new Array(7).fill(0);
             const dayCounts = new Array(7).fill(0);
 
             feedbacks.forEach(fb => {
@@ -3745,7 +3749,7 @@
               const d = new Date(fb.submittedAt).toISOString().slice(0, 10);
               const idx = last7.indexOf(d);
               if (idx !== -1) {
-                daySums[idx]   += fb.rating;
+                daySums[idx] += fb.rating;
                 dayCounts[idx] += 1;
               }
             });
@@ -3758,24 +3762,24 @@
             if (sparkBarsEl) {
               sparkBarsEl.innerHTML = dayAvgs.map((avg, i) => {
                 if (avg === null) return `<div class="spark-b" style="height:8%;opacity:0.25"></div>`;
-                const h = Math.max(8, Math.round((avg / 5) * 100)); 
+                const h = Math.max(8, Math.round((avg / 5) * 100));
                 const isPeak = avg === maxAvg && dayCounts[i] > 0;
                 return `<div class="spark-b${isPeak ? ' peak' : ''}" style="height:${h}%"></div>`;
               }).join('');
             }
 
             const totalCount = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).length;
-            const totalSum   = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).reduce((a, fb) => a + fb.rating, 0);
+            const totalSum = feedbacks.filter(fb => fb.rating >= 1 && fb.rating <= 5).reduce((a, fb) => a + fb.rating, 0);
             const overallAvg = totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '—';
 
-            const sparkEl    = document.getElementById('spark-satisfaction');
+            const sparkEl = document.getElementById('spark-satisfaction');
             const sparkSubEl = document.getElementById('spark-satisfaction-sub');
-            if (sparkEl)    sparkEl.textContent    = overallAvg;
+            if (sparkEl) sparkEl.textContent = overallAvg;
             if (sparkSubEl) sparkSubEl.textContent = totalCount > 0 ? `${totalCount} review${totalCount !== 1 ? 's' : ''}` : 'No reviews yet';
           }
 
           function _syncWaitTimeSpark() {
-            const visits   = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
             const todayStr = dateStr(0);
             const todayVisits = visits.filter(v =>
               v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === todayStr
@@ -3784,7 +3788,7 @@
               .filter(v => v.createdAt && (v.completedAt || v.attendedAt))
               .map(v => {
                 const start = new Date(v.createdAt).getTime();
-                const end   = new Date(v.completedAt || v.attendedAt).getTime();
+                const end = new Date(v.completedAt || v.attendedAt).getTime();
                 return (end - start) / 60000;
               })
               .filter(m => m > 0 && m < 300);
@@ -3803,7 +3807,7 @@
 
           // Initial calls that depend on window.allApplications
           document.addEventListener('DOMContentLoaded', () => {
-             // UI scripts rely on the new Firestore SSoT, which populates via module script
+            // UI scripts rely on the new Firestore SSoT, which populates via module script
           });
 
         </script>
@@ -3813,55 +3817,65 @@
           <span id="admin-toast-msg">Done</span>
         </div>
 
-  <script type="module">
-    import { db } from '../Backend/firebase-config.js';
-    import { collection, onSnapshot, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+        <script type="module">
+          import { db } from '../Backend/firebase-config.js';
+          import { collection, onSnapshot, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-    // 1. LIVE FIRESTORE SYNC (Bypasses LocalStorage entirely)
-    onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
-        const apps = [];
-        snapshot.forEach(doc => apps.push(doc.data()));
-        
-        // Push directly to UI
-        window.allApplications = apps.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-        
-        const pending = apps.filter(a => a.status === 'pending').length;
-        if(document.getElementById('count-pending')) document.getElementById('count-pending').textContent = pending;
-        if(document.getElementById('count-approved')) document.getElementById('count-approved').textContent = apps.filter(a => a.status === 'approved').length;
-        if(document.getElementById('count-rejected')) document.getElementById('count-rejected').textContent = apps.filter(a => a.status === 'rejected').length;
-        
-        const badge = document.getElementById('sb-pending-badge');
-        if (badge) {
-            badge.textContent = pending;
-            badge.style.display = pending > 0 ? 'inline-flex' : 'none';
-        }
-        
-        // Refresh the tables
-        if(typeof window.renderApplications === 'function') window.renderApplications();
-        if(typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
-        if(typeof window.refreshDashboard === 'function') window.refreshDashboard();
-    });
+          // 1. LIVE FIRESTORE SYNC (Bypasses LocalStorage entirely)
+          onSnapshot(collection(db, "doctorApplications"), (snapshot) => {
+            const apps = [];
+            snapshot.forEach(doc => apps.push(doc.data()));
 
-    // 2. FIRESTORE APPROVAL ACTION
-    window.approveDoctor = async function(uid) {
-        try {
-            // Generate Doctor ID safely
-            const apps = window.allApplications || [];
-            let maxNum = 1000;
-            apps.forEach(a => {
+            // Push directly to UI
+            window.allApplications = apps.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+            const pending = apps.filter(a => a.status === 'pending').length;
+            const approved = apps.filter(a => a.status === 'approved').length;
+            const rejected = apps.filter(a => a.status === 'rejected').length;
+
+            // Summary cards
+            if (document.getElementById('count-pending')) document.getElementById('count-pending').textContent = pending;
+            if (document.getElementById('count-approved')) document.getElementById('count-approved').textContent = approved;
+            if (document.getElementById('count-rejected')) document.getElementById('count-rejected').textContent = rejected;
+
+            // Tab filter badges (tc-all, tc-pending, tc-approved, tc-rejected)
+            if (document.getElementById('tc-all')) document.getElementById('tc-all').textContent = apps.length;
+            if (document.getElementById('tc-pending')) document.getElementById('tc-pending').textContent = pending;
+            if (document.getElementById('tc-approved')) document.getElementById('tc-approved').textContent = approved;
+            if (document.getElementById('tc-rejected')) document.getElementById('tc-rejected').textContent = rejected;
+
+            const badge = document.getElementById('sb-pending-badge');
+            if (badge) {
+              badge.textContent = pending;
+              badge.style.display = pending > 0 ? 'inline-flex' : 'none';
+            }
+
+            // Refresh the tables
+            if (typeof window.renderApplications === 'function') window.renderApplications();
+            if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            if (typeof window.refreshDashboard === 'function') window.refreshDashboard();
+          });
+
+          // 2. FIRESTORE APPROVAL ACTION
+          window.approveDoctor = async function (uid) {
+            try {
+              // Generate Doctor ID safely
+              const apps = window.allApplications || [];
+              let maxNum = 1000;
+              apps.forEach(a => {
                 if (a.doctorId && /^DOC\d+$/.test(a.doctorId)) {
-                    const n = parseInt(a.doctorId.replace('DOC', ''), 10);
-                    if (n > maxNum) maxNum = n;
+                  const n = parseInt(a.doctorId.replace('DOC', ''), 10);
+                  if (n > maxNum) maxNum = n;
                 }
-            });
-            const doctorId = 'DOC' + (maxNum + 1);
+              });
+              const doctorId = 'DOC' + (maxNum + 1);
 
-            await updateDoc(doc(db, "doctorApplications", uid), { status: 'approved', approved: true, doctorId: doctorId, approvedAt: new Date().toISOString() });
-            await updateDoc(doc(db, "doctors", uid), { status: 'approved', approved: true, doctorId: doctorId, role: 'doctor' });
+              await updateDoc(doc(db, "doctorApplications", uid), { status: 'approved', approved: true, doctorId: doctorId, approvedAt: new Date().toISOString() });
+              await updateDoc(doc(db, "doctors", uid), { status: 'approved', approved: true, doctorId: doctorId, role: 'doctor' });
 
-            // Write the users/{uid} document that handleLogin() looks up on every login
-            const appData = (window.allApplications || []).find(a => a.uid === uid) || {};
-            await setDoc(doc(db, "users", uid), {
+              // Write the users/{uid} document that handleLogin() looks up on every login
+              const appData = (window.allApplications || []).find(a => a.uid === uid) || {};
+              await setDoc(doc(db, "users", uid), {
                 uid: uid,
                 role: 'doctor',
                 approved: true,
@@ -3870,31 +3884,31 @@
                 specialization: appData.specialization || '',
                 email: appData.email || '',
                 updatedAt: new Date().toISOString()
-            });
-            
-            window.showAdminToast('t-success', '✅', `Doctor approved — ID: ${doctorId}`);
-        } catch(e) { console.error("Approval error:", e); }
-    };
+              });
 
-    // 3. FIRESTORE REJECT ACTION
-    window.rejectDoctor = async function(uid) {
-        try {
-            await updateDoc(doc(db, "doctorApplications", uid), { status: 'rejected', approved: false, rejectedAt: new Date().toISOString() });
-            await updateDoc(doc(db, "doctors", uid), { status: 'rejected', approved: false });
-            
-            window.showAdminToast('t-reject', '❌', 'Doctor rejected.');
-        } catch(e) { console.error("Reject error:", e); }
-    };
+              window.showAdminToast('t-success', '✅', `Doctor approved — ID: ${doctorId}`);
+            } catch (e) { console.error("Approval error:", e); }
+          };
 
-    // 4. FIRESTORE RESET ACTION
-    window.resetDoctor = async function(uid) {
-         try {
-            await updateDoc(doc(db, "doctorApplications", uid), { status: 'pending', approved: false });
-            await updateDoc(doc(db, "doctors", uid), { status: 'pending', approved: false });
-            window.showAdminToast('t-info', '↺', `Application reset to pending.`);
-         } catch(e) { console.error("Reset error:", e); }
-    }
-  </script>
+          // 3. FIRESTORE REJECT ACTION
+          window.rejectDoctor = async function (uid) {
+            try {
+              await updateDoc(doc(db, "doctorApplications", uid), { status: 'rejected', approved: false, rejectedAt: new Date().toISOString() });
+              await updateDoc(doc(db, "doctors", uid), { status: 'rejected', approved: false });
+
+              window.showAdminToast('t-reject', '❌', 'Doctor rejected.');
+            } catch (e) { console.error("Reject error:", e); }
+          };
+
+          // 4. FIRESTORE RESET ACTION
+          window.resetDoctor = async function (uid) {
+            try {
+              await updateDoc(doc(db, "doctorApplications", uid), { status: 'pending', approved: false });
+              await updateDoc(doc(db, "doctors", uid), { status: 'pending', approved: false });
+              window.showAdminToast('t-info', '↺', `Application reset to pending.`);
+            } catch (e) { console.error("Reset error:", e); }
+          }
+        </script>
 </body>
 
 </html>
