@@ -3800,7 +3800,7 @@
         </div>
 
         <script type="module">
-          import { db } from '../Backend/firebase-config.js';
+          import { auth, db } from "./firebase-config.js";
           import { collection, onSnapshot, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
           // 1. LIVE FIRESTORE SYNC (Bypasses LocalStorage entirely)

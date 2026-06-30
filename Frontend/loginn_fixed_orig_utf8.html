@@ -1332,12 +1332,14 @@
                                 <div class="btn-spinner"></div>
                             </button>
 
-                            <div class="msg-box error" id="loginError"><span>ΓÜá∩╕Å</span><span id="loginErrorText">Invalid
+                            <div class="msg-box error" id="loginError"><span>ΓÜá∩╕Å</span><span
+                                    id="loginErrorText">Invalid
                                     credentials.</span></div>
 
                             <div class="switch-prompt" id="loginSwitchPrompt">
                                 <span class="sp-text">New to SmartHeal?</span>
-                                <button class="sp-link" onclick="switchTab('register')">Create a free account ΓåÆ</button>
+                                <button class="sp-link" onclick="switchTab('register')">Create a free account
+                                    ΓåÆ</button>
                             </div>
                         </div>
                         <div class="demo-section">
@@ -1447,7 +1449,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError1"><span>ΓÜá∩╕Å</span><span id="regErrorText1">Please
+                                <div class="msg-box error" id="regError1"><span>ΓÜá∩╕Å</span><span
+                                        id="regErrorText1">Please
                                         fill all fields.</span></div>
                                 <button class="login-btn"
                                     style="background:linear-gradient(135deg,var(--teal),#6b4a8a);"
@@ -1495,7 +1498,8 @@
                                             id="regPwConfBtn">≡ƒæü∩╕Å</button>
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError2"><span>ΓÜá∩╕Å</span><span id="regErrorText2">Please
+                                <div class="msg-box error" id="regError2"><span>ΓÜá∩╕Å</span><span
+                                        id="regErrorText2">Please
                                         fill all fields.</span></div>
                                 <div style="display:flex;gap:9px;margin-top:18px;">
                                     <button class="login-btn"
@@ -1525,7 +1529,8 @@
                                         information for treatment purposes.
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError3"><span>ΓÜá∩╕Å</span><span id="regErrorText3">Please
+                                <div class="msg-box error" id="regError3"><span>ΓÜá∩╕Å</span><span
+                                        id="regErrorText3">Please
                                         accept the terms.</span></div>
                                 <div style="display:flex;gap:9px;margin-top:4px;">
                                     <button class="login-btn"
@@ -1541,7 +1546,8 @@
                             </div>
 
                             <div id="regSuccess" style="display:none;text-align:center;padding:16px 0;">
-                                <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">≡ƒÄë</div>
+                                <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">≡ƒÄë
+                                </div>
                                 <div
                                     style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;">
                                     Account Created!</div>
@@ -1575,7 +1581,7 @@
     </div>
 
     <script type="module">
-        import { auth, db } from '../Backend/firebase-config.js';
+        import { auth, db } from "./firebase-config.js";
         import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
         import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
