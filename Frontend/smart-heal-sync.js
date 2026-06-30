@@ -61,6 +61,34 @@ window.SmartHealSync = {
             localStorage.setItem("smartheal_feedbacks", JSON.stringify(feedbacks));
             if (onDataChangedCallback) onDataChangedCallback();
         });
+
+        // Listen to Notifications (Phase 16)
+        onSnapshot(collection(db, "notifications"), (snapshot) => {
+            const notifs = [];
+            snapshot.forEach(doc => {
+                notifs.push({ id: doc.id, ...doc.data() });
+            });
+            // Sort by newest first
+            notifs.sort((a, b) => b.timestamp - a.timestamp);
+            localStorage.setItem("smartheal_notifications", JSON.stringify(notifs));
+            if (onDataChangedCallback) onDataChangedCallback();
+        });
+    },
+
+    // ── PUSH NOTIFICATION ──
+    async pushNotification(target, text, icon = '🔔') {
+        try {
+            const id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+            await setDoc(doc(collection(db, "notifications"), id), {
+                target: target,
+                text: text,
+                icon: icon,
+                unread: true,
+                timestamp: Date.now()
+            });
+        } catch (e) {
+            console.error("Error pushing notification:", e);
+        }
     },
 
     // ── PHASE 6: AUTOMATIC DAILY QUEUE ARCHIVE & RESET ──

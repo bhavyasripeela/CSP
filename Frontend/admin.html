@@ -10,23 +10,23 @@
     rel="stylesheet">
   <style>
     :root {
-      --teal: #765568;
-      --teal-light: #E0F5F2;
-      --teal-mid: #1051f6;
-      --amber: #db87c5;
+      --teal: #0E7C7B;
+      --teal-light: #D0EFEF;
+      --teal-mid: #0E7C7B;
+      --amber: #F0A500;
       --amber-light: #FEF3E8;
-      --red: #b856a3;
+      --red: #E05555;
       --red-light: #FDEAEA;
       --blue: #1A5FBF;
       --blue-light: #E8F0FB;
-      --purple: #534AB7;
-      --purple-light: #EEEDFE;
-      --surface: #1A1625;
-      --white: #262134;
-      --text: #F0EBF5;
-      --text-2: #9B8EA9;
-      --text-3: #C88553;
-      --border: rgba(200, 180, 220, 0.13);
+      --purple: #0E7C7B;
+      --purple-light: #D0EFEF;
+      --surface: #0D1B2A;
+      --white: #132030;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
+      --border: rgba(14, 124, 123, 0.18);
       --radius: 18px;
       --radius-sm: 12px;
       --green: #2ECC8A;
@@ -78,7 +78,7 @@
     .sidebar {
       width: var(--sidebar);
       flex-shrink: 0;
-      background: #211a2e;
+      background: #0f2135;
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -150,7 +150,7 @@
     }
 
     .sb-link.active {
-      background: rgba(219, 135, 197, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--amber);
       font-weight: 500;
     }
@@ -218,7 +218,7 @@
 
     /* ── TOP BAR ── */
     .topbar {
-      background: #211a2e;
+      background: #0f2135;
       border-bottom: 1px solid var(--border);
       padding: 14px 28px;
       display: flex;
@@ -274,7 +274,7 @@
       height: 8px;
       background: var(--red);
       border-radius: 50%;
-      border: 2px solid #211a2e;
+      border: 2px solid #0f2135;
     }
 
     .tb-emg {
@@ -419,11 +419,11 @@
     }
 
     .kpi-icon.a {
-      background: rgba(219, 135, 197, 0.15);
+      background: rgba(14, 124, 123, 0.15);
     }
 
     .kpi-icon.r {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
     }
 
     .kpi-icon.g {
@@ -599,7 +599,7 @@
     }
 
     .status-badge.emergency {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
     }
 
@@ -851,7 +851,7 @@
     }
 
     .fb-tag.complaint {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
     }
 
@@ -985,7 +985,7 @@
     }
 
     .res-badge.critical {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
     }
 
@@ -1251,7 +1251,7 @@
       right: 0;
       width: 360px;
       height: 100vh;
-      background: #211a2e;
+      background: #0f2135;
       border-left: 1px solid var(--border);
       z-index: 301;
       transform: translateX(100%);
@@ -1369,8 +1369,8 @@
     }
 
     .modal {
-      background: #211a2e;
-      border: 1px solid rgba(184, 86, 163, 0.4);
+      background: #0f2135;
+      border: 1px solid rgba(14, 124, 123, 0.4);
       border-radius: var(--radius);
       padding: 24px;
       width: 480px;
@@ -1451,7 +1451,7 @@
     }
 
     .emg-status.waiting {
-      background: rgba(184, 86, 163, 0.18);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
     }
 
@@ -1486,7 +1486,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: #211a2e;
+      background: #0f2135;
       border-top: 1px solid var(--border);
       padding: 8px 0 14px;
       z-index: 200;
@@ -1573,7 +1573,7 @@
     }
 
     .chip.amber {
-      background: rgba(219, 135, 197, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--amber);
     }
 
@@ -1583,7 +1583,7 @@
     }
 
     .chip.red {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
     }
 
@@ -1780,9 +1780,9 @@
     }
 
     .app-tab.active {
-      background: rgba(219, 135, 197, 0.15);
+      background: rgba(14, 124, 123, 0.15);
       color: var(--amber);
-      border-color: rgba(219, 135, 197, 0.3);
+      border-color: rgba(14, 124, 123, 0.3);
     }
 
     .app-tab .tab-count {
@@ -1901,9 +1901,9 @@
     }
 
     .app-badge.pending {
-      background: rgba(219, 135, 197, 0.12);
+      background: rgba(14, 124, 123, 0.12);
       color: var(--amber);
-      border: 1px solid rgba(219, 135, 197, 0.25);
+      border: 1px solid rgba(14, 124, 123, 0.25);
     }
 
     .app-badge.approved {
@@ -1913,9 +1913,9 @@
     }
 
     .app-badge.rejected {
-      background: rgba(184, 86, 163, 0.12);
+      background: rgba(14, 124, 123, 0.12);
       color: var(--red);
-      border: 1px solid rgba(184, 86, 163, 0.25);
+      border: 1px solid rgba(14, 124, 123, 0.25);
     }
 
     .app-actions {
@@ -1949,13 +1949,13 @@
     }
 
     .app-btn.reject {
-      background: rgba(184, 86, 163, 0.15);
+      background: rgba(14, 124, 123, 0.18);
       color: var(--red);
-      border: 1px solid rgba(184, 86, 163, 0.25);
+      border: 1px solid rgba(14, 124, 123, 0.25);
     }
 
     .app-btn.reject:hover {
-      background: rgba(184, 86, 163, 0.25);
+      background: rgba(14, 124, 123, 0.25);
     }
 
     .app-btn.reset-btn {
@@ -2025,8 +2025,8 @@
     }
 
     .admin-toast.t-reject {
-      background: #2a1e2e;
-      border: 1px solid rgba(184, 86, 163, 0.3);
+      background: #0f2135;
+      border: 1px solid rgba(14, 124, 123, 0.3);
       color: var(--red);
     }
 
@@ -2050,13 +2050,9 @@
       </div>
     </div>
     <div class="notif-list" id="notifList">
-      <div class="notif-item success" id="notif-latest-feedback" style="display:none">
-        <div class="notif-item-title">⭐ New Feedback Received</div>
-        <div class="notif-item-msg" id="notif-latest-feedback-msg"></div>
-        <div class="notif-item-time" id="notif-latest-feedback-time"></div>
-      </div>
+      <!-- Notifications injected by renderAdminNotifications() -->
       <div class="notif-item info" id="notif-empty">
-        <div class="notif-item-title">🔔 No new notifications</div>
+        <div class="notif-item-title">📭 No new notifications</div>
         <div class="notif-item-msg">You're all caught up. Real-time alerts will appear here.</div>
       </div>
     </div>
@@ -2111,8 +2107,7 @@
         <a class="sb-link" href="#applications" onclick="setActive(this)"><span class="ic">📋</span>Doctor
           Applications<span class="sb-badge" id="sb-pending-badge">0</span></a>
         <a class="sb-link" href="#feedback" onclick="setActive(this)"><span class="ic">⭐</span>Feedback Center</a>
-        <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Delay Monitoring<span
-            class="sb-badge">3</span></a>
+        <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Delay Monitoring</a>
         <div class="sb-section">Monitoring</div>
         <a class="sb-link" href="#analytics" onclick="setActive(this)"><span class="ic">📈</span>Reports & Analytics</a>
       </nav>
@@ -2132,7 +2127,7 @@
       <div class="topbar">
         <div>
           <div class="topbar-title">Hospital Control Center</div>
-          <div class="topbar-sub">District General Hospital, Hyderabad</div>
+          <div class="topbar-sub">District General Hospital, Visakhapatnam</div>
         </div>
         <div class="tb-time" id="adminTime">09:41 AM</div>
         <div class="tb-notif" onclick="openNotif()">🔔<div class="tb-dot" id="tb-dot" style="display:none;"></div>
@@ -2640,7 +2635,8 @@
               const tok = String(p.token || '').replace('#', '');
               const isServing = nowServing && String(nowServing).replace('#', '') === tok;
               const isCalling = calling && String(calling).replace('#', '') === tok;
-              return !isServing && !isCalling && p.status !== 'completed' && p.status !== 'done';
+              const st = (p.status || '').toLowerCase();
+              return !isServing && !isCalling && st !== 'completed' && st !== 'done' && st !== 'no-show';
             });
             set('kpi-queue', waitingPatients.length);
 
@@ -2811,28 +2807,7 @@
             if (sparkEl) sparkEl.textContent = avgStr;
             if (sparkSubEl) sparkSubEl.textContent = ratingCount > 0 ? `${ratingCount} review${ratingCount !== 1 ? 's' : ''}` : 'No reviews yet';
 
-            // ── Update notification panel with latest feedback ──
-            const notifEmpty = document.getElementById('notif-empty');
-            const notifCount = document.getElementById('notif-count');
-            const tbDot = document.getElementById('tb-dot');
-            if (feedbacks.length > 0) {
-              const latest = feedbacks[0];
-              const notifEl = document.getElementById('notif-latest-feedback');
-              const notifMsg = document.getElementById('notif-latest-feedback-msg');
-              const notifTime = document.getElementById('notif-latest-feedback-time');
-              if (notifEl && notifMsg && notifTime) {
-                notifEl.style.display = '';
-                notifMsg.textContent = `${latest.name || 'A patient'} gave ${latest.rating || '?'}-star rating for ${latest.dept || 'General OPD'}.`;
-                notifTime.textContent = formatFbTime(latest.submittedAt);
-              }
-              if (notifEmpty) notifEmpty.style.display = 'none';
-              if (notifCount) { notifCount.textContent = '1'; notifCount.style.display = ''; }
-              if (tbDot) tbDot.style.display = '';
-            } else {
-              if (notifEmpty) notifEmpty.style.display = '';
-              if (notifCount) notifCount.style.display = 'none';
-              if (tbDot) tbDot.style.display = 'none';
-            }
+            // (Admin notifications now handled by renderAdminNotifications)
 
             // ── Update tab labels ──
             el('fbtab-all').textContent = `All (${total})`;
@@ -2928,16 +2903,16 @@
           // ── DOCTOR MANAGEMENT — Real Data from Firebase Sync ────────
 
           const DOC_GRADIENTS = [
-            'linear-gradient(135deg,#1051f6,#534AB7)',
-            'linear-gradient(135deg,#b856a3,#765568)',
-            'linear-gradient(135deg,#2ECC8A,#1051f6)',
-            'linear-gradient(135deg,#E8873A,#db87c5)',
-            'linear-gradient(135deg,#534AB7,#b856a3)',
-            'linear-gradient(135deg,#765568,#E8873A)',
-            'linear-gradient(135deg,#1051f6,#2ECC8A)',
-            'linear-gradient(135deg,#db87c5,#534AB7)',
+            'linear-gradient(135deg,#0E7C7B,#1A5FBF)',
+            'linear-gradient(135deg,#1A5FBF,#0E7C7B)',
+            'linear-gradient(135deg,#2ECC8A,#0E7C7B)',
+            'linear-gradient(135deg,#E8873A,#F0A500)',
+            'linear-gradient(135deg,#1A5FBF,#2ECC8A)',
+            'linear-gradient(135deg,#0E7C7B,#E8873A)',
+            'linear-gradient(135deg,#0E7C7B,#2ECC8A)',
+            'linear-gradient(135deg,#F0A500,#1A5FBF)',
             'linear-gradient(135deg,#2ECC8A,#E8873A)',
-            'linear-gradient(135deg,#E8873A,#1051f6)',
+            'linear-gradient(135deg,#E8873A,#0E7C7B)',
           ];
 
           const docStatusStore = JSON.parse(localStorage.getItem('smartheal_docStatus') || '{}');
@@ -3107,8 +3082,10 @@
                 const isServing = nowServing && String(nowServing).replace('#', '') === tok;
                 const isCalling = calling && String(calling).replace('#', '') === tok;
                 if (isServing || isCalling) return false;
-                if (p.status === 'completed' || p.status === 'done') return false;
-                if (p.status && p.status !== 'waiting') return false;
+                const st = (p.status || '').toLowerCase();
+                if (st === 'completed' || st === 'done' || st === 'no-show') return false;
+                if (st === 'serving' || st === 'calling') return false;
+                if (st && st !== 'waiting' && st !== 'emergency') return false;
                 return true;
               }).length;
             }
@@ -3302,12 +3279,12 @@
           }
 
           const AVATAR_GRADIENTS = [
-            'linear-gradient(135deg,#1051f6,#534AB7)',
-            'linear-gradient(135deg,#b856a3,#765568)',
-            'linear-gradient(135deg,#2ECC8A,#1051f6)',
-            'linear-gradient(135deg,#E8873A,#db87c5)',
-            'linear-gradient(135deg,#534AB7,#b856a3)',
-            'linear-gradient(135deg,#765568,#E8873A)',
+            'linear-gradient(135deg,#0E7C7B,#1A5FBF)',
+            'linear-gradient(135deg,#1A5FBF,#0E7C7B)',
+            'linear-gradient(135deg,#2ECC8A,#0E7C7B)',
+            'linear-gradient(135deg,#E8873A,#F0A500)',
+            'linear-gradient(135deg,#1A5FBF,#2ECC8A)',
+            'linear-gradient(135deg,#0E7C7B,#E8873A)',
           ];
 
           window.renderApplications = function () {
@@ -3390,12 +3367,16 @@
 
           // ── REAL-TIME UPDATES for Delay Monitoring ──
           window.addEventListener('storage', function (e) {
-            if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications'].includes(e.key)) {
+            if (['hospitalQueue', 'smartheal_visitHistory', 'smartheal_nowServing', 'smartheal_calling', 'doctorApplications', 'smartheal_notifications'].includes(e.key)) {
               if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+              if (typeof window.loadAnalytics === 'function') window.loadAnalytics();
+              if (typeof window.renderAdminNotifications === 'function') window.renderAdminNotifications();
             }
           });
           setInterval(() => {
             if (typeof window.loadDoctorManagement === 'function') window.loadDoctorManagement();
+            if (typeof window.loadAnalytics === 'function') window.loadAnalytics();
+            if (typeof window.renderAdminNotifications === 'function') window.renderAdminNotifications();
           }, 10000);
 
           // ══════════════════════════════════════════════════════════
@@ -3410,8 +3391,9 @@
           }
 
           function isCompleted(v) {
+            const st = (v.status || '').toLowerCase();
             return !!(v.consultationNote || v.prescription || v.completed === true
-              || v.status === 'completed' || v.status === 'done');
+              || st === 'completed' || st === 'done');
           }
 
           function dateStr(offset) {
@@ -3613,13 +3595,13 @@
               const b1 = document.createElement('div');
               b1.className = 'bc-bar';
               b1.style.height = Math.max(4, Math.round((opdCounts[i] / maxVal) * 108)) + 'px';
-              b1.style.background = isToday ? 'var(--teal-mid)' : 'rgba(16,81,246,0.45)';
+              b1.style.background = isToday ? 'var(--teal-mid)' : 'rgba(14, 124, 123, 0.40)';
               b1.title = `OPD: ${opdCounts[i]}`;
 
               const b2 = document.createElement('div');
               b2.className = 'bc-bar';
               b2.style.height = Math.max(emgCounts[i] > 0 ? 4 : 0, Math.round((emgCounts[i] / maxVal) * 108)) + 'px';
-              b2.style.background = isToday ? 'var(--amber)' : 'rgba(219,135,197,0.5)';
+              b2.style.background = isToday ? 'var(--amber)' : 'rgba(240, 165, 0, 0.40)';
               b2.title = `Emergency: ${emgCounts[i]}`;
 
               grp.appendChild(b1);
@@ -3887,6 +3869,7 @@
               });
 
               window.showAdminToast('t-success', '✅', `Doctor approved — ID: ${doctorId}`);
+              if (window.SmartHealSync && window.SmartHealSync.pushNotification) { window.SmartHealSync.pushNotification('admin', 'Doctor ' + (appData.name || uid) + ' approved (ID: ' + doctorId + ').', '✅'); }
             } catch (e) { console.error("Approval error:", e); }
           };
 
@@ -3897,6 +3880,7 @@
               await updateDoc(doc(db, "doctors", uid), { status: 'rejected', approved: false });
 
               window.showAdminToast('t-reject', '❌', 'Doctor rejected.');
+              if (window.SmartHealSync && window.SmartHealSync.pushNotification) { window.SmartHealSync.pushNotification('admin', 'A doctor application was rejected.', '❌'); }
             } catch (e) { console.error("Reject error:", e); }
           };
 
@@ -3908,6 +3892,57 @@
               window.showAdminToast('t-info', '↺', `Application reset to pending.`);
             } catch (e) { console.error("Reset error:", e); }
           }
+
+          // ── GLOBAL ADMIN NOTIFICATIONS ──
+          window.renderAdminNotifications = function () {
+            const notifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+            const adminNotifs = notifs.filter(n => n.target === 'admin');
+            const listEl = document.getElementById('notifList');
+            const countEl = document.getElementById('notif-count');
+            const dotEl = document.getElementById('tb-dot');
+
+            const unreadCount = adminNotifs.filter(n => n.unread).length;
+            if (countEl) {
+              countEl.textContent = unreadCount;
+              countEl.style.display = unreadCount > 0 ? '' : 'none';
+            }
+            if (dotEl) dotEl.style.display = unreadCount > 0 ? '' : 'none';
+
+            if (adminNotifs.length === 0) {
+              if (listEl) listEl.innerHTML = '<div class="notif-item info"><div class="notif-item-title">📭 No new notifications</div><div class="notif-item-msg">You\'re all caught up.</div></div>';
+              return;
+            }
+
+            var html = '';
+            adminNotifs.forEach(function (n) {
+              var d = new Date(n.timestamp);
+              var t = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + d.toLocaleDateString();
+              html += '<div class="notif-item ' + (n.unread ? 'info' : '') + '"><div class="notif-item-title">' + (n.icon || '🔔') + ' ' + n.text + '</div><div class="notif-item-time">' + t + '</div></div>';
+            });
+
+            if (listEl) listEl.innerHTML = html;
+          };
+
+          // Mark all as read when notification panel is opened
+          var _origToggleNotif = window.toggleNotif;
+          window.toggleNotif = function () {
+            var panel = document.getElementById('notifPanel');
+            var isOpening = panel && !panel.classList.contains('active');
+            if (_origToggleNotif) _origToggleNotif();
+            if (isOpening) {
+              var notifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+              var updated = false;
+              notifs.forEach(function (n) { if (n.target === 'admin' && n.unread) { n.unread = false; updated = true; } });
+              if (updated) {
+                localStorage.setItem('smartheal_notifications', JSON.stringify(notifs));
+                window.renderAdminNotifications();
+              }
+            }
+          };
+
+          // Initial render on page load
+          if (typeof window.renderAdminNotifications === 'function') window.renderAdminNotifications();
+
         </script>
 </body>
 

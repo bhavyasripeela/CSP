@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SmartHeal — Login / Register</title>
+    <title>SmartHeal ΓÇö Login / Register</title>
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
         rel="stylesheet" />
@@ -71,7 +71,7 @@
             border-radius: 2px;
         }
 
-        /* ── BACKGROUND ── */
+        /* ΓöÇΓöÇ BACKGROUND ΓöÇΓöÇ */
         .bg-mesh {
             position: fixed;
             inset: 0;
@@ -144,7 +144,7 @@
             pointer-events: none;
         }
 
-        /* ── NAVBAR ── */
+        /* ΓöÇΓöÇ NAVBAR ΓöÇΓöÇ */
         .navbar {
             position: sticky;
             top: 0;
@@ -178,7 +178,7 @@
             margin-top: 1px;
         }
 
-        /* ── PAGE ── */
+        /* ΓöÇΓöÇ PAGE ΓöÇΓöÇ */
         .page {
             position: relative;
             z-index: 1;
@@ -203,7 +203,7 @@
             height: calc(100vh - 60px);
         }
 
-        /* ── LEFT PANEL ── */
+        /* ΓöÇΓöÇ LEFT PANEL ΓöÇΓöÇ */
         .left-panel {
             flex: 1;
             min-width: 0;
@@ -306,8 +306,7 @@
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
             background: var(--card);
-            cursor: default;
-            pointer-events: none;
+            cursor: pointer;
             transition: all 0.22s;
             position: relative;
             overflow: hidden;
@@ -329,14 +328,15 @@
         }
 
         .role-pill.rp-doctor::before {
-            background: linear-gradient(180deg, var(--teal), var(--amber));
+            background: linear-gradient(180deg, var(--purple), var(--amber));
         }
 
         .role-pill.rp-admin::before {
             background: linear-gradient(180deg, var(--amber), var(--red));
         }
 
-        .role-pill.active {
+        .role-pill.active,
+        .role-pill:hover {
             border-color: var(--border-glow);
             background: #0d2233;
         }
@@ -370,6 +370,11 @@
             font-size: 19px;
             flex-shrink: 0;
             transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .role-pill.active .rp-icon,
+        .role-pill:hover .rp-icon {
+            transform: scale(1.1) rotate(-4deg);
         }
 
         .rp-patient .rp-icon {
@@ -443,7 +448,7 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        /* ── RIGHT PANEL ── */
+        /* ΓöÇΓöÇ RIGHT PANEL ΓöÇΓöÇ */
         .right-panel {
             width: 420px;
             flex-shrink: 0;
@@ -454,7 +459,7 @@
             animation: fadeSlideUp 0.6s ease 0.12s both;
         }
 
-        /* ── CARD VIEW SWITCHER ── */
+        /* ΓöÇΓöÇ CARD VIEW SWITCHER ΓöÇΓöÇ */
         .card-views {
             position: relative;
         }
@@ -468,7 +473,7 @@
             display: block;
         }
 
-        /* ── SHARED CARD ── */
+        /* ΓöÇΓöÇ SHARED CARD ΓöÇΓöÇ */
         .login-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -552,7 +557,7 @@
             line-height: 1.5;
         }
 
-        /* ── TAB SWITCHER (Login / Register) — only on patient ── */
+        /* ΓöÇΓöÇ TAB SWITCHER (Login / Register) ΓÇö only on patient ΓöÇΓöÇ */
         .auth-tabs {
             display: flex;
             background: #0d2233;
@@ -582,7 +587,7 @@
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
         }
 
-        /* ── FORM FIELDS ── */
+        /* ΓöÇΓöÇ FORM FIELDS ΓöÇΓöÇ */
         .field-group {
             margin-bottom: 13px;
         }
@@ -892,7 +897,6 @@
             color: var(--teal-mid);
         }
 
-
         /* Switch prompt */
         .switch-prompt {
             margin-top: 20px;
@@ -1041,7 +1045,7 @@
             flex-shrink: 0;
         }
 
-        /* ── FOOTER ── */
+        /* ΓöÇΓöÇ FOOTER ΓöÇΓöÇ */
         .footer {
             background: var(--card);
             border-top: 1px solid var(--border);
@@ -1100,7 +1104,7 @@
             color: var(--text);
         }
 
-        /* ── KEYFRAMES ── */
+        /* ΓöÇΓöÇ KEYFRAMES ΓöÇΓöÇ */
         @keyframes fadeSlideDown {
             from {
                 transform: translateY(-20px);
@@ -1157,7 +1161,7 @@
             }
         }
 
-        /* ── RESPONSIVE ── */
+        /* ΓöÇΓöÇ RESPONSIVE ΓöÇΓöÇ */
         @media(max-width:900px) {
             .login-wrap {
                 flex-direction: column;
@@ -1236,15 +1240,40 @@
                     <div class="dot"></div>Secure Portal Access
                 </div>
                 <h1 class="lp-title">Welcome to<br><span class="shimmer">SmartHeal</span></h1>
-                <p class="lp-sub" id="lpSub">Sign in to access queue tracking, health records, and hospital services
-                    &mdash; all in one place.</p>
+                <p class="lp-sub" id="lpSub">Sign in or create your account to access queue tracking, health records,
+                    and hospital services ΓÇö all in one place.</p>
 
-
+                <div class="role-pills">
+                    <div class="role-pill rp-patient active" onclick="selectRole('patient', this)">
+                        <div class="rp-icon">≡ƒÅÑ</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Patient Portal</div>
+                            <div class="rp-desc">Book appointments & view records</div>
+                        </div>
+                        <div class="rp-check">Γ£ô</div>
+                    </div>
+                    <div class="role-pill rp-doctor" onclick="selectRole('doctor', this)">
+                        <div class="rp-icon">≡ƒæ¿ΓÇìΓÜò∩╕Å</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Doctor Portal</div>
+                            <div class="rp-desc">Manage queues & prescriptions</div>
+                        </div>
+                        <div class="rp-check"></div>
+                    </div>
+                    <div class="role-pill rp-admin" onclick="selectRole('admin', this)">
+                        <div class="rp-icon">≡ƒ¢í∩╕Å</div>
+                        <div class="rp-info">
+                            <div class="rp-name">Admin Portal</div>
+                            <div class="rp-desc">Hospital monitoring & settings</div>
+                        </div>
+                        <div class="rp-check"></div>
+                    </div>
+                </div>
 
                 <div class="sec-badges">
-                    <span class="sec-badge">🔒 256-bit Encrypted</span>
-                    <span class="sec-badge">🛡️ HIPAA Compliant</span>
-                    <span class="sec-badge">✔ Gov. Approved</span>
+                    <span class="sec-badge">≡ƒöÆ 256-bit Encrypted</span>
+                    <span class="sec-badge">≡ƒ¢í∩╕Å HIPAA Compliant</span>
+                    <span class="sec-badge">Γ£ô Gov. Approved</span>
                 </div>
             </div>
 
@@ -1255,13 +1284,11 @@
                         <div class="login-card" id="loginCard">
                             <div class="card-corner-glow" id="loginCorner"></div>
 
-                            <div class="card-role-eyebrow" id="cardEyebrow"
-                                style="color:var(--teal); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">
-                                Patient Portal</div>
-                            <div class="card-role-title" id="cardTitle" style="margin-top:0; font-size:28px;">Sign in
-                            </div>
-                            <div class="card-role-sub" id="cardSub" style="margin-bottom:24px;">New to SmartHeal? Create
-                                your free account in seconds.</div>
+                            <div class="card-role-icon" id="cardIcon">≡ƒÅÑ</div>
+                            <div class="card-role-eyebrow" id="cardEyebrow">Patient Portal</div>
+                            <div class="card-role-title" id="cardTitle">Sign in</div>
+                            <div class="card-role-sub" id="cardSub">New to SmartHeal? Create your free account in
+                                seconds.</div>
 
                             <div class="auth-tabs" id="authTabs">
                                 <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign
@@ -1271,25 +1298,25 @@
                             </div>
 
                             <div class="field-group">
-                                <label class="field-label" id="idLabel"><span id="idFieldIcon">📧</span> <span
+                                <label class="field-label" id="idLabel"><span id="idLabelIcon">≡ƒôº</span> <span
                                         id="idLabelText">Email Address</span></label>
                                 <div class="field-wrap">
                                     <input class="field-input has-icon" type="email" id="idInput"
                                         placeholder="Enter your email" autocomplete="email" spellcheck="false" />
-                                    <span class="field-icon" id="idFieldIcon">📧</span>
+                                    <span class="field-icon" id="idFieldIcon">≡ƒôº</span>
                                 </div>
                                 <div class="field-hint" id="idHint">Use the email you registered with.
                                 </div>
                             </div>
 
                             <div class="field-group">
-                                <label class="field-label"><span>🔑</span> Password</label>
+                                <label class="field-label"><span>≡ƒöæ</span> Password</label>
                                 <div class="field-wrap">
                                     <input class="field-input has-icon" type="password" id="pwInput"
                                         placeholder="Enter your password" autocomplete="current-password" />
-                                    <span class="field-icon">🔒</span>
+                                    <span class="field-icon">≡ƒöÆ</span>
                                     <button class="field-action" id="pwToggle" onclick="togglePw('pwInput','pwToggle')"
-                                        title="Show/hide">👁️</button>
+                                        title="Show/hide">≡ƒæü∩╕Å</button>
                                 </div>
                             </div>
 
@@ -1301,22 +1328,22 @@
 
                             <button class="login-btn" id="loginBtn" onclick="handleLogin()">
                                 <span class="btn-text" id="loginBtnText">Sign In</span>
-                                <span class="btn-arrow btn-text">→</span>
+                                <span class="btn-arrow btn-text">ΓåÆ</span>
                                 <div class="btn-spinner"></div>
                             </button>
 
-                            <div class="msg-box error" id="loginError"><span>⚠️</span><span id="loginErrorText">Invalid
+                            <div class="msg-box error" id="loginError"><span>ΓÜá∩╕Å</span><span id="loginErrorText">Invalid
                                     credentials.</span></div>
 
                             <div class="switch-prompt" id="loginSwitchPrompt">
                                 <span class="sp-text">New to SmartHeal?</span>
-                                <button class="sp-link" onclick="switchTab('register')">Create a free account →</button>
+                                <button class="sp-link" onclick="switchTab('register')">Create a free account ΓåÆ</button>
                             </div>
                         </div>
                         <div class="demo-section">
                             <div class="demo-toggle" id="demoToggleLogin" onclick="toggleDemo('Login')">
                                 <span>Demo Accounts</span>
-                                <span class="chev">▼</span>
+                                <span class="chev">Γû╝</span>
                             </div>
                             <div class="demo-body" id="demoBodyLogin">
                                 <div class="demo-inner">
@@ -1327,7 +1354,7 @@
                                             <div class="dc-name">Ravi Kumar (Patient)</div>
                                             <div class="dc-id">ravi@smartheal.com</div>
                                         </div>
-                                        <div class="dc-use">Use →</div>
+                                        <div class="dc-use">Use ΓåÆ</div>
                                     </div>
 
                                     <div class="demo-role-title">Doctors</div>
@@ -1337,7 +1364,7 @@
                                             <div class="dc-name">Dr. Priya Sharma</div>
                                             <div class="dc-id">doctor@smartheal.com</div>
                                         </div>
-                                        <div class="dc-use">Use →</div>
+                                        <div class="dc-use">Use ΓåÆ</div>
                                     </div>
 
                                     <div class="demo-role-title">Admin</div>
@@ -1347,7 +1374,7 @@
                                             <div class="dc-name">Hospital Admin</div>
                                             <div class="dc-id">admin@smartheal.com</div>
                                         </div>
-                                        <div class="dc-use">Use →</div>
+                                        <div class="dc-use">Use ΓåÆ</div>
                                     </div>
                                 </div>
                             </div>
@@ -1359,11 +1386,14 @@
                             style="--card-accent:linear-gradient(90deg,var(--teal),var(--blue));">
                             <div class="card-corner-glow" style="background:var(--teal);"></div>
 
-                            <div class="card-role-title" style="margin-top:0; font-size:28px;">Create your account</div>
-                            <div class="card-role-sub" style="margin-bottom:24px;">Already have an account? <button
-                                    onclick="showLogin()"
+                            <div class="card-role-icon"
+                                style="background:linear-gradient(135deg,rgba(118,85,104,0.25),rgba(26,95,191,0.15));border:1px solid rgba(118,85,104,0.3);">
+                                ≡ƒÅÑ</div>
+                            <div class="card-role-eyebrow" style="color:var(--teal);">Patient Portal</div>
+                            <div class="card-role-title">Create your account</div>
+                            <div class="card-role-sub">Already have an account? <button onclick="showLogin()"
                                     style="color:var(--amber);background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">Sign
-                                    in instead →</button></div>
+                                    in instead ΓåÆ</button></div>
 
                             <div style="display:flex;gap:5px;margin-bottom:22px;" id="regStepBar">
                                 <div style="flex:1;height:3px;border-radius:2px;background:var(--teal-mid);transition:background 0.3s;"
@@ -1374,28 +1404,28 @@
                                     id="step3bar"></div>
                             </div>
                             <div style="font-size:10px;color:var(--text-3);margin-bottom:16px;" id="regStepLabel">Step 1
-                                of 3 — Personal details</div>
+                                of 3 ΓÇö Personal details</div>
 
                             <div id="regStep1">
                                 <div class="field-row">
                                     <div class="field-group">
-                                        <label class="field-label">👤 First Name</label>
+                                        <label class="field-label">≡ƒæñ First Name</label>
                                         <div class="field-wrap"><input class="field-input has-icon" type="text"
                                                 id="regFirst" placeholder="Ravi" autocomplete="given-name" /><span
-                                                class="field-icon">👤</span></div>
+                                                class="field-icon">≡ƒæñ</span></div>
                                     </div>
                                     <div class="field-group">
-                                        <label class="field-label">👤 Last Name</label>
+                                        <label class="field-label">≡ƒæñ Last Name</label>
                                         <div class="field-wrap"><input class="field-input has-icon" type="text"
                                                 id="regLast" placeholder="Kumar" autocomplete="family-name" /><span
-                                                class="field-icon">👤</span></div>
+                                                class="field-icon">≡ƒæñ</span></div>
                                     </div>
                                 </div>
                                 <div class="field-group">
-                                    <label class="field-label">📱 Mobile Number</label>
+                                    <label class="field-label">≡ƒô▒ Mobile Number</label>
                                     <div class="field-wrap"><input class="field-input has-icon" type="tel" id="regPhone"
                                             placeholder="9876543210" autocomplete="tel" /><span
-                                            class="field-icon">📱</span>
+                                            class="field-icon">≡ƒô▒</span>
                                     </div>
                                     <div class="field-hint">Used for OTP verification and hospital notifications.</div>
                                 </div>
@@ -1406,7 +1436,7 @@
                                                 id="regAge" placeholder="25" min="1" max="120" /></div>
                                     </div>
                                     <div class="field-group">
-                                        <label class="field-label">⚧ Gender</label>
+                                        <label class="field-label">ΓÜº Gender</label>
                                         <div class="field-wrap">
                                             <select class="field-input" id="regGender" style="padding-left:14px;">
                                                 <option value="">Select</option>
@@ -1417,33 +1447,33 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError1"><span>⚠️</span><span id="regErrorText1">Please
+                                <div class="msg-box error" id="regError1"><span>ΓÜá∩╕Å</span><span id="regErrorText1">Please
                                         fill all fields.</span></div>
                                 <button class="login-btn"
                                     style="background:linear-gradient(135deg,var(--teal),#6b4a8a);"
                                     onclick="nextStep(2)">
-                                    <span class="btn-text">Continue</span><span class="btn-arrow">→</span>
+                                    <span class="btn-text">Continue</span><span class="btn-arrow">ΓåÆ</span>
                                 </button>
                             </div>
 
                             <div id="regStep2" style="display:none;">
                                 <div class="field-group">
-                                    <label class="field-label">📧 Email Address</label>
+                                    <label class="field-label">≡ƒôº Email Address</label>
                                     <div class="field-wrap"><input class="field-input has-icon" type="email"
                                             id="regUsername" placeholder="e.g. ravi@smartheal.com" autocomplete="email"
-                                            spellcheck="false" /><span class="field-icon">📧</span></div>
+                                            spellcheck="false" /><span class="field-icon">≡ƒôº</span></div>
                                     <div class="field-hint">We will use this email for your account and password resets.
                                     </div>
                                 </div>
                                 <div class="field-group">
-                                    <label class="field-label">🔑 Password</label>
+                                    <label class="field-label">≡ƒöæ Password</label>
                                     <div class="field-wrap">
                                         <input class="field-input has-icon" type="password" id="regPw"
                                             placeholder="Create a strong password" oninput="checkStrength(this.value)"
                                             autocomplete="new-password" />
-                                        <span class="field-icon">🔒</span>
+                                        <span class="field-icon">≡ƒöÆ</span>
                                         <button class="field-action" onclick="togglePw('regPw','regPwBtn')"
-                                            id="regPwBtn">👁️</button>
+                                            id="regPwBtn">≡ƒæü∩╕Å</button>
                                     </div>
                                     <div class="pw-strength">
                                         <div class="pw-bars">
@@ -1456,25 +1486,25 @@
                                     </div>
                                 </div>
                                 <div class="field-group">
-                                    <label class="field-label">🔑 Confirm Password</label>
+                                    <label class="field-label">≡ƒöæ Confirm Password</label>
                                     <div class="field-wrap">
                                         <input class="field-input has-icon" type="password" id="regPwConf"
                                             placeholder="Re-enter your password" autocomplete="new-password" />
-                                        <span class="field-icon">🔒</span>
+                                        <span class="field-icon">≡ƒöÆ</span>
                                         <button class="field-action" onclick="togglePw('regPwConf','regPwConfBtn')"
-                                            id="regPwConfBtn">👁️</button>
+                                            id="regPwConfBtn">≡ƒæü∩╕Å</button>
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError2"><span>⚠️</span><span id="regErrorText2">Please
+                                <div class="msg-box error" id="regError2"><span>ΓÜá∩╕Å</span><span id="regErrorText2">Please
                                         fill all fields.</span></div>
                                 <div style="display:flex;gap:9px;margin-top:18px;">
                                     <button class="login-btn"
                                         style="background:#0d2233;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 20px;"
-                                        onclick="goStep(1)">← Back</button>
+                                        onclick="goStep(1)">ΓåÉ Back</button>
                                     <button class="login-btn"
                                         style="background:linear-gradient(135deg,var(--teal),#6b4a8a);flex:1;"
                                         onclick="nextStep(3)"><span class="btn-text">Continue</span><span
-                                            class="btn-arrow">→</span></button>
+                                            class="btn-arrow">ΓåÆ</span></button>
                                 </div>
                             </div>
 
@@ -1495,23 +1525,23 @@
                                         information for treatment purposes.
                                     </div>
                                 </div>
-                                <div class="msg-box error" id="regError3"><span>⚠️</span><span id="regErrorText3">Please
+                                <div class="msg-box error" id="regError3"><span>ΓÜá∩╕Å</span><span id="regErrorText3">Please
                                         accept the terms.</span></div>
                                 <div style="display:flex;gap:9px;margin-top:4px;">
                                     <button class="login-btn"
                                         style="background:#0d2233;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 20px;"
-                                        onclick="goStep(2)">← Back</button>
+                                        onclick="goStep(2)">ΓåÉ Back</button>
                                     <button class="login-btn"
                                         style="background:linear-gradient(135deg,var(--green),#1db87a);flex:1;"
                                         id="submitRegBtn" onclick="submitRegister()"><span class="btn-text">Create
-                                            Account ✓</span>
+                                            Account Γ£ô</span>
                                         <div class="btn-spinner"></div>
                                     </button>
                                 </div>
                             </div>
 
                             <div id="regSuccess" style="display:none;text-align:center;padding:16px 0;">
-                                <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">🎉</div>
+                                <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">≡ƒÄë</div>
                                 <div
                                     style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;">
                                     Account Created!</div>
@@ -1520,13 +1550,12 @@
                                     can now sign in.</div>
                                 <button class="login-btn"
                                     style="background:linear-gradient(135deg,var(--teal),#6b4a8a);"
-                                    onclick="goToLoginAfterReg()">Sign In Now →</button>
+                                    onclick="goToLoginAfterReg()">Sign In Now ΓåÆ</button>
                             </div>
 
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
 
@@ -1534,7 +1563,7 @@
             <div class="footer-inner">
                 <div>
                     <div class="footer-brand">Smart<span>Heal</span></div>
-                    <div class="footer-copy">© 2025 SmartHeal · District General Hospital, Visakhapatnam</div>
+                    <div class="footer-copy">┬⌐ 2025 SmartHeal ┬╖ District General Hospital, Visakhapatnam, TS</div>
                 </div>
                 <div class="footer-links">
                     <a class="footer-link" href="#">Privacy</a>
@@ -1550,132 +1579,148 @@
         import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
         import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-        // ══════════════════════════════════════════
+        // ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
         // ROLE CONFIG
-        // ══════════════════════════════════════════
-
-
-
-
-
+        // ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
         const ROLES = {
             patient: {
-                eyebrow: 'Patient Portal', eyebrowColor: 'var(--teal)',
-                title: 'Sign in',
-                sub: 'New to SmartHeal? Create your free account in seconds.',
-                idLabelText: 'Email Address', idPlaceholder: 'Enter your email', idFieldIcon: '📧',
-                idHint: 'Use the email you registered with.',
-                btnText: 'Sign In ',
-                accentBar: 'linear-gradient(90deg, var(--teal), var(--blue))',
-                cornerGlow: 'rgba(14, 124, 123, 0.15)',
+                icon: '≡ƒÅÑ', eyebrow: 'Patient Portal', eyebrowColor: 'var(--teal)',
+                title: 'Sign in', sub: 'New to SmartHeal? Create your free account in seconds.',
+                idLabelText: 'Email Address', idPlaceholder: 'Enter your email',
+                idFieldIcon: '≡ƒôº', idHint: 'Use the email address you set during registration.',
+                btnText: 'Sign In to Patient Portal',
+                accentBar: 'linear-gradient(90deg,var(--teal),var(--blue))',
+                cornerGlow: 'var(--teal)',
+                iconBg: 'linear-gradient(135deg,rgba(14,124,123,0.25),rgba(26,95,191,0.15))',
+                iconBorder: 'rgba(14,124,123,0.3)',
                 focusColor: 'rgba(14,124,123,0.5)', focusGlow: 'rgba(14,124,123,0.12)',
-                btnGradient: 'linear-gradient(135deg, var(--teal), #6b4a8a)',
+                btnGradient: 'linear-gradient(135deg, #0E7C7B, #1A5FBF)',
                 redirect: 'hospiiiii.html',
-                showTabs: true
+                showTabs: true,
+                validUsers: ['ravi@smartheal.com', 'anita@smartheal.com', 'demo@smartheal.com', 'patient@smartheal.com'],
+                validPass: ['patient123', 'test1234', 'demo', 'patient']
             },
             doctor: {
-                eyebrow: 'Doctor Portal', eyebrowColor: 'var(--amber)',
-                title: 'Doctor Sign in',
-                sub: 'Access your schedule, patient records, and digital prescriptions.',
-                idLabelText: 'Email or Doctor ID', idPlaceholder: 'Enter ID or Email', idFieldIcon: '🆔',
-                idHint: 'Use your official SmartHeal doctor ID.',
-                btnText: 'Access Portal →',
-                accentBar: 'linear-gradient(90deg, var(--teal), var(--amber))',
-                cornerGlow: 'rgba(14, 124, 123, 0.15)',
+                icon: '≡ƒæ¿ΓÇìΓÜò∩╕Å', eyebrow: 'Doctor Portal', eyebrowColor: 'var(--teal)',
+                title: 'Sign-in', sub: 'Enter your registered doctor email address.',
+                idLabelText: 'Doctor Email', idPlaceholder: 'doctor@smartheal.com',
+                idFieldIcon: '≡ƒ⌐║', idHint: 'Use the email linked to your hospital profile.',
+                btnText: 'Sign In  ',
+                accentBar: 'linear-gradient(90deg,var(--teal),var(--amber))',
+                cornerGlow: 'var(--teal)',
+                iconBg: 'linear-gradient(135deg,rgba(14,124,123,0.25),rgba(240,165,0,0.15))',
+                iconBorder: 'rgba(14,124,123,0.3)',
                 focusColor: 'rgba(14,124,123,0.5)', focusGlow: 'rgba(14,124,123,0.12)',
-                btnGradient: 'linear-gradient(135deg, var(--teal), var(--amber))',
+                btnGradient: 'linear-gradient(135deg, #0E7C7B, #0a5a59)',
                 redirect: 'doctor-fixed.html',
-                showTabs: false
+                showTabs: false,
+                validUsers: ['doctor@smartheal.com', 'DOC-2024-PS01', 'DOC-2024-RG02'],
+                validPass: ['doctor123', 'secure456', 'demo']
             },
             admin: {
-                eyebrow: 'Admin Portal', eyebrowColor: 'var(--amber)',
-                title: 'Admin Sign in',
-                sub: 'System administration and hospital monitoring dashboard.',
-                idLabelText: 'Admin Email', idPlaceholder: 'admin@smartheal.gov.in', idFieldIcon: '🛡️',
-                idHint: 'Authorized personnel only.',
-                btnText: 'Authenticate →',
-                accentBar: 'linear-gradient(90deg, var(--amber), var(--red))',
-                cornerGlow: 'rgba(240, 165, 0, 0.15)',
+                icon: '≡ƒ¢í∩╕Å', eyebrow: 'Admin Portal', eyebrowColor: 'var(--amber)',
+                title: ' Sign-in', sub: 'Restricted access. Administrator credentials required.',
+                idLabelText: 'Admin Email', idPlaceholder: 'admin@smartheal.com',
+                idFieldIcon: '≡ƒöÉ', idHint: 'Use your official administrator email.',
+                btnText: 'Sign In ',
+                accentBar: 'linear-gradient(90deg,var(--amber),var(--red))',
+                cornerGlow: 'var(--amber)',
+                iconBg: 'linear-gradient(135deg,rgba(240,165,0,0.25),rgba(224,85,85,0.15))',
+                iconBorder: 'rgba(240,165,0,0.3)',
                 focusColor: 'rgba(240,165,0,0.5)', focusGlow: 'rgba(240,165,0,0.12)',
                 btnGradient: 'linear-gradient(135deg, #b87d00, #F0A500)',
                 redirect: 'admin.html',
-                showTabs: false
+                showTabs: false,
+                validUsers: ['admin@smartheal.com', 'ADMIN-001', 'ADMIN-002'],
+                validPass: ['admin2025', 'admin123', 'demo']
             }
         };
 
         let currentRole = 'patient';
-
-        function applyRole(role) {
-            if (!ROLES[role]) role = 'patient';
-            currentRole = role;
-            const r = ROLES[role];
-            const card = document.getElementById('loginCard');
-
-            // ── Update left-panel pill highlight ──
-            ['patient', 'doctor', 'admin'].forEach(r2 => {
-                const pill = document.getElementById('pill-' + r2);
-                const check = document.getElementById('check-' + r2);
-                if (pill) pill.classList.toggle('active', r2 === role);
-                if (check) check.textContent = (r2 === role) ? '✔' : '';
-            });
-
-            // ── Update card text ──
-            const eyebrow = document.getElementById('cardEyebrow');
-            if (eyebrow) { eyebrow.textContent = r.eyebrow; eyebrow.style.color = r.eyebrowColor; }
-
-            const title = document.getElementById('cardTitle');
-            if (title) title.textContent = r.title;
-
-            const sub = document.getElementById('cardSub');
-            if (sub) sub.textContent = r.sub;
-
-            const idLabelText = document.getElementById('idLabelText');
-            if (idLabelText) idLabelText.textContent = r.idLabelText;
-
-            const idInput = document.getElementById('idInput');
-            if (idInput) idInput.placeholder = r.idPlaceholder;
-
-            const idFieldIcon = document.getElementById('idFieldIcon');
-            if (idFieldIcon) idFieldIcon.textContent = r.idFieldIcon;
-
-            const idHint = document.getElementById('idHint');
-            if (idHint) idHint.textContent = r.idHint;
-
-            const loginBtnText = document.getElementById('loginBtnText');
-            if (loginBtnText) loginBtnText.textContent = r.btnText;
-
-            card.style.setProperty('--card-accent', r.accentBar);
-            const corner = document.getElementById('loginCorner');
-            if (corner) corner.style.background = r.cornerGlow;
-            card.style.setProperty('--focus-color', r.focusColor);
-            card.style.setProperty('--focus-glow', r.focusGlow);
-            const btn = document.getElementById('loginBtn');
-            if (btn) btn.style.background = r.btnGradient;
-
-            // ── Show / hide auth tabs (Create Account only for patients) ──
-            const tabs = document.getElementById('authTabs');
-            if (tabs) tabs.style.display = r.showTabs ? 'flex' : 'none';
-            const switchPrompt = document.getElementById('loginSwitchPrompt');
-            if (switchPrompt) switchPrompt.style.display = r.showTabs ? 'block' : 'none';
-
-            // ── Doctor apply link ──
-            updateDoctorApplyLink();
-
-            hideMsg('loginError');
-        }
-
-        let currentTab = 'login';
+        let currentTab = 'login'; // 'login' | 'register'
         let regStep = 1;
         let regData = {};
 
-        // ══ SWITCH TAB (login / register) inside login card ══
+        // ΓòÉΓòÉ APPLY ROLE ΓòÉΓòÉ
+        function applyRole(role) {
+            const r = ROLES[role];
+            const card = document.getElementById('loginCard');
+
+            // Animate icon
+            const icon = document.getElementById('cardIcon');
+            icon.style.animation = 'none'; void icon.offsetWidth;
+            icon.style.animation = 'iconBounce 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+            icon.textContent = r.icon;
+            icon.style.background = r.iconBg;
+            icon.style.border = `1px solid ${r.iconBorder}`;
+
+            document.getElementById('cardEyebrow').textContent = r.eyebrow;
+            document.getElementById('cardEyebrow').style.color = r.eyebrowColor;
+            document.getElementById('cardTitle').textContent = r.title;
+            document.getElementById('cardSub').textContent = r.sub;
+            document.getElementById('idLabelText').textContent = r.idLabelText;
+            document.getElementById('idInput').placeholder = r.idPlaceholder;
+            document.getElementById('idFieldIcon').textContent = r.idFieldIcon;
+            document.getElementById('idHint').textContent = r.idHint;
+            document.getElementById('loginBtnText').textContent = r.btnText;
+
+            card.style.setProperty('--card-accent', r.accentBar);
+            document.getElementById('loginCorner').style.background = r.cornerGlow;
+            card.style.setProperty('--focus-color', r.focusColor);
+            card.style.setProperty('--focus-glow', r.focusGlow);
+            document.getElementById('loginBtn').style.background = r.btnGradient;
+
+            // Show/hide auth tabs ΓÇö only patients can register; doctors get Apply tab
+            document.getElementById('authTabs').style.display = r.showTabs ? 'flex' : 'none';
+            document.getElementById('loginSwitchPrompt').style.display = r.showTabs ? 'block' : 'none';
+
+            // Relabel tabs for doctor role
+            const tabLoginEl = document.getElementById('tabLogin');
+            const tabRegEl = document.getElementById('tabRegister');
+            if (currentRole === 'doctor') {
+                if (tabLoginEl) tabLoginEl.textContent = 'Sign In';
+                if (tabRegEl) tabRegEl.textContent = 'Apply for Access';
+                const sp = document.getElementById('loginSwitchPrompt');
+                if (sp) sp.innerHTML = '<span class="sp-text">New doctor?</span><button class="sp-link" onclick="switchTab(\'register\')">Apply for access ΓåÆ</button>';
+            } else {
+                if (tabLoginEl) tabLoginEl.textContent = 'Sign In';
+                if (tabRegEl) tabRegEl.textContent = 'Create Account';
+                const sp = document.getElementById('loginSwitchPrompt');
+                if (sp) sp.innerHTML = '<span class="sp-text">New to SmartHeal?</span><button class="sp-link" onclick="switchTab(\'register\')">Create a free account ΓåÆ</button>';
+            }
+
+            hideMsg('loginError');
+            document.getElementById('idInput').value = '';
+            document.getElementById('pwInput').value = '';
+            // Inject/remove doctor apply link
+            updateDoctorApplyLink();
+        }
+
+        // ΓòÉΓòÉ SELECT ROLE ΓòÉΓòÉ
+        function selectRole(role, el) {
+            currentRole = role;
+            document.querySelectorAll('.role-pill').forEach(p => { p.classList.remove('active'); p.querySelector('.rp-check').textContent = ''; });
+            el.classList.add('active');
+            el.querySelector('.rp-check').textContent = 'Γ£ô';
+            // Always go back to login view when switching role
+            showLogin();
+            applyRole(role);
+            updateDoctorApplyLink();
+        }
+
+        // ΓòÉΓòÉ SWITCH TAB (login / register / apply) inside login card ΓòÉΓòÉ
         function switchTab(tab) {
             currentTab = tab;
             document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
             document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
 
             if (tab === 'register') {
-                // Patient role → show register card
+                // Doctor role ΓåÆ navigate to application form
+                if (currentRole === 'doctor') {
+                    window.location.href = 'doctor-apply.html';
+                    return;
+                }
+                // Patient role ΓåÆ show register card
                 document.getElementById('viewLogin').classList.remove('active');
                 document.getElementById('viewRegister').classList.add('active');
                 goStep(1);
@@ -1692,16 +1737,16 @@
             document.getElementById('tabRegister').classList.remove('active');
         }
 
-        // ══ PW TOGGLE ══
+        // ΓòÉΓòÉ PW TOGGLE ΓòÉΓòÉ
         function togglePw(inputId, btnId) {
             const inp = document.getElementById(inputId);
             const btn = document.getElementById(btnId);
             const vis = inp.type === 'text';
             inp.type = vis ? 'password' : 'text';
-            btn.textContent = vis ? '👁️' : '🙈';
+            btn.textContent = vis ? '≡ƒæü∩╕Å' : '≡ƒÖê';
         }
 
-        // ══ LOGIN HANDLER ══
+        // ΓòÉΓòÉ LOGIN HANDLER ΓòÉΓòÉ
         function restoreActiveQueueSession(patient) {
             try {
                 const phone = String(patient.phone || '').replace(/\D/g, '');
@@ -1729,7 +1774,7 @@
                     ).sort((a, b) => (a.registeredAt || 0) - (b.registeredAt || 0));
                     const position = deptQueue.findIndex(e => e.token === latest.token) + 1;
 
-                    console.log(`[SmartHeal] Restored active registration — Token ${latest.token}, ` +
+                    console.log(`[SmartHeal] Restored active registration ΓÇö Token ${latest.token}, ` +
                         `Dept ${latest.dept}, Position ${position || '?'}, Status ${latest.status || 'Waiting'}`);
                 } else {
                     localStorage.removeItem('currentTokenData');
@@ -1743,9 +1788,10 @@
             const email = document.getElementById('idInput').value.trim();
             const pw = document.getElementById('pwInput').value.trim();
             const btn = document.getElementById('loginBtn');
+            const r = ROLES[currentRole];
             hideMsg('loginError');
 
-            if (!email || !pw) { showMsg('loginError', 'error', '⚠️', 'Please fill in both fields.'); return; }
+            if (!email || !pw) { showMsg('loginError', 'error', 'ΓÜá∩╕Å', 'Please fill in both fields.'); return; }
             btn.classList.add('loading');
 
             try {
@@ -1753,62 +1799,46 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, pw);
                 const user = userCredential.user;
 
-                // 2. Fetch the user's role
+                // 2. Fetch the user's basic role
                 const userDoc = await getDoc(doc(db, "users", user.uid));
 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    const actualRole = userData.role || 'patient';
 
-                    if (actualRole !== currentRole) {
+                    // 3. Security Check
+                    if (userData.role !== currentRole) {
                         btn.classList.remove('loading');
-                        showMsg('loginError', 'error', '⛔', `Access denied. Your account is registered as a ${actualRole}.`);
+                        showMsg('loginError', 'error', 'Γ¢ö', `Access denied. Your account is registered as a ${userData.role}.`);
                         shake(document.getElementById('loginCard'));
                         return;
                     }
 
-                    // 3. Save session
+                    // 4. Save session
                     localStorage.setItem('currentUser', user.uid);
 
-                    // 4. Fetch the FULL profile so the dashboard can auto-fill the forms!
-                    let redirectUrl = 'hospiiiii.html';
-                    if (actualRole === 'patient') {
+                    // 5. THE FIX: Fetch the FULL profile so the dashboard can auto-fill the forms!
+                    if (currentRole === 'patient') {
                         const patientDoc = await getDoc(doc(db, "patients", user.uid));
                         if (patientDoc.exists()) {
                             const pData = patientDoc.data();
                             // Map the database fields to the exact names the frontend expects
-                            pData.first = pData.firstName || '';
-                            pData.last = pData.lastName || '';
+                            pData.first = pData.firstName;
+                            pData.last = pData.lastName;
                             localStorage.setItem('currentPatient', JSON.stringify(pData));
-                        } else {
-                            // Fallback if patient doc doesn't exist (e.g., demo accounts)
-                            const fallbackData = {
-                                name: userData.name || 'Patient',
-                                first: userData.name ? userData.name.split(' ')[0] : 'Patient',
-                                last: userData.name ? userData.name.split(' ').slice(1).join(' ') : '',
-                                email: userData.email || email,
-                                age: '--',
-                                gender: '--',
-                                phone: '--'
-                            };
-                            localStorage.setItem('currentPatient', JSON.stringify(fallbackData));
                         }
-                    } else if (actualRole === 'doctor') {
-                        redirectUrl = 'doctor-fixed.html';
+                    } else if (currentRole === 'doctor') {
                         const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
                         if (doctorDoc.exists()) {
                             localStorage.setItem('currentDoctor', JSON.stringify(doctorDoc.data()));
                         }
-                    } else if (actualRole === 'admin') {
-                        redirectUrl = 'admin.html';
                     }
 
                     btn.classList.remove('loading');
-                    loginSuccess(btn, redirectUrl, user.uid);
+                    loginSuccess(btn, r.redirect, user.uid);
 
                 } else {
                     btn.classList.remove('loading');
-                    showMsg('loginError', 'error', '⚠️', 'Profile not found in database. Please register.');
+                    showMsg('loginError', 'error', 'ΓÜá∩╕Å', 'Profile not found in database. Please register.');
                 }
 
             } catch (error) {
@@ -1817,7 +1847,7 @@
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
                     errorMsg = "Incorrect email or password.";
                 }
-                showMsg('loginError', 'error', '⚠️', errorMsg);
+                showMsg('loginError', 'error', 'ΓÜá∩╕Å', errorMsg);
                 shake(document.getElementById('loginCard'));
                 console.error("Firebase Login Error: ", error);
             }
@@ -1826,17 +1856,8 @@
         function loginSuccess(btn, redirect, id) {
             localStorage.setItem("currentUser", id);
             btn.style.background = 'linear-gradient(135deg,var(--green),#1db87a)';
-            document.getElementById('loginBtnText').textContent = '✓ Authenticated';
+            document.getElementById('loginBtnText').textContent = 'Γ£ô Authenticated';
             setTimeout(() => { window.location.href = redirect; }, 900);
-        }
-
-        function handleForgot() {
-            const msgs = {
-                patient: 'To reset your password, contact the hospital reception or call 040-2345-6789.',
-                doctor: 'Doctor portal passwords are managed by IT Administration. Contact helpdesk@smartheal.gov.in',
-                admin: 'Admin password resets require in-person verification at the IT department.'
-            };
-            showMsg('loginError', 'info', 'ℹ️', msgs[currentRole] || msgs['patient']);
         }
 
         function updateDoctorApplyLink() {
@@ -1847,9 +1868,18 @@
                 const applyDiv = document.createElement('div');
                 applyDiv.id = 'doctor-apply-link';
                 applyDiv.style.cssText = 'text-align:center;margin-top:14px;font-size:12px;color:var(--text-2);';
-                applyDiv.innerHTML = 'New doctor? <a href="doctor-apply.html" style="color:var(--teal);font-weight:600;text-decoration:none;">Apply to join SmartHeal →</a>';
+                applyDiv.innerHTML = 'New doctor? <a href="doctor-apply.html" style="color:var(--teal);font-weight:600;text-decoration:none;">Apply to join SmartHeal ΓåÆ</a>';
                 loginCard.appendChild(applyDiv);
             }
+        }
+
+        function handleForgot() {
+            const msgs = {
+                patient: 'To reset your password, contact the hospital reception or call 040-2345-6789.',
+                doctor: 'Doctor portal passwords are managed by IT Administration. Contact helpdesk@smartheal.gov.in',
+                admin: 'Admin password resets require in-person verification at the IT department.'
+            };
+            showMsg('loginError', 'info', 'Γä╣∩╕Å', msgs[currentRole]);
         }
 
         function showMsg(id, type, icon, text) {
@@ -1872,6 +1902,9 @@
         }
 
         function fillCreds(id, pw, role) {
+            const pillMap = { patient: 0, doctor: 1, admin: 2 };
+            const pills = document.querySelectorAll('.role-pill');
+            selectRole(role, pills[pillMap[role]]);
             setTimeout(() => {
                 document.getElementById('idInput').value = id;
                 document.getElementById('pwInput').value = pw;
@@ -1891,7 +1924,7 @@
                 document.getElementById('regStep' + s).style.display = s === step ? 'block' : 'none';
                 document.getElementById('step' + s + 'bar').style.background = s <= step ? 'var(--teal-mid)' : '#0d2233';
             });
-            const labels = ['Step 1 of 3 — Personal details', 'Step 2 of 3 — Account credentials', 'Step 3 of 3 — Review & confirm'];
+            const labels = ['Step 1 of 3 ΓÇö Personal details', 'Step 2 of 3 ΓÇö Account credentials', 'Step 3 of 3 ΓÇö Review & confirm'];
             document.getElementById('regStepLabel').textContent = labels[step - 1];
             document.getElementById('regSuccess').style.display = 'none';
             document.getElementById('regStepBar').style.display = 'flex';
@@ -1907,10 +1940,10 @@
                 const age = document.getElementById('regAge').value.trim();
                 const gender = document.getElementById('regGender').value;
                 if (!first || !last || !phone || !age || !gender) {
-                    showMsg('regError1', 'error', '⚠️', 'Please fill in all personal details.'); return;
+                    showMsg('regError1', 'error', 'ΓÜá∩╕Å', 'Please fill in all personal details.'); return;
                 }
                 if (!/^[0-9]{10}$/.test(phone)) {
-                    showMsg('regError1', 'error', '⚠️', 'Please enter a valid 10-digit mobile number.'); return;
+                    showMsg('regError1', 'error', 'ΓÜá∩╕Å', 'Please enter a valid 10-digit mobile number.'); return;
                 }
                 regData.first = first; regData.last = last; regData.phone = phone;
                 regData.age = age; regData.gender = gender;
@@ -1920,30 +1953,30 @@
                 const pw = document.getElementById('regPw').value;
                 const conf = document.getElementById('regPwConf').value;
                 if (!uname || !pw || !conf) {
-                    showMsg('regError2', 'error', '⚠️', 'Please fill in all credential fields.'); return;
+                    showMsg('regError2', 'error', 'ΓÜá∩╕Å', 'Please fill in all credential fields.'); return;
                 }
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(uname)) {
-                    showMsg('regError2', 'error', '⚠️', 'Please enter a valid email address.'); return;
+                    showMsg('regError2', 'error', 'ΓÜá∩╕Å', 'Please enter a valid email address.'); return;
                 }
                 if (pw.length < 6) {
-                    showMsg('regError2', 'error', '⚠️', 'Password must be at least 6 characters.'); return;
+                    showMsg('regError2', 'error', 'ΓÜá∩╕Å', 'Password must be at least 6 characters.'); return;
                 }
                 if (pw !== conf) {
-                    showMsg('regError2', 'error', '⚠️', 'Passwords do not match.'); return;
+                    showMsg('regError2', 'error', 'ΓÜá∩╕Å', 'Passwords do not match.'); return;
                 }
                 const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
                 if (stored.some(u => (u.username || u.email || '').toLowerCase() === uname.toLowerCase())) {
-                    showMsg('regError2', 'error', '⚠️', 'That email is already registered. Please sign in.'); return;
+                    showMsg('regError2', 'error', 'ΓÜá∩╕Å', 'That email is already registered. Please sign in.'); return;
                 }
                 regData.username = uname; regData.password = pw;
 
                 const rb = document.getElementById('reviewBlock');
                 rb.innerHTML = [
-                    ['👤 Full name', regData.first + ' ' + regData.last],
-                    ['📱 Mobile', regData.phone],
-                    ['🎂 Age / Gender', regData.age + ' · ' + regData.gender],
-                    ['📧 Email', regData.username],
-                    ['🔑 Password', '••••••••']
+                    ['≡ƒæñ Full name', regData.first + ' ' + regData.last],
+                    ['≡ƒô▒ Mobile', regData.phone],
+                    ['≡ƒÄé Age / Gender', regData.age + ' ┬╖ ' + regData.gender],
+                    ['≡ƒôº Email', regData.username],
+                    ['≡ƒöæ Password', 'ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó']
                 ].map(([k, v]) => `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:12px;">${k}</span><span style="color:var(--text);font-size:12px;font-weight:500;">${v}</span></div>`).join('');
                 goStep(3);
             }
@@ -1951,7 +1984,7 @@
 
         async function submitRegister() {
             if (!document.getElementById('termsCheck').checked) {
-                showMsg('regError3', 'error', '⚠️', 'Please accept the Terms of Service to continue.'); return;
+                showMsg('regError3', 'error', 'ΓÜá∩╕Å', 'Please accept the Terms of Service to continue.'); return;
             }
             const btn = document.getElementById('submitRegBtn');
             btn.classList.add('loading');
@@ -1996,7 +2029,7 @@
                 let errorMsg = "Failed to create account.";
                 if (error.code === 'auth/email-already-in-use') errorMsg = "This email is already registered.";
                 if (error.code === 'auth/weak-password') errorMsg = "Password must be at least 6 characters.";
-                showMsg('regError3', 'error', '⚠️', errorMsg);
+                showMsg('regError3', 'error', 'ΓÜá∩╕Å', errorMsg);
                 console.error("Firebase Registration Error: ", error);
             }
         }
@@ -2027,14 +2060,28 @@
         document.addEventListener('keydown', e => { if (e.key === 'Enter') { if (currentTab === 'login') handleLogin(); } });
 
         window.addEventListener('DOMContentLoaded', () => {
-            const selectedRole = new URLSearchParams(window.location.search).get('role');
-            applyRole(ROLES[selectedRole] ? selectedRole : 'patient');
+            const saved = new URLSearchParams(window.location.search).get('role');
+            if (saved && ROLES[saved]) {
+                currentRole = saved;
+                const pillMap = { patient: 0, doctor: 1, admin: 2 };
+                const pills = document.querySelectorAll('.role-pill');
+                if (pills[pillMap[saved]]) {
+                    pills.forEach(p => {
+                        p.classList.remove('active');
+                        p.querySelector('.rp-check').textContent = '';
+                    });
+                    pills[pillMap[saved]].classList.add('active');
+                    pills[pillMap[saved]].querySelector('.rp-check').textContent = 'Γ£ô';
+                }
+                applyRole(saved);
+                updateDoctorApplyLink();
+            }
             console.log('[SmartHeal] Login page loaded. Role:', currentRole);
         });
 
         // Expose functions to HTML buttons
         window.applyRole = applyRole;
-        window.handleForgot = handleForgot;
+        window.selectRole = selectRole;
         window.switchTab = switchTab;
         window.showLogin = showLogin;
         window.togglePw = togglePw;

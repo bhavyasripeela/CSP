@@ -2472,7 +2472,7 @@
   <div class="lang-overlay" id="lang-overlay">
     <div class="lo-brand">Smart<span>Heal</span></div>
     <div class="lo-sub">Hospital Patient Assistant</div>
-    <div class="lo-hospital">District General Hospital, Hyderabad</div>
+    <div class="lo-hospital">District General Hospital, Visakhapatnam</div>
     <div class="lo-prompt" id="lo-p1">Choose your language</div>
     <div class="lo-prompt2" id="lo-p2">You can change this anytime in Settings</div>
     <button class="lo-btn lo-en" onclick="chooseLang('en')">🇬🇧 &nbsp;English</button>
@@ -2518,7 +2518,7 @@
             id="sbn-fb-t">Feedback</span></div>
       </div>
       <div class="sb-card">
-        <div class="sb-sec">Live Weather — Hyderabad</div>
+        <div class="sb-sec">Live Weather — Visakhapatnam</div>
         <div class="sb-weather-live">
           <div class="sbw-row">
             <span class="sbw-icon" id="sbw-icon-live">⏳</span>
@@ -2546,6 +2546,9 @@
               </div>
             </div>
             <div class="hdr-actions">
+              <button class="hdr-btn" onclick="goTo('screen-notifications')" title="Notifications" style="position:relative;">
+                🔔<span id="patient-notif-badge" style="display:none;position:absolute;top:2px;right:2px;background:#e53e3e;color:white;border-radius:50%;font-size:9px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;">0</span>
+              </button>
               <button class="hdr-btn" onclick="goTo('screen-settings')" title="Settings">⚙️</button>
               <button class="hdr-btn hdr-logout-btn" onclick="showLogoutDialog()" title="Logout"
                 style="background:rgba(184,86,163,0.25);border:1px solid rgba(184,86,163,0.35);font-size:13px;font-weight:600;color:white;gap:3px;width:auto;padding:0 10px;border-radius:20px;display:flex;align-items:center;">
@@ -2563,7 +2566,6 @@
               <div class="tc-label" id="tc-dl">Department</div>
               <div style="color:white;font-size:12px;font-weight:500;" id="tc-dept">—</div>
             </div>
-            <div class="tc-badge" id="tc-badge">Register</div>
           </div>
         </div>
         <div class="scroll-body">
@@ -2627,7 +2629,7 @@
             <div style="display:flex;justify-content:space-between;"><span id="hi-emg">📞 Emergency</span><span
                 style="font-weight:600;color:var(--red)">108</span></div>
             <div style="display:flex;justify-content:space-between;"><span id="hi-loc">📍 Location</span><span
-                style="color:var(--teal)">Hyderabad, TS</span></div>
+                style="color:var(--teal)">Visakhapatnam, TS</span></div>
           </div>
         </div>
         <div class="nav-bar">
@@ -2793,7 +2795,7 @@
           <div class="aw-card heatwave">
             <div class="aw-icon">☀️</div>
             <div class="aw-title" id="aw1-title">Heatwave Safety — Summer 2025</div>
-            <div class="aw-body" id="aw1-body">Hyderabad is experiencing extreme heat. Protect yourself:</div>
+            <div class="aw-body" id="aw1-body">Visakhapatnam is experiencing extreme heat. Protect yourself:</div>
             <ul class="tip-list" id="aw1-tips">
               <li>Drink at least 3–4 litres of water daily</li>
               <li>Avoid going out between 12 PM – 4 PM</li>
@@ -3022,7 +3024,7 @@
             <div class="set-row">
               <div>
                 <div class="set-label">District General Hospital</div>
-                <div class="set-sub">Hyderabad, Telangana</div>
+                <div class="set-sub">Visakhapatnam, Telangana</div>
               </div>
               <span style="font-size:18px;">🏥</span>
             </div>
@@ -3036,6 +3038,18 @@
               </div><span style="font-size:18px;">ℹ️</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ===== NOTIFICATIONS ===== -->
+      <div class="screen" id="screen-notifications">
+        <div class="inner-header">
+          <button class="back-btn" onclick="goTo('screen-home')">< <span id="bk-notif">Back</span></button>
+          <h1 id="notif-title">Notifications</h1>
+          <p id="notif-sub">Your recent alerts</p>
+        </div>
+        <div class="settings-body" id="patient-notif-list" style="padding:15px; display:flex; flex-direction:column; gap:10px;">
+           <div style="text-align:center;color:var(--text-2);font-size:12px;margin-top:20px;">No notifications yet.</div>
         </div>
       </div>
 
@@ -3101,6 +3115,65 @@
 
     <script type="module" src="smart-heal-sync.js"></script>
     <script>
+      // ════════════ NOTIFICATIONS ════════════
+      function renderPatientNotifications() {
+        if (!window.currentPatient || !window.currentPatient.phone) return;
+        const allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+        const phone = window.currentPatient.phone;
+        const myNotifs = allNotifs.filter(n => n.target === 'patient_' + phone);
+        
+        const unreadCount = myNotifs.filter(n => n.unread).length;
+        const badge = document.getElementById('patient-notif-badge');
+        if (badge) {
+          badge.textContent = unreadCount;
+          badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+        }
+
+        const listEl = document.getElementById('patient-notif-list');
+        if (!listEl) return;
+        if (myNotifs.length === 0) {
+          listEl.innerHTML = '<div style="text-align:center;color:var(--text-2);font-size:12px;margin-top:20px;">No notifications yet.</div>';
+          return;
+        }
+        
+        listEl.innerHTML = myNotifs.map(n => {
+          const timeStr = new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          return `<div style="background:${n.unread ? '#f0f9ff' : 'var(--surface)'};border:1px solid ${n.unread ? '#bae6fd' : 'var(--border)'};border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;">
+            <div style="font-size:24px;">${n.icon || '🔔'}</div>
+            <div style="flex:1">
+               <div style="color:var(--text-1);font-weight:500;font-size:13px;margin-bottom:2px;">${n.text}</div>
+               <div style="color:var(--text-2);font-size:11px;">${timeStr}</div>
+            </div>
+            ${n.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;"></div>' : ''}
+          </div>`;
+        }).join('');
+      }
+
+      // Mark as read when navigating to screen-notifications
+      const _origGoTo = window.goTo;
+      window.goTo = function(id) {
+         if (_origGoTo) _origGoTo(id);
+         if (id === 'screen-notifications' && window.currentPatient && window.currentPatient.phone) {
+           let allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+           let updated = false;
+           allNotifs.forEach(n => {
+             if (n.target === 'patient_' + window.currentPatient.phone && n.unread) {
+               n.unread = false;
+               updated = true;
+             }
+           });
+           if (updated) {
+             localStorage.setItem('smartheal_notifications', JSON.stringify(allNotifs));
+             renderPatientNotifications();
+           }
+         }
+      };
+
+      window.addEventListener('storage', (e) => {
+         if (e.key === 'smartheal_notifications') renderPatientNotifications();
+      });
+      setInterval(renderPatientNotifications, 10000);
+
       // Start listening for live Firebase updates
       window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
@@ -3160,7 +3233,7 @@
           'ns-label': 'Now Serving', 'ql-waiting': 'Waiting', 'ql-served': 'Served', 'ql-avg': 'Avg Wait', 'ql-next': 'Up next',
           'awh-title': 'Health Awareness', 'awh-sub': 'Seasonal tips, safety & hygiene',
           'aw-cat1': 'Seasonal Alert', 'aw-cat2': 'Hydration Tips', 'aw-cat3': 'Hygiene & Prevention',
-          'aw1-title': 'Heatwave Safety — Summer 2025', 'aw1-body': 'Hyderabad is experiencing extreme heat. Protect yourself:',
+          'aw1-title': 'Heatwave Safety — Summer 2025', 'aw1-body': 'Visakhapatnam is experiencing extreme heat. Protect yourself:',
           'aw1-tips': ['Drink at least 3–4 litres of water daily', 'Avoid going out between 12 PM – 4 PM', 'Wear light, loose, light-coloured clothing', 'If dizzy or nauseous, sit in shade and drink ORS', 'Never leave children or elderly in parked vehicles'],
           'aw2-title': 'Stay Hydrated', 'aw2-body': 'Signs of dehydration to watch for:',
           'aw2-tips': ['Dark yellow urine — drink more water immediately', 'Headache & dizziness — sign of early dehydration', 'ORS sachets available free at hospital pharmacy', 'Avoid sugary drinks & alcohol in heat'],
@@ -3189,6 +3262,7 @@
           'seth-title': 'Settings', 'seth-sub': 'Language & preferences',
           'set-lang-title': 'Language / భాష', 'set-hosp-title': 'Hospital', 'set-about-title': 'About',
           'bk-home': 'Back', 'bk-home-q': 'Back', 'bk-aware': 'Back', 'bk-faq': 'Back', 'bk-fb': 'Back', 'bk-mv': 'Back', 'bk-set': 'Back',
+          'bk-notif': 'Back', 'notif-title': 'Notifications', 'notif-sub': 'Your recent alerts',
           'sbn-home-t': 'Home', 'sbn-reg-t': 'Registration', 'sbn-queue-t': 'Queue Monitor', 'sbn-aware-t': 'Health Awareness', 'sbn-rec-t': 'MediVault', 'sbn-fb-t': 'Feedback',
           'faqs': [
             { q: 'How do I register for a token?', a: 'Go to Patient Registration, fill in your details, and submit the form. A token number will be generated automatically.' },
@@ -3262,6 +3336,7 @@
           'seth-title': 'సెట్టింగ్‌లు', 'seth-sub': 'భాష & ప్రాధాన్యతలు',
           'set-lang-title': 'Language / భాష', 'set-hosp-title': 'ఆసుపత్రి', 'set-about-title': 'గురించి',
           'bk-home': 'వెనక', 'bk-home-q': 'వెనక', 'bk-aware': 'వెనక', 'bk-faq': 'వెనక', 'bk-fb': 'వెనక', 'bk-mv': 'వెనక', 'bk-set': 'వెనక',
+          'bk-notif': 'వెనక', 'notif-title': 'నోటిఫికేషన్లు', 'notif-sub': 'మీ తాజా హెచ్చరికలు',
           'sbn-home-t': 'హోమ్', 'sbn-reg-t': 'నమోదు', 'sbn-queue-t': 'క్యూ మానిటర్', 'sbn-aware-t': 'ఆరోగ్య అవగాహన', 'sbn-rec-t': 'మెడివాల్ట్', 'sbn-fb-t': 'ఫీడ్‌బ్యాక్',
           'faqs': [
             { q: 'టోకెన్ కోసం ఎలా నమోదు చేసుకోవాలి?', a: 'రోగి నమోదుకు వెళ్ళి, మీ వివరాలు నింపి ఫారం సమర్పించండి. టోకెన్ నంబర్ స్వయంచాలకంగా జనరేట్ అవుతుంది.' },
@@ -3360,7 +3435,8 @@
           'dc1', 'dc2', 'dc3', 'rec-save-btn',
           'seth-title', 'seth-sub', 'set-lang-title', 'set-hosp-title', 'set-about-title',
           'bk-home', 'bk-home-q', 'bk-aware', 'bk-faq', 'bk-fb', 'bk-mv', 'bk-set',
-          'sbn-home-t', 'sbn-reg-t', 'sbn-queue-t', 'sbn-aware-t', 'sbn-rec-t', 'sbn-fb-t'
+          'sbn-home-t', 'sbn-reg-t', 'sbn-queue-t', 'sbn-aware-t', 'sbn-rec-t', 'sbn-fb-t',
+          'bk-notif', 'notif-title', 'notif-sub'
         ];
         ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t(id); });
 
@@ -3384,6 +3460,9 @@
         // rebuild FAQ
         buildFAQ();
         renderRecords();
+        renderQueue();
+        syncVisitsFromStorage();
+        renderPatientNotifications();
         checkFollowupAlerts();
 
         // settings lang opts
@@ -3484,7 +3563,7 @@
         if (elSbAlert) elSbAlert.textContent = alertMsg;
         if (elHbSub) elHbSub.textContent = isTe
           ? `హైదరాబాద్: ${temp}°C. ${alertMsg || 'నీళ్ళు తాగండి.'}`
-          : `Hyderabad: ${temp}°C today. ${alertMsg || 'Stay hydrated.'}`;
+          : `Visakhapatnam: ${temp}°C today. ${alertMsg || 'Stay hydrated.'}`;
       }
 
       async function fetchWeather() {
@@ -3509,7 +3588,7 @@
 
         // ── Attempt 2: wttr.in JSON (different CDN, often reachable when Open-Meteo isn't) ──
         try {
-          const res = await fetch('https://wttr.in/Hyderabad?format=j1', { signal: AbortSignal.timeout(5000) });
+          const res = await fetch('https://wttr.in/Visakhapatnam?format=j1', { signal: AbortSignal.timeout(5000) });
           if (!res.ok) throw new Error('wttr status ' + res.status);
           const data = await res.json();
           const cur = data.current_condition[0];
@@ -3680,9 +3759,9 @@
 
         const tokenData = JSON.parse(saved);
 
-        // If the saved token belongs to a different user session, don't restore it
+        // If the saved token belongs to a different user session (or has no owner), don't restore it
         const currentUid = localStorage.getItem('currentUser') || '';
-        if (tokenData.uid && currentUid && tokenData.uid !== currentUid) {
+        if (!tokenData.uid || !currentUid || tokenData.uid !== currentUid) {
           localStorage.removeItem('currentTokenData');
           document.getElementById('rp-token-num').textContent = '--';
           document.getElementById('rp-dept-val').textContent = '--';
@@ -3922,8 +4001,8 @@
 
         // Get patient name from current session
         const cp = (() => { try { return JSON.parse(localStorage.getItem('currentPatient')) || {}; } catch (e) { return {}; } })();
-        const fname = (document.getElementById('fname') ? document.getElementById('fname').value.trim() : '') || cp.first || '';
-        const lname = (document.getElementById('lname') ? document.getElementById('lname').value.trim() : '') || cp.last || '';
+        const fname = (document.getElementById('fname') ? document.getElementById('fname').value.trim() : '') || cp.first || cp.firstName || cp.name || '';
+        const lname = (document.getElementById('lname') ? document.getElementById('lname').value.trim() : '') || cp.last || cp.lastName || '';
         const patientName = (fname + (lname ? ' ' + lname : '')).trim() || 'Anonymous';
 
         // Get department — active tab or registered dept
@@ -4004,8 +4083,9 @@
       function getMvStorageKey() {
         try {
           const cp = JSON.parse(localStorage.getItem('currentPatient'));
-          if (cp && (cp.username || cp.first)) {
-            return 'mv_docs_' + (cp.username || (cp.first + '_' + cp.last)).replace(/\s+/g, '_').toLowerCase();
+          if (cp && (cp.username || cp.first || cp.firstName || cp.name)) {
+            let n = cp.username || cp.name || ((cp.first || cp.firstName || '') + '_' + (cp.last || cp.lastName || ''));
+            return 'mv_docs_' + n.replace(/\s+/g, '_').toLowerCase();
           }
         } catch (_) { }
         return 'mv_docs_guest';
@@ -4114,7 +4194,10 @@
           let patientUsername = 'guest';
           try {
             const cp = JSON.parse(localStorage.getItem('currentPatient'));
-            if (cp) patientUsername = cp.username || ((cp.first || '') + ' ' + (cp.last || '')).trim() || 'guest';
+            if (cp) {
+              const pName = cp.name || ((cp.first || cp.firstName || '') + ' ' + (cp.last || cp.lastName || '')).trim();
+              patientUsername = cp.username || pName || 'guest';
+            }
           } catch (_) { }
 
           const doc = {
@@ -4484,11 +4567,12 @@
           if (saved) {
             const p = JSON.parse(saved);
             if (p) {
+              const pName = p.name || ((p.first || p.firstName || '') + ' ' + (p.last || p.lastName || '')).trim() || p.username || DEMO_PROFILE.name;
               return {
-                name: p.first + ' ' + p.last,
-                age: p.age,
-                gender: p.gender,
-                phone: p.phone
+                name: pName,
+                age: p.age || DEMO_PROFILE.age,
+                gender: p.gender || DEMO_PROFILE.gender,
+                phone: p.phone || p.phoneNumber || DEMO_PROFILE.phone
               };
             }
           }
@@ -4577,8 +4661,8 @@
 
         const patient = JSON.parse(saved);
 
-        document.getElementById("fname").value = patient.first || "";
-        document.getElementById("lname").value = patient.last || "";
+        document.getElementById("fname").value = patient.first || patient.firstName || patient.name || "";
+        document.getElementById("lname").value = patient.last || patient.lastName || "";
         document.getElementById("age").value = patient.age || "";
         document.getElementById("gender").value = patient.gender || "";
 
@@ -4713,10 +4797,9 @@
         JSON.parse(localStorage.getItem("currentPatient"));
 
       if (currentPatient) {
-
+        const pName = currentPatient.name || ((currentPatient.first || currentPatient.firstName || '') + ' ' + (currentPatient.last || currentPatient.lastName || '')).trim() || currentPatient.username || 'Patient';
         document.getElementById("welcome-user").innerText =
-          `Welcome, ${currentPatient.first} ${currentPatient.last} 👋`;
-
+          `Welcome, ${pName} 👋`;
       }
 
       // ══════════════════════════════════════════════════
@@ -4804,7 +4887,7 @@
     align-items:center;justify-content:center;
   ">
       <div id="logout-dialog" style="
-      background:#211a2e;border:1px solid rgba(184,86,163,0.4);
+      background:var(--white);border:1px solid var(--border);
       border-radius:22px;padding:32px 28px;width:320px;max-width:90vw;
       box-shadow:0 24px 80px rgba(0,0,0,0.5);
       animation:logoutDialogIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
@@ -4812,16 +4895,16 @@
         <!-- Icon -->
         <div style="
         width:56px;height:56px;border-radius:16px;
-        background:rgba(184,86,163,0.15);border:1px solid rgba(184,86,163,0.3);
+        background:rgba(224,85,85,0.15);border:1px solid rgba(224,85,85,0.3);
         display:flex;align-items:center;justify-content:center;
-        font-size:24px;margin-bottom:16px;
+        font-size:24px;margin-bottom:16px;color:var(--red);
       ">⏻</div>
 
         <!-- Title -->
-        <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:#F0EBF5;margin-bottom:6px;">
+        <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--text);margin-bottom:6px;">
           Logout?
         </div>
-        <div style="font-size:13px;color:#9B8EA9;line-height:1.6;margin-bottom:24px;">
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:24px;">
           Are you sure you want to logout of SmartHeal? Your session data will be cleared.
         </div>
 
@@ -4829,8 +4912,8 @@
         <div id="logout-success-msg" style="
         display:none;align-items:center;gap:8px;margin-bottom:16px;
         padding:10px 14px;border-radius:10px;
-        background:rgba(46,204,138,0.12);border:1px solid rgba(46,204,138,0.3);
-        font-size:13px;color:#2ECC8A;font-weight:500;
+        background:var(--green-light);border:1px solid rgba(46,204,138,0.3);
+        font-size:13px;color:var(--green);font-weight:500;
       ">
           <span>✓</span><span>Logged out successfully. Redirecting…</span>
         </div>
@@ -4839,16 +4922,16 @@
         <div id="logout-btn-row" style="display:flex;gap:10px;">
           <button onclick="cancelLogout()" style="
           flex:1;padding:13px;border-radius:10px;
-          background:#2d2140;border:1px solid rgba(200,180,220,0.15);
-          color:#9B8EA9;font-family:'DM Sans',sans-serif;
+          background:rgba(255,255,255,0.03);border:1px solid var(--border);
+          color:var(--text-2);font-family:'DM Sans',sans-serif;
           font-size:14px;font-weight:600;cursor:pointer;
           transition:background 0.2s;
-        " onmouseover="this.style.background='#342848'" onmouseout="this.style.background='#2d2140'">
+        " onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
             Cancel
           </button>
           <button onclick="confirmLogout()" id="confirm-logout-btn" style="
           flex:1;padding:13px;border-radius:10px;
-          background:linear-gradient(135deg,#9b3d80,#b856a3);
+          background:linear-gradient(135deg, var(--red), #C23838);
           border:none;color:white;
           font-family:'Syne',sans-serif;
           font-size:14px;font-weight:700;cursor:pointer;

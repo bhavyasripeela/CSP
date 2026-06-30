@@ -2838,38 +2838,6 @@
                 <span id="po-phone">📞 —</span>
                 <span id="po-allergies" class="po-allergies">⚠️ Allergies: —</span>
               </div>
-              <div class="vitals-grid" id="vitals-grid">
-                <div class="vital-card">
-                  <div class="vital-icon">❤️</div>
-                  <div class="vital-val" id="vital-bp">120/80</div>
-                  <div class="vital-lbl">Blood Pressure</div>
-                </div>
-                <div class="vital-card">
-                  <div class="vital-icon">🌡️</div>
-                  <div class="vital-val" id="vital-temp">98.6°F</div>
-                  <div class="vital-lbl">Temperature</div>
-                </div>
-                <div class="vital-card">
-                  <div class="vital-icon">💓</div>
-                  <div class="vital-val" id="vital-pulse">72 bpm</div>
-                  <div class="vital-lbl">Pulse Rate</div>
-                </div>
-                <div class="vital-card">
-                  <div class="vital-icon">🩸</div>
-                  <div class="vital-val" id="vital-spo2">98%</div>
-                  <div class="vital-lbl">SpO2</div>
-                </div>
-                <div class="vital-card">
-                  <div class="vital-icon">⚖️</div>
-                  <div class="vital-val" id="vital-weight">68 kg</div>
-                  <div class="vital-lbl">Weight</div>
-                </div>
-                <div class="vital-card">
-                  <div class="vital-icon">🩺</div>
-                  <div class="vital-val" id="vital-rr">16/min</div>
-                  <div class="vital-lbl">Resp. Rate</div>
-                </div>
-              </div>
             </div>
 
             <div class="card-title" style="margin-bottom:8px;">Appointment Controls</div>
@@ -3167,8 +3135,7 @@
       },
     ];
 
-    const NOTIFICATIONS = [];
-    let notifIdSeq = 10;
+
 
     const NOTE_TEMPLATES = {
       general: `Chief Complaint: Patient presents with [complaint].\n\nHistory: [relevant history]\n\nExamination:\n- General: Conscious, oriented, well-built\n- Vitals: BP [BP], Pulse [pulse], Temp [temp]\n- CVS/RS: Normal\n\nDiagnosis: [diagnosis]\n\nPlan: [management plan]\n\nAdvice: Rest, adequate hydration, follow-up in 1 week.`,
@@ -3294,6 +3261,9 @@
           allergies: p.allergies || existing.allergies || 'Not recorded',
           // Preserve original registration timestamp — never lose it on persist
           registeredAt: existing.registeredAt || p.registeredAt || Date.now(),
+          calledAt: p.calledAt || existing.calledAt,
+          attendedAt: p.attendedAt || existing.attendedAt,
+          completedAt: p.completedAt || existing.completedAt,
           doctor: docName  // real logged-in doctor name, readable by patient dashboard
         };
       });
@@ -3695,6 +3665,9 @@
       const p = PATIENTS_LIVE.find(x => x.id === selectedPatientId);
       if (!p) return;
       if (status === 'Emergency') { p.emg = true; }
+      if (status === 'Calling' && !p.calledAt) p.calledAt = Date.now();
+      if (status === 'Serving' && !p.attendedAt) p.attendedAt = Date.now();
+      if (status === 'Completed' && !p.completedAt) p.completedAt = Date.now();
       patientStatuses[selectedPatientId] = status;
       renderQueue();
       syncToPatientAssistant();
@@ -3710,6 +3683,15 @@
       };
       showToast(status === 'Completed' ? '✅' : status === 'No-Show' ? '🚫' : '📣', msgs[status] || 'Status updated.');
       addNotification({ icon: status === 'Completed' ? '✅' : '📣', text: msgs[status], time: 'Just now', unread: true });
+      if (window.SmartHealSync && window.SmartHealSync.pushNotification && p.phone) {
+         if (status === 'Calling') {
+            window.SmartHealSync.pushNotification('patient_' + p.phone, 'It is your turn! Please proceed to the doctor\'s cabin.', '🩺');
+         } else if (status === 'Completed') {
+            window.SmartHealSync.pushNotification('patient_' + p.phone, 'Consultation completed. View your e-prescription in MediVault.', '💊');
+         } else if (status === 'Emergency') {
+            window.SmartHealSync.pushNotification('patient_' + p.phone, 'Your case has been marked as Emergency priority.', '🚨');
+         }
+      }
     }
 
     function markPatientEmergency() {
@@ -3991,7 +3973,7 @@
       const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('rx-print-preview').innerHTML = `
         <div class="rx-print-hosp">SmartHeal — District General Hospital</div>
-        <div class="rx-print-sub">Hyderabad, Telangana · Ph: 040-2345-6789</div>
+        <div class="rx-print-sub">Visakhapatnam, Telangana · Ph: 040-2345-6789</div>
         <div class="rx-print-divider"></div>
         <div class="rx-print-label">Patient</div>
         <div class="rx-print-patient">${p.name} · ${p.age}y / ${p.gender === 'M' ? 'Male' : 'Female'}</div>
@@ -4090,50 +4072,79 @@
     }
 
     /* ════════════ NOTIFICATIONS ════════════ */
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'smartheal_notifications') {
+        renderNotifications();
+      }
+    });
+    
+    setInterval(renderNotifications, 10000);
+
     function notifItemHtml(n) {
+      const timeStr = new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
       return `<div class="notif-item ${n.unread ? 'unread' : ''}">
-          <div class="notif-icon">${n.icon}</div>
+          <div class="notif-icon">${n.icon || '🔔'}</div>
           <div style="flex:1">
             <div class="notif-text">${n.text}</div>
-            <div class="notif-time">${n.time}</div>
+            <div class="notif-time">${timeStr}</div>
           </div>
-          <button type="button" class="notif-dismiss" onclick="event.stopPropagation();dismissNotification(${n.id})" title="Dismiss">✕</button>
+          <button type="button" class="notif-dismiss" onclick="event.stopPropagation();dismissNotification('${n.id}')" title="Dismiss">✕</button>
           ${n.unread ? '<div class="notif-dot"></div>' : ''}
         </div>`;
     }
 
     function renderNotifications() {
-      const html = NOTIFICATIONS.length
-        ? NOTIFICATIONS.map(notifItemHtml).join('')
+      const allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+      const spec = currentDoctorProfile.specialization || '';
+      const doctorNotifs = allNotifs.filter(n => n.target === 'doctor_' + spec);
+      
+      const html = doctorNotifs.length
+        ? doctorNotifs.map(notifItemHtml).join('')
         : '<div style="padding:20px;text-align:center;color:var(--text-2);font-size:12px;">No notifications yet.</div>';
+        
       const container = document.getElementById('notif-list');
       const topList = document.getElementById('topbar-notif-list');
       if (container) container.innerHTML = html;
       if (topList) topList.innerHTML = html;
-      const unreadCount = NOTIFICATIONS.filter(n => n.unread).length;
-      document.getElementById('notif-count').textContent = unreadCount;
+      const unreadCount = doctorNotifs.filter(n => n.unread).length;
+      if (document.getElementById('notif-count')) document.getElementById('notif-count').textContent = unreadCount;
       const sbBadge = document.getElementById('sb-notif-badge');
-      if (sbBadge) sbBadge.textContent = unreadCount;
+      if (sbBadge) {
+        sbBadge.textContent = unreadCount;
+        sbBadge.style.display = unreadCount > 0 ? 'inline-flex' : 'none';
+      }
     }
 
     function addNotification(notif) {
-      notif.id = notif.id || ++notifIdSeq;
-      NOTIFICATIONS.unshift(notif);
-      renderNotifications();
+      if (window.SmartHealSync && window.SmartHealSync.pushNotification) {
+         window.SmartHealSync.pushNotification('doctor_' + currentDoctorProfile.specialization, notif.text, notif.icon || '🔔');
+      }
     }
 
     function dismissNotification(id) {
-      const i = NOTIFICATIONS.findIndex(n => n.id === id);
-      if (i >= 0) NOTIFICATIONS.splice(i, 1);
-      renderNotifications();
+      const allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+      const i = allNotifs.findIndex(n => String(n.id) === String(id));
+      if (i >= 0) {
+        allNotifs.splice(i, 1);
+        localStorage.setItem('smartheal_notifications', JSON.stringify(allNotifs));
+        renderNotifications();
+      }
     }
 
     function markNotificationsRead() {
-      NOTIFICATIONS.forEach(n => n.unread = false);
-      renderNotifications();
-      document.getElementById('notif-count').textContent = '0';
-      const sbBadge = document.getElementById('sb-notif-badge');
-      if (sbBadge) sbBadge.textContent = '0';
+      const allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
+      const spec = currentDoctorProfile.specialization || '';
+      let updated = false;
+      allNotifs.forEach(n => {
+        if (n.target === 'doctor_' + spec && n.unread) {
+           n.unread = false;
+           updated = true;
+        }
+      });
+      if (updated) {
+         localStorage.setItem('smartheal_notifications', JSON.stringify(allNotifs));
+         renderNotifications();
+      }
     }
 
     function toggleTopbarNotif(ev) {
