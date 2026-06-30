@@ -1,4 +1,4 @@
-import { db } from '../Backend/firebase-config.js';
+import { db } from './Backend/firebase-config.js';
 import { collection, doc, setDoc, onSnapshot, writeBatch, runTransaction, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 window.SmartHealSync = {
