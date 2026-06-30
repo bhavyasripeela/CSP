@@ -1545,6 +1545,31 @@
 
     </div>
 
+    <script>
+        // ── Immediate, dependency-free role label fix ──
+        // The full role logic below lives inside a type="module" script that
+        // imports Firebase. If that import is slow, blocked, or fails for any
+        // reason, the page was silently staying on the hardcoded "Patient
+        // Portal" text even when the URL says ?role=doctor. This tiny script
+        // has no imports, runs immediately, and swaps the visible labels
+        // right away so the correct portal always shows.
+        (function () {
+            var role = new URLSearchParams(window.location.search).get('role');
+            var LABELS = {
+                doctor: { eyebrow: 'Doctor Portal', title: 'Doctor Sign in', sub: 'Access your schedule, patient records, and digital prescriptions.', idLabel: 'Email or Doctor ID', idPlaceholder: 'Enter ID or Email' },
+                admin: { eyebrow: 'Admin Portal', title: 'Admin Sign in', sub: 'System administration and hospital monitoring dashboard.', idLabel: 'Admin Email', idPlaceholder: 'admin@smartheal.gov.in' }
+            };
+            var L = LABELS[role];
+            if (!L) return; // patient (default) — leave the existing markup as-is
+            function set(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+            set('cardEyebrow', L.eyebrow);
+            set('cardTitle', L.title);
+            set('cardSub', L.sub);
+            set('idLabelText', L.idLabel);
+            var idInput = document.getElementById('idInput');
+            if (idInput) idInput.placeholder = L.idPlaceholder;
+        })();
+    </script>
     <script type="module">
         import { auth, db } from '../Backend/firebase-config.js';
         import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
