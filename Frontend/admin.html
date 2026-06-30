@@ -1,43 +1,2065 @@
-We have identified the exact deployment error.
+<!DOCTYPE html>
+<html lang="en">
 
-Do NOT guess.
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartHeal — Login / Register</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --teal: #0E7C7B;
+      --teal-light: #D0EFEF;
+      --teal-mid: #0E7C7B;
+      --amber: #F0A500;
+      --amber-light: #FEF3E8;
+      --red: #E05555;
+      --red-light: #FDEAEA;
+      --blue: #1A5FBF;
+      --blue-light: #E8F0FB;
+      --purple: #0E7C7B;
+      --purple-light: #D0EFEF;
+      --green: #2ECC8A;
+      --green-light: rgba(46, 204, 138, 0.12);
+      --surface: #0D1B2A;
+      --card: #132030;
+      --card-2: #172636;
+      --text: #E8F1F8;
+      --text-2: #7A9BB5;
+      --text-3: #F0A500;
+      --border: rgba(14, 124, 123, 0.18);
+      --border-glow: rgba(14, 124, 123, 0.40);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+    }
 
-Do NOT redesign anything.
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-Do NOT modify authentication logic.
+    html {
+      scroll-behavior: smooth;
+    }
 
-Do NOT modify Firebase initialization.
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      overflow-x: hidden;
+    }
 
-The browser Network tab shows:
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
 
-firebase-config.js → 404 (Not Found)
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-while
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
 
-firebase-app.js
-firebase-auth.js
-firebase-firestore.js
+    /* ── BACKGROUND ── */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
 
-all load successfully.
+    .mesh-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      animation: orbFloat 18s ease-in-out infinite alternate;
+    }
 
-This proves the only failing resource is the import path to firebase-config.js.
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--teal), transparent 70%);
+      top: -180px;
+      left: -120px;
+      animation-duration: 20s;
+    }
 
-Your task:
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--purple), transparent 70%);
+      top: 30%;
+      right: -100px;
+      animation-duration: 25s;
+      animation-delay: -8s;
+    }
 
-1. Trace every existing import of firebase-config.js.
-2. Determine the correct relative path based on the deployed directory structure.
-3. Modify ONLY the incorrect import paths.
-4. Do NOT modify any other code.
-5. Do NOT change login logic.
-6. Do NOT change UI.
-7. Do NOT change CSS.
-8. Do NOT change JavaScript except the import path(s).
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--amber), transparent 70%);
+      bottom: -100px;
+      left: 30%;
+      animation-duration: 22s;
+      animation-delay: -4s;
+    }
 
-Before changing anything, explain:
+    @keyframes orbFloat {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
 
-- Which file is importing firebase-config.js incorrectly.
-- What the current import path is.
-- What the corrected import path should be.
-- Why the current path works locally but returns 404 on Netlify.
+      33% {
+        transform: translate(30px, -40px) scale(1.05);
+      }
 
-Return only the modified existing file(s).
+      66% {
+        transform: translate(-20px, 20px) scale(0.97);
+      }
+
+      100% {
+        transform: translate(15px, -15px) scale(1.03);
+      }
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: linear-gradient(rgba(14, 124, 123, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 124, 123, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 27, 42, 0.90);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .nav-brand span {
+      color: var(--amber);
+    }
+
+    .nav-tagline {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    /* ── PAGE ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .login-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 40px;
+      gap: 60px;
+      overflow-y: auto;
+      height: calc(100vh - 60px);
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-right: 0;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+
+    .lp-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: rgba(14, 124, 123, 0.1);
+      border: 1px solid rgba(14, 124, 123, 0.25);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .lp-eyebrow .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.7);
+      }
+    }
+
+    .lp-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .lp-title .shimmer {
+      background: linear-gradient(90deg, var(--text) 0%, var(--amber) 40%, var(--teal) 70%, var(--text) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 4s linear infinite;
+    }
+
+    @keyframes shimmerText {
+      from {
+        background-position: 0% center;
+      }
+
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    .lp-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+
+    /* Role pills */
+    .role-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .role-pill {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: default;
+      pointer-events: none;
+      transition: all 0.22s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .role-pill::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 2px;
+      transition: width 0.2s;
+    }
+
+    .role-pill.rp-patient::before {
+      background: linear-gradient(180deg, var(--teal), var(--blue));
+    }
+
+    .role-pill.rp-doctor::before {
+      background: linear-gradient(180deg, var(--teal), var(--amber));
+    }
+
+    .role-pill.rp-admin::before {
+      background: linear-gradient(180deg, var(--amber), var(--red));
+    }
+
+    .role-pill.active {
+      border-color: var(--border-glow);
+      background: #0d2233;
+    }
+
+    .role-pill.active::before {
+      width: 4px;
+    }
+
+    .role-pill.rp-patient.active {
+      border-color: rgba(14, 124, 123, 0.45);
+      box-shadow: 0 0 0 1px rgba(14, 124, 123, 0.2);
+    }
+
+    .role-pill.rp-doctor.active {
+      border-color: rgba(14, 124, 123, 0.45);
+      box-shadow: 0 0 0 1px rgba(14, 124, 123, 0.2);
+    }
+
+    .role-pill.rp-admin.active {
+      border-color: rgba(240, 165, 0, 0.45);
+      box-shadow: 0 0 0 1px rgba(240, 165, 0, 0.2);
+    }
+
+    .rp-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .rp-patient .rp-icon {
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.25), rgba(26, 95, 191, 0.15));
+      border: 1px solid rgba(14, 124, 123, 0.3);
+    }
+
+    .rp-doctor .rp-icon {
+      background: linear-gradient(135deg, rgba(14, 124, 123, 0.25), rgba(240, 165, 0, 0.15));
+      border: 1px solid rgba(14, 124, 123, 0.3);
+    }
+
+    .rp-admin .rp-icon {
+      background: linear-gradient(135deg, rgba(240, 165, 0, 0.25), rgba(224, 85, 85, 0.15));
+      border: 1px solid rgba(240, 165, 0, 0.3);
+    }
+
+    .rp-info {
+      flex: 1;
+    }
+
+    .rp-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .rp-desc {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    .rp-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .role-pill.active .rp-check {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    /* Security badges */
+    .sec-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      width: 420px;
+      flex-shrink: 0;
+      min-width: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      animation: fadeSlideUp 0.6s ease 0.12s both;
+    }
+
+    /* ── CARD VIEW SWITCHER ── */
+    .card-views {
+      position: relative;
+    }
+
+    .card-view {
+      display: none;
+      animation: fadeSlideUp 0.35s ease both;
+    }
+
+    .card-view.active {
+      display: block;
+    }
+
+    /* ── SHARED CARD ── */
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 32px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 24px 24px 0 0;
+      background: var(--card-accent, linear-gradient(90deg, var(--teal), var(--blue)));
+      transition: background 0.35s ease;
+    }
+
+    .card-corner-glow {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      opacity: 0.06;
+      pointer-events: none;
+      transition: background 0.35s ease;
+    }
+
+    .card-role-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 18px;
+      transition: all 0.3s ease;
+      animation: iconBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes iconBounce {
+      from {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .card-role-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      transition: color 0.3s;
+    }
+
+    .card-role-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.4px;
+      margin-bottom: 5px;
+    }
+
+    .card-role-sub {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* ── TAB SWITCHER (Login / Register) — only on patient ── */
+    .auth-tabs {
+      display: flex;
+      background: #0d2233;
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 22px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-2);
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      background: var(--card-2);
+      color: var(--text);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ── FORM FIELDS ── */
+    .field-group {
+      margin-bottom: 13px;
+    }
+
+    .field-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-wrap {
+      position: relative;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 13px 44px 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #0d2233;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-input::placeholder {
+      color: var(--text-3);
+      font-size: 13px;
+    }
+
+    .field-input:focus {
+      border-color: var(--focus-color, rgba(14, 124, 123, 0.5));
+      box-shadow: 0 0 0 3px var(--focus-glow, rgba(14, 124, 123, 0.1));
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .field-input.has-icon {
+      padding-left: 42px;
+    }
+
+    .field-action {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-3);
+      transition: color 0.15s;
+      padding: 2px;
+    }
+
+    .field-action:hover {
+      color: var(--text-2);
+    }
+
+    .field-hint {
+      font-size: 10px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Password strength */
+    .pw-strength {
+      margin-top: 6px;
+    }
+
+    .pw-bars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 3px;
+    }
+
+    .pw-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: #0d2233;
+      transition: background 0.3s;
+    }
+
+    .pw-bar.s1 {
+      background: var(--red);
+    }
+
+    .pw-bar.s2 {
+      background: var(--amber);
+    }
+
+    .pw-bar.s3 {
+      background: var(--teal-mid);
+    }
+
+    .pw-bar.s4 {
+      background: var(--green);
+    }
+
+    .pw-strength-lbl {
+      font-size: 10px;
+      color: var(--text-3);
+    }
+
+    /* Form row */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 18px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--amber);
+      cursor: pointer;
+    }
+
+    .remember-lbl {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .forgot-link {
+      font-size: 12px;
+      color: var(--amber);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .forgot-link:hover {
+      opacity: 0.75;
+    }
+
+    /* Terms */
+    .terms-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 12px 0 18px;
+    }
+
+    .terms-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--amber);
+      cursor: pointer;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .terms-text {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .terms-text a {
+      color: var(--amber);
+      text-decoration: none;
+    }
+
+    .terms-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Submit button */
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      letter-spacing: 0.01em;
+      color: #ffffff !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0);
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover::after {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+
+    .login-btn .btn-arrow {
+      font-size: 16px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .login-btn:hover .btn-arrow {
+      transform: translateX(4px);
+    }
+
+    .login-btn.loading .btn-text {
+      display: none;
+    }
+
+    .btn-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .login-btn.loading .btn-spinner {
+      display: block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Error / success messages */
+    .msg-box {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-xs);
+      font-size: 12px;
+      animation: fadeSlideUp 0.3s ease;
+    }
+
+    .msg-box.show {
+      display: flex;
+    }
+
+    .msg-box.error {
+      background: rgba(184, 86, 163, 0.1);
+      border: 1px solid rgba(184, 86, 163, 0.25);
+      color: var(--red);
+    }
+
+    .msg-box.warning {
+      background: rgba(240, 165, 0, 0.1);
+      border: 1px solid rgba(240, 165, 0, 0.3);
+      color: #F0A500;
+    }
+
+    .msg-box.success {
+      background: rgba(46, 204, 138, 0.1);
+      border: 1px solid rgba(46, 204, 138, 0.25);
+      color: var(--green);
+    }
+
+    .msg-box.info {
+      background: rgba(16, 81, 246, 0.1);
+      border: 1px solid rgba(16, 81, 246, 0.2);
+      color: var(--teal-mid);
+    }
+
+
+    /* Switch prompt */
+    .switch-prompt {
+      margin-top: 20px;
+      text-align: center;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .switch-prompt .sp-text {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .switch-prompt .sp-link {
+      color: var(--amber);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 5px;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      transition: opacity 0.15s;
+    }
+
+    .switch-prompt .sp-link:hover {
+      opacity: 0.75;
+      text-decoration: underline;
+    }
+
+    /* Demo credentials */
+    .demo-section {
+      margin-top: 14px;
+    }
+
+    .demo-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-radius: var(--radius-xs);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-2);
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .demo-toggle:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .demo-toggle .chev {
+      font-size: 11px;
+      transition: transform 0.25s;
+    }
+
+    .demo-toggle.open .chev {
+      transform: rotate(180deg);
+    }
+
+    .demo-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .demo-body.open {
+      max-height: 500px;
+    }
+
+    .demo-inner {
+      padding: 14px;
+      background: #0d2233;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-xs) var(--radius-xs);
+    }
+
+    .demo-role-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      margin-top: 12px;
+    }
+
+    .demo-role-title:first-child {
+      margin-top: 0;
+    }
+
+    .demo-cred {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: var(--radius-xs);
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .demo-cred:hover {
+      border-color: var(--border-glow);
+    }
+
+    .demo-cred:last-child {
+      margin-bottom: 0;
+    }
+
+    .dc-left {
+      flex: 1;
+    }
+
+    .dc-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .dc-id {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 1px;
+      font-family: monospace;
+    }
+
+    .dc-use {
+      font-size: 10px;
+      color: var(--amber);
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: rgba(14, 124, 123, 0.1);
+      border: 1px solid rgba(14, 124, 123, 0.2);
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 24px 32px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .footer-brand span {
+      color: var(--amber);
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeSlideDown {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        transform: translateY(24px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      15% {
+        transform: translateX(-7px);
+      }
+
+      30% {
+        transform: translateX(7px);
+      }
+
+      45% {
+        transform: translateX(-5px);
+      }
+
+      60% {
+        transform: translateX(5px);
+      }
+
+      75% {
+        transform: translateX(-3px);
+      }
+
+      90% {
+        transform: translateX(3px);
+      }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .login-wrap {
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 24px 48px;
+        gap: 32px;
+      }
+
+      .left-panel {
+        padding-right: 0;
+        max-width: 520px;
+        width: 100%;
+      }
+
+      .right-panel {
+        width: 100%;
+        max-width: 480px;
+      }
+    }
+
+    @media(max-width:600px) {
+      .navbar {
+        padding: 0 16px;
+      }
+
+      .login-wrap {
+        padding: 24px 16px 48px;
+      }
+
+      .login-card {
+        padding: 26px 20px 24px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .footer {
+        padding: 20px 16px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .lp-title {
+        letter-spacing: -1.5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-mesh">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+  </div>
+  <div class="bg-grid"></div>
+
+  <div class="page">
+
+    <nav class="navbar">
+      <div>
+        <div class="nav-brand">Smart<span>Heal</span></div>
+        <div class="nav-tagline">District General Hospital, Visakhapatnam</div>
+      </div>
+    </nav>
+
+    <main class="login-wrap">
+
+      <div class="left-panel">
+        <div class="lp-eyebrow">
+          <div class="dot"></div>Secure Portal Access
+        </div>
+        <h1 class="lp-title">Welcome to<br><span class="shimmer">SmartHeal</span></h1>
+        <p class="lp-sub" id="lpSub">Sign in to access queue tracking, health records, and hospital services
+          &mdash; all in one place.</p>
+
+
+
+        <div class="sec-badges">
+          <span class="sec-badge">🔒 256-bit Encrypted</span>
+          <span class="sec-badge">🛡️ HIPAA Compliant</span>
+          <span class="sec-badge">✔ Gov. Approved</span>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="card-views">
+
+          <div class="card-view active" id="viewLogin">
+            <div class="login-card" id="loginCard">
+              <div class="card-corner-glow" id="loginCorner"></div>
+
+              <div class="card-role-eyebrow" id="cardEyebrow"
+                style="color:var(--teal); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">
+                Patient Portal</div>
+              <div class="card-role-title" id="cardTitle" style="margin-top:0; font-size:28px;">Sign in
+              </div>
+              <div class="card-role-sub" id="cardSub" style="margin-bottom:24px;">New to SmartHeal? Create
+                your free account in seconds.</div>
+
+              <div class="auth-tabs" id="authTabs">
+                <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign
+                  In</button>
+                <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Create
+                  Account</button>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" id="idLabel"><span id="idFieldIcon">📧</span> <span id="idLabelText">Email
+                    Address</span></label>
+                <div class="field-wrap">
+                  <input class="field-input has-icon" type="email" id="idInput" placeholder="Enter your email"
+                    autocomplete="email" spellcheck="false" />
+                  <span class="field-icon" id="idFieldIcon">📧</span>
+                </div>
+                <div class="field-hint" id="idHint">Use the email you registered with.
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label"><span>🔑</span> Password</label>
+                <div class="field-wrap">
+                  <input class="field-input has-icon" type="password" id="pwInput" placeholder="Enter your password"
+                    autocomplete="current-password" />
+                  <span class="field-icon">🔒</span>
+                  <button class="field-action" id="pwToggle" onclick="togglePw('pwInput','pwToggle')"
+                    title="Show/hide">👁️</button>
+                </div>
+              </div>
+
+              <div class="form-row" id="rememberRow">
+                <label class="remember"><input type="checkbox" id="rememberMe" /><span class="remember-lbl">Remember
+                    me</span></label>
+                <a class="forgot-link" onclick="handleForgot()">Forgot password?</a>
+              </div>
+
+              <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+                <span class="btn-text" id="loginBtnText">Sign In</span>
+                <span class="btn-arrow btn-text">→</span>
+                <div class="btn-spinner"></div>
+              </button>
+
+              <div class="msg-box error" id="loginError"><span>⚠️</span><span id="loginErrorText">Invalid
+                  credentials.</span></div>
+
+              <div class="switch-prompt" id="loginSwitchPrompt">
+                <span class="sp-text">New to SmartHeal?</span>
+                <button class="sp-link" onclick="switchTab('register')">Create a free account →</button>
+              </div>
+            </div>
+            <div class="demo-section">
+              <div class="demo-toggle" id="demoToggleLogin" onclick="toggleDemo('Login')">
+                <span>Demo Accounts</span>
+                <span class="chev">▼</span>
+              </div>
+              <div class="demo-body" id="demoBodyLogin">
+                <div class="demo-inner">
+                  <div class="demo-role-title">Patients</div>
+                  <div class="demo-cred" onclick="fillCreds('ravi@smartheal.com', 'patient123', 'patient')">
+                    <div class="dc-left">
+                      <div class="dc-name">Ravi Kumar (Patient)</div>
+                      <div class="dc-id">ravi@smartheal.com</div>
+                    </div>
+                    <div class="dc-use">Use →</div>
+                  </div>
+
+                  <div class="demo-role-title">Doctors</div>
+                  <div class="demo-cred" onclick="fillCreds('doctor@smartheal.com', 'doctor123', 'doctor')">
+                    <div class="dc-left">
+                      <div class="dc-name">Dr. Priya Sharma</div>
+                      <div class="dc-id">doctor@smartheal.com</div>
+                    </div>
+                    <div class="dc-use">Use →</div>
+                  </div>
+
+                  <div class="demo-role-title">Admin</div>
+                  <div class="demo-cred" onclick="fillCreds('admin@smartheal.com', 'admin2025', 'admin')">
+                    <div class="dc-left">
+                      <div class="dc-name">Hospital Admin</div>
+                      <div class="dc-id">admin@smartheal.com</div>
+                    </div>
+                    <div class="dc-use">Use →</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="card-view" id="viewRegister">
+            <div class="login-card" id="registerCard"
+              style="--card-accent:linear-gradient(90deg,var(--teal),var(--blue));">
+              <div class="card-corner-glow" style="background:var(--teal);"></div>
+
+              <div class="card-role-title" style="margin-top:0; font-size:28px;">Create your account</div>
+              <div class="card-role-sub" style="margin-bottom:24px;">Already have an account? <button
+                  onclick="showLogin()"
+                  style="color:var(--amber);background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;">Sign
+                  in instead →</button></div>
+
+              <div style="display:flex;gap:5px;margin-bottom:22px;" id="regStepBar">
+                <div style="flex:1;height:3px;border-radius:2px;background:var(--teal-mid);transition:background 0.3s;"
+                  id="step1bar"></div>
+                <div style="flex:1;height:3px;border-radius:2px;background:#0d2233;transition:background 0.3s;"
+                  id="step2bar"></div>
+                <div style="flex:1;height:3px;border-radius:2px;background:#0d2233;transition:background 0.3s;"
+                  id="step3bar"></div>
+              </div>
+              <div style="font-size:10px;color:var(--text-3);margin-bottom:16px;" id="regStepLabel">Step 1
+                of 3 — Personal details</div>
+
+              <div id="regStep1">
+                <div class="field-row">
+                  <div class="field-group">
+                    <label class="field-label">👤 First Name</label>
+                    <div class="field-wrap"><input class="field-input has-icon" type="text" id="regFirst"
+                        placeholder="Ravi" autocomplete="given-name" /><span class="field-icon">👤</span></div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">👤 Last Name</label>
+                    <div class="field-wrap"><input class="field-input has-icon" type="text" id="regLast"
+                        placeholder="Kumar" autocomplete="family-name" /><span class="field-icon">👤</span></div>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">📱 Mobile Number</label>
+                  <div class="field-wrap"><input class="field-input has-icon" type="tel" id="regPhone"
+                      placeholder="9876543210" autocomplete="tel" /><span class="field-icon">📱</span>
+                  </div>
+                  <div class="field-hint">Used for OTP verification and hospital notifications.</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-group">
+                    <label class="field-label"> Age</label>
+                    <div class="field-wrap"><input class="field-input has-icon" type="number" id="regAge"
+                        placeholder="25" min="1" max="120" /></div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">⚧ Gender</label>
+                    <div class="field-wrap">
+                      <select class="field-input" id="regGender" style="padding-left:14px;">
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="msg-box error" id="regError1"><span>⚠️</span><span id="regErrorText1">Please
+                    fill all fields.</span></div>
+                <button class="login-btn" style="background:linear-gradient(135deg,var(--teal),#6b4a8a);"
+                  onclick="nextStep(2)">
+                  <span class="btn-text">Continue</span><span class="btn-arrow">→</span>
+                </button>
+              </div>
+
+              <div id="regStep2" style="display:none;">
+                <div class="field-group">
+                  <label class="field-label">📧 Email Address</label>
+                  <div class="field-wrap"><input class="field-input has-icon" type="email" id="regUsername"
+                      placeholder="e.g. ravi@smartheal.com" autocomplete="email" spellcheck="false" /><span
+                      class="field-icon">📧</span></div>
+                  <div class="field-hint">We will use this email for your account and password resets.
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">🔑 Password</label>
+                  <div class="field-wrap">
+                    <input class="field-input has-icon" type="password" id="regPw"
+                      placeholder="Create a strong password" oninput="checkStrength(this.value)"
+                      autocomplete="new-password" />
+                    <span class="field-icon">🔒</span>
+                    <button class="field-action" onclick="togglePw('regPw','regPwBtn')" id="regPwBtn">👁️</button>
+                  </div>
+                  <div class="pw-strength">
+                    <div class="pw-bars">
+                      <div class="pw-bar" id="pb1"></div>
+                      <div class="pw-bar" id="pb2"></div>
+                      <div class="pw-bar" id="pb3"></div>
+                      <div class="pw-bar" id="pb4"></div>
+                    </div>
+                    <div class="pw-strength-lbl" id="pwStrengthLbl">Enter a password</div>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">🔑 Confirm Password</label>
+                  <div class="field-wrap">
+                    <input class="field-input has-icon" type="password" id="regPwConf"
+                      placeholder="Re-enter your password" autocomplete="new-password" />
+                    <span class="field-icon">🔒</span>
+                    <button class="field-action" onclick="togglePw('regPwConf','regPwConfBtn')"
+                      id="regPwConfBtn">👁️</button>
+                  </div>
+                </div>
+                <div class="msg-box error" id="regError2"><span>⚠️</span><span id="regErrorText2">Please
+                    fill all fields.</span></div>
+                <div style="display:flex;gap:9px;margin-top:18px;">
+                  <button class="login-btn"
+                    style="background:#0d2233;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 20px;"
+                    onclick="goStep(1)">← Back</button>
+                  <button class="login-btn" style="background:linear-gradient(135deg,var(--teal),#6b4a8a);flex:1;"
+                    onclick="nextStep(3)"><span class="btn-text">Continue</span><span
+                      class="btn-arrow">→</span></button>
+                </div>
+              </div>
+
+              <div id="regStep3" style="display:none;">
+                <div
+                  style="background:#0d2233;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;">
+                  <div
+                    style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;">
+                    Review your details</div>
+                  <div id="reviewBlock" style="display:flex;flex-direction:column;gap:7px;font-size:13px;">
+                  </div>
+                </div>
+                <div class="terms-row">
+                  <input type="checkbox" id="termsCheck" />
+                  <div class="terms-text">I agree to SmartHeal's <a href="#">Terms of Service</a> and
+                    <a href="#">Privacy Policy</a>. I consent to the hospital storing my health
+                    information for treatment purposes.
+                  </div>
+                </div>
+                <div class="msg-box error" id="regError3"><span>⚠️</span><span id="regErrorText3">Please
+                    accept the terms.</span></div>
+                <div style="display:flex;gap:9px;margin-top:4px;">
+                  <button class="login-btn"
+                    style="background:#0d2233;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 20px;"
+                    onclick="goStep(2)">← Back</button>
+                  <button class="login-btn" style="background:linear-gradient(135deg,var(--green),#1db87a);flex:1;"
+                    id="submitRegBtn" onclick="submitRegister()"><span class="btn-text">Create
+                      Account ✓</span>
+                    <div class="btn-spinner"></div>
+                  </button>
+                </div>
+              </div>
+
+              <div id="regSuccess" style="display:none;text-align:center;padding:16px 0;">
+                <div style="font-size:52px;margin-bottom:14px;animation:iconBounce 0.5s ease;">🎉</div>
+                <div
+                  style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;">
+                  Account Created!</div>
+                <div style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:20px;">
+                  Welcome to SmartHeal, <strong id="welcomeName"></strong>. Your account is ready. You
+                  can now sign in.</div>
+                <button class="login-btn" style="background:linear-gradient(135deg,var(--teal),#6b4a8a);"
+                  onclick="goToLoginAfterReg()">Sign In Now →</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand">Smart<span>Heal</span></div>
+          <div class="footer-copy">© 2025 SmartHeal · District General Hospital, Visakhapatnam</div>
+        </div>
+        <div class="footer-links">
+          <a class="footer-link" href="#">Privacy</a>
+          <a class="footer-link" href="#">Support</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── Immediate, dependency-free role label fix ──
+    // The full role logic below lives inside a type="module" script that
+    // imports Firebase. If that import is slow, blocked, or fails for any
+    // reason, the page was silently staying on the hardcoded "Patient
+    // Portal" text even when the URL says ?role=doctor. This tiny script
+    // has no imports, runs immediately, and swaps the visible labels
+    // right away so the correct portal always shows.
+    (function () {
+      var role = new URLSearchParams(window.location.search).get('role');
+      var LABELS = {
+        doctor: { eyebrow: 'Doctor Portal', title: 'Doctor Sign in', sub: 'Access your schedule, patient records, and digital prescriptions.', idLabel: 'Email or Doctor ID', idPlaceholder: 'Enter ID or Email' },
+        admin: { eyebrow: 'Admin Portal', title: 'Admin Sign in', sub: 'System administration and hospital monitoring dashboard.', idLabel: 'Admin Email', idPlaceholder: 'admin@smartheal.gov.in' }
+      };
+      var L = LABELS[role];
+      if (!L) return; // patient (default) — leave the existing markup as-is
+      function set(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+      set('cardEyebrow', L.eyebrow);
+      set('cardTitle', L.title);
+      set('cardSub', L.sub);
+      set('idLabelText', L.idLabel);
+      var idInput = document.getElementById('idInput');
+      if (idInput) idInput.placeholder = L.idPlaceholder;
+    })();
+  </script>
+  <script type="module">
+    import { auth, db } from './Backend/firebase-config.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    // ══════════════════════════════════════════
+    // ROLE CONFIG
+    // ══════════════════════════════════════════
+
+
+
+
+
+    const ROLES = {
+      patient: {
+        eyebrow: 'Patient Portal', eyebrowColor: 'var(--teal)',
+        title: 'Sign in',
+        sub: 'New to SmartHeal? Create your free account in seconds.',
+        idLabelText: 'Email Address', idPlaceholder: 'Enter your email', idFieldIcon: '📧',
+        idHint: 'Use the email you registered with.',
+        btnText: 'Sign In ',
+        accentBar: 'linear-gradient(90deg, var(--teal), var(--blue))',
+        cornerGlow: 'rgba(14, 124, 123, 0.15)',
+        focusColor: 'rgba(14,124,123,0.5)', focusGlow: 'rgba(14,124,123,0.12)',
+        btnGradient: 'linear-gradient(135deg, var(--teal), #6b4a8a)',
+        redirect: 'hospiiiii.html',
+        showTabs: true
+      },
+      doctor: {
+        eyebrow: 'Doctor Portal', eyebrowColor: 'var(--amber)',
+        title: 'Doctor Sign in',
+        sub: 'Access your schedule, patient records, and digital prescriptions.',
+        idLabelText: 'Email or Doctor ID', idPlaceholder: 'Enter ID or Email', idFieldIcon: '🆔',
+        idHint: 'Use your official SmartHeal doctor ID.',
+        btnText: 'Access Portal →',
+        accentBar: 'linear-gradient(90deg, var(--teal), var(--amber))',
+        cornerGlow: 'rgba(14, 124, 123, 0.15)',
+        focusColor: 'rgba(14,124,123,0.5)', focusGlow: 'rgba(14,124,123,0.12)',
+        btnGradient: 'linear-gradient(135deg, var(--teal), var(--amber))',
+        redirect: 'doctor-fixed.html',
+        showTabs: false
+      },
+      admin: {
+        eyebrow: 'Admin Portal', eyebrowColor: 'var(--amber)',
+        title: 'Admin Sign in',
+        sub: 'System administration and hospital monitoring dashboard.',
+        idLabelText: 'Admin Email', idPlaceholder: 'admin@smartheal.gov.in', idFieldIcon: '🛡️',
+        idHint: 'Authorized personnel only.',
+        btnText: 'Authenticate →',
+        accentBar: 'linear-gradient(90deg, var(--amber), var(--red))',
+        cornerGlow: 'rgba(240, 165, 0, 0.15)',
+        focusColor: 'rgba(240,165,0,0.5)', focusGlow: 'rgba(240,165,0,0.12)',
+        btnGradient: 'linear-gradient(135deg, #b87d00, #F0A500)',
+        redirect: 'admin.html',
+        showTabs: false
+      }
+    };
+
+    let currentRole = 'patient';
+
+    function applyRole(role) {
+      if (!ROLES[role]) role = 'patient';
+      currentRole = role;
+      const r = ROLES[role];
+      const card = document.getElementById('loginCard');
+
+      // ── Update left-panel pill highlight ──
+      ['patient', 'doctor', 'admin'].forEach(r2 => {
+        const pill = document.getElementById('pill-' + r2);
+        const check = document.getElementById('check-' + r2);
+        if (pill) pill.classList.toggle('active', r2 === role);
+        if (check) check.textContent = (r2 === role) ? '✔' : '';
+      });
+
+      // ── Update card text ──
+      const eyebrow = document.getElementById('cardEyebrow');
+      if (eyebrow) { eyebrow.textContent = r.eyebrow; eyebrow.style.color = r.eyebrowColor; }
+
+      const title = document.getElementById('cardTitle');
+      if (title) title.textContent = r.title;
+
+      const sub = document.getElementById('cardSub');
+      if (sub) sub.textContent = r.sub;
+
+      const idLabelText = document.getElementById('idLabelText');
+      if (idLabelText) idLabelText.textContent = r.idLabelText;
+
+      const idInput = document.getElementById('idInput');
+      if (idInput) idInput.placeholder = r.idPlaceholder;
+
+      const idFieldIcon = document.getElementById('idFieldIcon');
+      if (idFieldIcon) idFieldIcon.textContent = r.idFieldIcon;
+
+      const idHint = document.getElementById('idHint');
+      if (idHint) idHint.textContent = r.idHint;
+
+      const loginBtnText = document.getElementById('loginBtnText');
+      if (loginBtnText) loginBtnText.textContent = r.btnText;
+
+      card.style.setProperty('--card-accent', r.accentBar);
+      const corner = document.getElementById('loginCorner');
+      if (corner) corner.style.background = r.cornerGlow;
+      card.style.setProperty('--focus-color', r.focusColor);
+      card.style.setProperty('--focus-glow', r.focusGlow);
+      const btn = document.getElementById('loginBtn');
+      if (btn) btn.style.background = r.btnGradient;
+
+      // ── Show / hide auth tabs (Create Account only for patients) ──
+      const tabs = document.getElementById('authTabs');
+      if (tabs) tabs.style.display = r.showTabs ? 'flex' : 'none';
+      const switchPrompt = document.getElementById('loginSwitchPrompt');
+      if (switchPrompt) switchPrompt.style.display = r.showTabs ? 'block' : 'none';
+
+      // ── Doctor apply link ──
+      updateDoctorApplyLink();
+
+      hideMsg('loginError');
+    }
+
+    let currentTab = 'login';
+    let regStep = 1;
+    let regData = {};
+
+    // ══ SWITCH TAB (login / register) inside login card ══
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+
+      if (tab === 'register') {
+        // Patient role → show register card
+        document.getElementById('viewLogin').classList.remove('active');
+        document.getElementById('viewRegister').classList.add('active');
+        goStep(1);
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      currentTab = 'login';
+      document.getElementById('viewLogin').classList.add('active');
+      document.getElementById('viewRegister').classList.remove('active');
+      document.getElementById('tabLogin').classList.add('active');
+      document.getElementById('tabRegister').classList.remove('active');
+    }
+
+    // ══ PW TOGGLE ══
+    function togglePw(inputId, btnId) {
+      const inp = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      const vis = inp.type === 'text';
+      inp.type = vis ? 'password' : 'text';
+      btn.textContent = vis ? '👁️' : '🙈';
+    }
+
+    // ══ LOGIN HANDLER ══
+    function restoreActiveQueueSession(patient) {
+      try {
+        const phone = String(patient.phone || '').replace(/\D/g, '');
+        if (!phone) { localStorage.removeItem('currentTokenData'); return; }
+
+        const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
+        const ACTIVE_STATUSES = ['Waiting', 'Calling', 'Serving', 'Emergency'];
+
+        const myActive = queue
+          .filter(e => String(e.phone || '').replace(/\D/g, '') === phone)
+          .filter(e => ACTIVE_STATUSES.includes(e.status || 'Waiting'))
+          .sort((a, b) => (b.registeredAt || 0) - (a.registeredAt || 0));
+
+        if (myActive.length > 0) {
+          const latest = myActive[0];
+
+          localStorage.setItem('currentTokenData', JSON.stringify({
+            token: latest.token,
+            department: latest.dept
+          }));
+
+          const deptQueue = queue.filter(e =>
+            (e.dept || 'General OPD') === latest.dept
+            && ACTIVE_STATUSES.includes(e.status || 'Waiting')
+          ).sort((a, b) => (a.registeredAt || 0) - (b.registeredAt || 0));
+          const position = deptQueue.findIndex(e => e.token === latest.token) + 1;
+
+          console.log(`[SmartHeal] Restored active registration — Token ${latest.token}, ` +
+            `Dept ${latest.dept}, Position ${position || '?'}, Status ${latest.status || 'Waiting'}`);
+        } else {
+          localStorage.removeItem('currentTokenData');
+        }
+      } catch (e) {
+        localStorage.removeItem('currentTokenData');
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('idInput').value.trim();
+      const pw = document.getElementById('pwInput').value.trim();
+      const btn = document.getElementById('loginBtn');
+      hideMsg('loginError');
+
+      if (!email || !pw) { showMsg('loginError', 'error', '⚠️', 'Please fill in both fields.'); return; }
+      btn.classList.add('loading');
+
+      try {
+        // 1. Check credentials against Firebase Auth
+        const userCredential = await signInWithEmailAndPassword(auth, email, pw);
+        const user = userCredential.user;
+
+        // 2. Fetch the user's role
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const actualRole = userData.role || 'patient';
+
+          if (actualRole !== currentRole) {
+            btn.classList.remove('loading');
+            showMsg('loginError', 'error', '⛔', `Access denied. Your account is registered as a ${actualRole}.`);
+            shake(document.getElementById('loginCard'));
+            return;
+          }
+
+          // 3. Save session
+          localStorage.setItem('currentUser', user.uid);
+
+          // 4. Fetch the FULL profile so the dashboard can auto-fill the forms!
+          let redirectUrl = 'hospiiiii.html';
+          if (actualRole === 'patient') {
+            const patientDoc = await getDoc(doc(db, "patients", user.uid));
+            if (patientDoc.exists()) {
+              const pData = patientDoc.data();
+              // Map the database fields to the exact names the frontend expects
+              pData.first = pData.firstName || '';
+              pData.last = pData.lastName || '';
+              localStorage.setItem('currentPatient', JSON.stringify(pData));
+            } else {
+              // Fallback if patient doc doesn't exist (e.g., demo accounts)
+              const fallbackData = {
+                name: userData.name || 'Patient',
+                first: userData.name ? userData.name.split(' ')[0] : 'Patient',
+                last: userData.name ? userData.name.split(' ').slice(1).join(' ') : '',
+                email: userData.email || email,
+                age: '--',
+                gender: '--',
+                phone: '--'
+              };
+              localStorage.setItem('currentPatient', JSON.stringify(fallbackData));
+            }
+          } else if (actualRole === 'doctor') {
+            redirectUrl = 'doctor-fixed.html';
+            const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
+            if (doctorDoc.exists()) {
+              localStorage.setItem('currentDoctor', JSON.stringify(doctorDoc.data()));
+            }
+          } else if (actualRole === 'admin') {
+            redirectUrl = 'admin.html';
+          }
+
+          btn.classList.remove('loading');
+          loginSuccess(btn, redirectUrl, user.uid);
+
+        } else {
+          btn.classList.remove('loading');
+          showMsg('loginError', 'error', '⚠️', 'Profile not found in database. Please register.');
+        }
+
+      } catch (error) {
+        btn.classList.remove('loading');
+        let errorMsg = "Invalid credentials. Please try again.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+          errorMsg = "Incorrect email or password.";
+        }
+        showMsg('loginError', 'error', '⚠️', errorMsg);
+        shake(document.getElementById('loginCard'));
+        console.error("Firebase Login Error: ", error);
+      }
+    }
+
+    function loginSuccess(btn, redirect, id) {
+      localStorage.setItem("currentUser", id);
+      btn.style.background = 'linear-gradient(135deg,var(--green),#1db87a)';
+      document.getElementById('loginBtnText').textContent = '✓ Authenticated';
+      setTimeout(() => { window.location.href = redirect; }, 900);
+    }
+
+    function handleForgot() {
+      const msgs = {
+        patient: 'To reset your password, contact the hospital reception or call 040-2345-6789.',
+        doctor: 'Doctor portal passwords are managed by IT Administration. Contact helpdesk@smartheal.gov.in',
+        admin: 'Admin password resets require in-person verification at the IT department.'
+      };
+      showMsg('loginError', 'info', 'ℹ️', msgs[currentRole] || msgs['patient']);
+    }
+
+    function updateDoctorApplyLink() {
+      const existing = document.getElementById('doctor-apply-link');
+      if (existing) existing.remove();
+      if (currentRole === 'doctor') {
+        const loginCard = document.getElementById('loginCard');
+        const applyDiv = document.createElement('div');
+        applyDiv.id = 'doctor-apply-link';
+        applyDiv.style.cssText = 'text-align:center;margin-top:14px;font-size:12px;color:var(--text-2);';
+        applyDiv.innerHTML = 'New doctor? <a href="doctor-apply.html" style="color:var(--teal);font-weight:600;text-decoration:none;">Apply to join SmartHeal →</a>';
+        loginCard.appendChild(applyDiv);
+      }
+    }
+
+    function showMsg(id, type, icon, text) {
+      const el = document.getElementById(id);
+      el.className = `msg-box ${type} show`;
+      el.innerHTML = `<span>${icon}</span><span>${text}</span>`;
+    }
+    function hideMsg(id) { document.getElementById(id).classList.remove('show'); }
+
+    function shake(el) {
+      el.style.animation = 'none'; void el.offsetWidth;
+      el.style.animation = 'shake 0.4s ease';
+    }
+
+    function toggleDemo(suffix) {
+      const toggle = document.getElementById('demoToggle' + suffix);
+      const body = document.getElementById('demoBody' + suffix);
+      toggle.classList.toggle('open');
+      body.classList.toggle('open');
+    }
+
+    function fillCreds(id, pw, role) {
+      setTimeout(() => {
+        document.getElementById('idInput').value = id;
+        document.getElementById('pwInput').value = pw;
+        ['idInput', 'pwInput'].forEach(fid => {
+          const el = document.getElementById(fid);
+          el.style.borderColor = 'var(--green)';
+          setTimeout(() => { el.style.borderColor = ''; }, 1000);
+        });
+        document.getElementById('demoToggleLogin').classList.remove('open');
+        document.getElementById('demoBodyLogin').classList.remove('open');
+      }, 180);
+    }
+
+    function goStep(step) {
+      regStep = step;
+      [1, 2, 3].forEach(s => {
+        document.getElementById('regStep' + s).style.display = s === step ? 'block' : 'none';
+        document.getElementById('step' + s + 'bar').style.background = s <= step ? 'var(--teal-mid)' : '#0d2233';
+      });
+      const labels = ['Step 1 of 3 — Personal details', 'Step 2 of 3 — Account credentials', 'Step 3 of 3 — Review & confirm'];
+      document.getElementById('regStepLabel').textContent = labels[step - 1];
+      document.getElementById('regSuccess').style.display = 'none';
+      document.getElementById('regStepBar').style.display = 'flex';
+      document.getElementById('regStepLabel').style.display = 'block';
+    }
+
+    function nextStep(to) {
+      hideMsg('regError' + (to - 1));
+      if (to === 2) {
+        const first = document.getElementById('regFirst').value.trim();
+        const last = document.getElementById('regLast').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const age = document.getElementById('regAge').value.trim();
+        const gender = document.getElementById('regGender').value;
+        if (!first || !last || !phone || !age || !gender) {
+          showMsg('regError1', 'error', '⚠️', 'Please fill in all personal details.'); return;
+        }
+        if (!/^[0-9]{10}$/.test(phone)) {
+          showMsg('regError1', 'error', '⚠️', 'Please enter a valid 10-digit mobile number.'); return;
+        }
+        regData.first = first; regData.last = last; regData.phone = phone;
+        regData.age = age; regData.gender = gender;
+        goStep(2);
+      } else if (to === 3) {
+        const uname = document.getElementById('regUsername').value.trim();
+        const pw = document.getElementById('regPw').value;
+        const conf = document.getElementById('regPwConf').value;
+        if (!uname || !pw || !conf) {
+          showMsg('regError2', 'error', '⚠️', 'Please fill in all credential fields.'); return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(uname)) {
+          showMsg('regError2', 'error', '⚠️', 'Please enter a valid email address.'); return;
+        }
+        if (pw.length < 6) {
+          showMsg('regError2', 'error', '⚠️', 'Password must be at least 6 characters.'); return;
+        }
+        if (pw !== conf) {
+          showMsg('regError2', 'error', '⚠️', 'Passwords do not match.'); return;
+        }
+        const stored = JSON.parse(localStorage.getItem('smartheal_users') || '[]');
+        if (stored.some(u => (u.username || u.email || '').toLowerCase() === uname.toLowerCase())) {
+          showMsg('regError2', 'error', '⚠️', 'That email is already registered. Please sign in.'); return;
+        }
+        regData.username = uname; regData.password = pw;
+
+        const rb = document.getElementById('reviewBlock');
+        rb.innerHTML = [
+          ['👤 Full name', regData.first + ' ' + regData.last],
+          ['📱 Mobile', regData.phone],
+          ['🎂 Age / Gender', regData.age + ' · ' + regData.gender],
+          ['📧 Email', regData.username],
+          ['🔑 Password', '••••••••']
+        ].map(([k, v]) => `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-3);font-size:12px;">${k}</span><span style="color:var(--text);font-size:12px;font-weight:500;">${v}</span></div>`).join('');
+        goStep(3);
+      }
+    }
+
+    async function submitRegister() {
+      if (!document.getElementById('termsCheck').checked) {
+        showMsg('regError3', 'error', '⚠️', 'Please accept the Terms of Service to continue.'); return;
+      }
+      const btn = document.getElementById('submitRegBtn');
+      btn.classList.add('loading');
+
+      try {
+        // 1. Create the secure user account in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, regData.username, regData.password);
+        const user = userCredential.user;
+
+        // 2. Save their Role in the 'users' collection (Phase 3)
+        await setDoc(doc(db, "users", user.uid), {
+          name: regData.first + ' ' + regData.last,
+          email: regData.username,
+          role: 'patient',
+          createdAt: new Date().toISOString()
+        });
+
+        // 3. Save their full profile in the 'patients' collection (Phase 4)
+        await setDoc(doc(db, "patients", user.uid), {
+          uid: user.uid,
+          firstName: regData.first,
+          lastName: regData.last,
+          name: regData.first + ' ' + regData.last,
+          email: regData.username,
+          phone: regData.phone,
+          age: regData.age,
+          gender: regData.gender,
+          createdAt: new Date().toISOString()
+        });
+
+        // 4. Show the success screen
+        btn.classList.remove('loading');
+        document.getElementById('regStep3').style.display = 'none';
+        document.getElementById('regStepBar').style.display = 'none';
+        document.getElementById('regStepLabel').style.display = 'none';
+        document.getElementById('welcomeName').textContent = regData.first + ' ' + regData.last;
+        document.getElementById('regSuccess').style.display = 'block';
+        regData = {};
+
+      } catch (error) {
+        btn.classList.remove('loading');
+        let errorMsg = "Failed to create account.";
+        if (error.code === 'auth/email-already-in-use') errorMsg = "This email is already registered.";
+        if (error.code === 'auth/weak-password') errorMsg = "Password must be at least 6 characters.";
+        showMsg('regError3', 'error', '⚠️', errorMsg);
+        console.error("Firebase Registration Error: ", error);
+      }
+    }
+
+    function goToLoginAfterReg() {
+      showLogin();
+      setTimeout(() => {
+        document.getElementById('idInput').value = regData.username;
+        document.getElementById('idInput').style.borderColor = 'var(--green)';
+        setTimeout(() => { document.getElementById('idInput').style.borderColor = ''; }, 1000);
+      }, 100);
+    }
+
+    function checkStrength(pw) {
+      const bars = [document.getElementById('pb1'), document.getElementById('pb2'), document.getElementById('pb3'), document.getElementById('pb4')];
+      bars.forEach(b => { b.className = 'pw-bar'; });
+      let score = 0;
+      if (pw.length >= 6) score++;
+      if (pw.length >= 10) score++;
+      if (/[A-Z]/.test(pw) || /[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const cls = ['s1', 's2', 's3', 's4'];
+      const lbls = ['Too short', 'Weak', 'Good', 'Strong'];
+      for (let i = 0; i < score; i++) bars[i].classList.add(cls[score - 1]);
+      document.getElementById('pwStrengthLbl').textContent = pw.length === 0 ? 'Enter a password' : (score <= 1 ? 'Too short' : lbls[score - 1]);
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') { if (currentTab === 'login') handleLogin(); } });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const selectedRole = new URLSearchParams(window.location.search).get('role');
+      applyRole(ROLES[selectedRole] ? selectedRole : 'patient');
+      console.log('[SmartHeal] Login page loaded. Role:', currentRole);
+    });
+
+    // Expose functions to HTML buttons
+    window.applyRole = applyRole;
+    window.handleForgot = handleForgot;
+    window.switchTab = switchTab;
+    window.showLogin = showLogin;
+    window.togglePw = togglePw;
+    window.handleLogin = handleLogin;
+    window.goStep = goStep;
+    window.nextStep = nextStep;
+    window.submitRegister = submitRegister;
+    window.goToLoginAfterReg = goToLoginAfterReg;
+    window.checkStrength = checkStrength;
+    window.toggleDemo = toggleDemo;
+    window.fillCreds = fillCreds;
+  </script>
+</body>
+
+</html>
