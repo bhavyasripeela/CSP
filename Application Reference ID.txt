@@ -57,3 +57,5 @@ Then press:
 Y
 
 (if prompted) and hit Enter.
+====================
+ cd "/c/Users/bhavy/OneDrive/Documents/Desktop/FCSP"

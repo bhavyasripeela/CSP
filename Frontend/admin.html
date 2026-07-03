@@ -2107,7 +2107,7 @@
         <a class="sb-link" href="#applications" onclick="setActive(this)"><span class="ic">📋</span>Doctor
           Applications<span class="sb-badge" id="sb-pending-badge">0</span></a>
         <a class="sb-link" href="#feedback" onclick="setActive(this)"><span class="ic">⭐</span>Feedback Center</a>
-        <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Delay Monitoring</a>
+        <a class="sb-link" href="#delays" onclick="setActive(this)"><span class="ic">⏱</span>Queue Monitoring</a>
         <div class="sb-section">Monitoring</div>
         <a class="sb-link" href="#analytics" onclick="setActive(this)"><span class="ic">📈</span>Reports & Analytics</a>
       </nav>
@@ -2375,7 +2375,7 @@
         <section class="section" id="delays">
           <div class="section-header">
             <div>
-              <div class="section-title">Delay Monitoring</div>
+              <div class="section-title">Queue Monitoring</div>
               <div class="section-sub">Waiting time by department · live data</div>
             </div>
             <button class="section-action" onclick="viewFullReport()">View Full Report</button>
@@ -2388,35 +2388,13 @@
                     <th>Department</th>
                     <th>Doctor</th>
                     <th>In Queue</th>
-                    <th>Avg Wait Time</th>
-                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody id="delay-table-body">
                 </tbody>
               </table>
             </div>
-            <div class="delay-summary">
-              <div class="delay-stat">
-                <div class="delay-stat-val" id="delay-peak-val" style="color:var(--red)">—</div>
-                <div class="delay-stat-lbl" id="delay-peak-lbl">Peak wait time</div>
-              </div>
-              <div class="delay-stat">
-                <div class="delay-stat-val" id="delay-best-val">—</div>
-                <div class="delay-stat-lbl" id="delay-best-lbl">Best wait time</div>
-              </div>
-              <div class="delay-stat">
-                <div class="delay-stat-val" id="delay-avg-val" style="color:var(--amber)">—</div>
-                <div class="delay-stat-lbl">Hospital average</div>
-              </div>
-              <div class="card-sm">
-                <div
-                  style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">
-                  Wait Trend Today</div>
-                <div class="delay-trend" id="delay-trend-body">
-                </div>
-              </div>
-            </div>
+
           </div>
         </section>
 
@@ -3062,7 +3040,7 @@
 
             if (!approved.length) {
               tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-2)">No approved doctors on record.</td></tr>';
-              _renderDelaySummary([]);
+
               return;
             }
 
@@ -3123,116 +3101,23 @@
               return { label: 'Critical', badge: 'critical', tier: 'high' };
             }
 
-            const deptStats = [];
             tbody.innerHTML = approved.map(doc => {
               const name = escDr(doc.name || doc.fullName || 'Unknown');
               const dept = normDept(doc.specialization || 'General OPD');
               const inQueue = queueCountFor(dept);
-              const avgMin = avgWaitFor(dept);
-              const st = statusFor(avgMin);
-
-              deptStats.push({ dept, avgMin });
-
-              const waitLabel = avgMin === null ? 'Not Available' : `${avgMin} min`;
-              const pct = avgMin === null ? 0 : Math.min(100, Math.round((avgMin / 60) * 100));
 
               return `
                 <tr>
                   <td class="td-name">${escDr(dept)}</td>
                   <td class="text-sm">${name}</td>
                   <td><span class="chip blue">${inQueue}</span></td>
-                  <td class="wait-bar-cell">
-                    <div class="wait-num ${st.tier}">${waitLabel}</div>
-                    <div class="wait-bar"><div class="wait-fill ${st.tier}" style="width:${pct}%"></div></div>
-                  </td>
-                  <td><span class="res-badge ${st.badge}">${st.label}</span></td>
                 </tr>`;
             }).join('');
 
-            _renderDelaySummary(deptStats, visits, queue, todayStr);
+
           }
 
-          function _renderDelaySummary(deptStats, visits, queue, todayStr) {
-            const peakValEl = document.getElementById('delay-peak-val');
-            const peakLblEl = document.getElementById('delay-peak-lbl');
-            const bestValEl = document.getElementById('delay-best-val');
-            const bestLblEl = document.getElementById('delay-best-lbl');
-            const avgValEl = document.getElementById('delay-avg-val');
-            const trendEl = document.getElementById('delay-trend-body');
 
-            const withData = (deptStats || []).filter(d => d.avgMin !== null);
-
-            if (withData.length === 0) {
-              if (peakValEl) peakValEl.textContent = '—';
-              if (peakLblEl) peakLblEl.textContent = 'Peak wait time (no data yet)';
-              if (bestValEl) bestValEl.textContent = '—';
-              if (bestLblEl) bestLblEl.textContent = 'Best wait time (no data yet)';
-              if (avgValEl) avgValEl.textContent = 'Not Available';
-            } else {
-              const peak = withData.reduce((a, b) => b.avgMin > a.avgMin ? b : a);
-              const best = withData.reduce((a, b) => b.avgMin < a.avgMin ? b : a);
-              const hospAvg = Math.round(withData.reduce((s, d) => s + d.avgMin, 0) / withData.length);
-
-              if (peakValEl) peakValEl.textContent = `${peak.avgMin} min`;
-              if (peakLblEl) peakLblEl.textContent = `Peak wait time (${peak.dept})`;
-              if (bestValEl) bestValEl.textContent = `${best.avgMin} min`;
-              if (bestLblEl) bestLblEl.textContent = `Best wait time (${best.dept})`;
-              if (avgValEl) avgValEl.textContent = `${hospAvg} min`;
-            }
-
-            if (!trendEl) return;
-
-            const blocks = [
-              { label: '8 AM', start: 8, end: 10 },
-              { label: '10 AM', start: 10, end: 12 },
-              { label: '12 PM', start: 12, end: 14 },
-              { label: '2 PM', start: 14, end: 16 },
-            ];
-
-            const getStart = r => r.createdAt || r.registeredAt || r.timestamp;
-            const getCalled = r => r.calledAt || r.attendedAt || r.completedAt;
-
-            const allRecords = (visits || []).slice();
-            (queue || []).forEach(p => {
-              const dup = allRecords.some(v => v.token && v.token === p.token);
-              if (!dup) allRecords.push(p);
-            });
-
-            const todayRecords = allRecords.filter(r => {
-              const start = getStart(r), end = getCalled(r);
-              if (!start || !end) return false;
-              if (new Date(start).toISOString().slice(0, 10) !== todayStr) return false;
-              const mins = (new Date(end).getTime() - new Date(start).getTime()) / 60000;
-              return mins >= 0 && mins < 300;
-            });
-
-            if (todayRecords.length === 0) {
-              trendEl.innerHTML = '<div style="padding:12px 0;text-align:center;color:var(--text-2);font-size:13px;">No trend data available</div>';
-              return;
-            }
-
-            const blockStats = blocks.map(b => {
-              const mins = todayRecords.filter(r => {
-                const hour = new Date(getStart(r)).getHours();
-                return hour >= b.start && hour < b.end;
-              }).map(r => (new Date(getCalled(r)).getTime() - new Date(getStart(r)).getTime()) / 60000);
-              if (!mins.length) return null;
-              return Math.round(mins.reduce((a, c) => a + c, 0) / mins.length);
-            });
-
-            const maxBlock = Math.max(...blockStats.filter(m => m !== null), 1);
-
-            trendEl.innerHTML = blocks.map((b, i) => {
-              const m = blockStats[i];
-              const pct = m === null ? 0 : Math.max(4, Math.round((m / maxBlock) * 100));
-              const label = m === null ? '—' : `${m}m`;
-              return `<div class="dtrend-item"><span style="width:50px;flex-shrink:0;">${b.label}</span>
-                    <div class="dtrend-bar">
-                      <div class="dtrend-fill" style="width:${pct}%"></div>
-                    </div><span>${label}</span>
-                  </div>`;
-            }).join('');
-          }
 
           // ── SCROLL SPY (sidebar) ──
           const sections = ['overview', 'doctors', 'applications', 'feedback', 'delays', 'analytics'];
