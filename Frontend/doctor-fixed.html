@@ -3684,13 +3684,13 @@
       showToast(status === 'Completed' ? '✅' : status === 'No-Show' ? '🚫' : '📣', msgs[status] || 'Status updated.');
       addNotification({ icon: status === 'Completed' ? '✅' : '📣', text: msgs[status], time: 'Just now', unread: true });
       if (window.SmartHealSync && window.SmartHealSync.pushNotification && p.phone) {
-         if (status === 'Calling') {
-            window.SmartHealSync.pushNotification('patient_' + p.phone, 'It is your turn! Please proceed to the doctor\'s cabin.', '🩺');
-         } else if (status === 'Completed') {
-            window.SmartHealSync.pushNotification('patient_' + p.phone, 'Consultation completed. View your e-prescription in MediVault.', '💊');
-         } else if (status === 'Emergency') {
-            window.SmartHealSync.pushNotification('patient_' + p.phone, 'Your case has been marked as Emergency priority.', '🚨');
-         }
+        if (status === 'Calling') {
+          window.SmartHealSync.pushNotification('patient_' + p.phone, 'It is your turn! Please proceed to the doctor\'s cabin.', '🩺');
+        } else if (status === 'Completed') {
+          window.SmartHealSync.pushNotification('patient_' + p.phone, 'Consultation completed. View your e-prescription in MediVault.', '💊');
+        } else if (status === 'Emergency') {
+          window.SmartHealSync.pushNotification('patient_' + p.phone, 'Your case has been marked as Emergency priority.', '🚨');
+        }
       }
     }
 
@@ -3738,7 +3738,13 @@
           doctor: docName,
           consultationNote: diag + (drugTxt ? '\n\nRx: ' + drugTxt : ''),
           prescription: drugTxt || null,
-          followUp: (patientFollowups[p.id] && patientFollowups[p.id].date) || null
+          followUp: (patientFollowups[p.id] && patientFollowups[p.id].date) || null,
+          // Timestamps needed for avg wait time calculation in admin dashboard
+          completedAt: p.completedAt || Date.now(),
+          attendedAt: p.attendedAt || null,
+          calledAt: p.calledAt || null,
+          dept: p.dept || null,
+          emergency: p.emg || false
         });
       }
     }
@@ -4077,11 +4083,11 @@
         renderNotifications();
       }
     });
-    
+
     setInterval(renderNotifications, 10000);
 
     function notifItemHtml(n) {
-      const timeStr = new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      const timeStr = new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       return `<div class="notif-item ${n.unread ? 'unread' : ''}">
           <div class="notif-icon">${n.icon || '🔔'}</div>
           <div style="flex:1">
@@ -4097,11 +4103,11 @@
       const allNotifs = JSON.parse(localStorage.getItem('smartheal_notifications') || '[]');
       const spec = currentDoctorProfile.specialization || '';
       const doctorNotifs = allNotifs.filter(n => n.target === 'doctor_' + spec);
-      
+
       const html = doctorNotifs.length
         ? doctorNotifs.map(notifItemHtml).join('')
         : '<div style="padding:20px;text-align:center;color:var(--text-2);font-size:12px;">No notifications yet.</div>';
-        
+
       const container = document.getElementById('notif-list');
       const topList = document.getElementById('topbar-notif-list');
       if (container) container.innerHTML = html;
@@ -4117,7 +4123,7 @@
 
     function addNotification(notif) {
       if (window.SmartHealSync && window.SmartHealSync.pushNotification) {
-         window.SmartHealSync.pushNotification('doctor_' + currentDoctorProfile.specialization, notif.text, notif.icon || '🔔');
+        window.SmartHealSync.pushNotification('doctor_' + currentDoctorProfile.specialization, notif.text, notif.icon || '🔔');
       }
     }
 
@@ -4137,13 +4143,13 @@
       let updated = false;
       allNotifs.forEach(n => {
         if (n.target === 'doctor_' + spec && n.unread) {
-           n.unread = false;
-           updated = true;
+          n.unread = false;
+          updated = true;
         }
       });
       if (updated) {
-         localStorage.setItem('smartheal_notifications', JSON.stringify(allNotifs));
-         renderNotifications();
+        localStorage.setItem('smartheal_notifications', JSON.stringify(allNotifs));
+        renderNotifications();
       }
     }
 

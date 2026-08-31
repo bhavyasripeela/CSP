@@ -2937,6 +2937,9 @@
 
             let onCount = 0, breakCount = 0, offCount = 0, emgCount = 0;
 
+            // Count completed consultations per doctor from visitHistory
+            const allVisits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+
             const cards = approved.map((doc, idx) => {
               const uid = doc.uid || doc.id;
               const name = doc.name || doc.fullName || 'Unknown Doctor';
@@ -2959,6 +2962,14 @@
                 ? new Date(doc.approvedAt).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })
                 : '';
 
+              // Count visits completed by this doctor (name match + has consultation data)
+              const docNameFull = name.startsWith('Dr') ? name : 'Dr. ' + name;
+              const patientsSeen = allVisits.filter(v => {
+                if (!v.consultationNote && !v.completedAt) return false;
+                const vDoc = (v.doctor || '').toLowerCase().trim();
+                return vDoc === name.toLowerCase().trim() || vDoc === docNameFull.toLowerCase().trim();
+              }).length;
+
               return `
                 <div class="doctor-card" data-uid="${uid}" data-status="${status}">
                   <div class="doc-avatar" style="background:${gradient}">${initials}</div>
@@ -2972,7 +2983,7 @@
                     ${approvedDate ? `<div style="font-size:9px;color:var(--text-3);margin-top:1px;">Approved ${approvedDate}</div>` : ''}
                   </div>
                   <div class="doc-right">
-                    <div class="doc-patients">—</div>
+                    <div class="doc-patients">${patientsSeen}</div>
                     <div class="doc-plabel">patients</div>
                     <div class="status-badge ${status}">${statusLabel}</div>
                   </div>
@@ -2989,7 +3000,8 @@
             setS('doc-stat-break', breakCount);
             setS('doc-stat-off', offCount);
             setS('doc-stat-emg', emgCount);
-            setS('doc-stat-patients', '—');
+            const totalSeen = allVisits.filter(v => v.consultationNote || v.completedAt).length;
+            setS('doc-stat-patients', totalSeen);
 
             renderDelayTable(approved);
           }
@@ -3647,10 +3659,13 @@
 
           function _syncWaitTimeSpark() {
             const visits = JSON.parse(localStorage.getItem('smartheal_visitHistory') || '[]');
+            const queue = JSON.parse(localStorage.getItem('hospitalQueue') || '[]');
             const todayStr = dateStr(0);
             const todayVisits = visits.filter(v =>
               v.createdAt && new Date(v.createdAt).toISOString().slice(0, 10) === todayStr
             );
+
+            // All-patients avg wait time (registration → consultation completion)
             const waitTimes = todayVisits
               .filter(v => v.createdAt && (v.completedAt || v.attendedAt))
               .map(v => {
@@ -3668,8 +3683,30 @@
               if (subEl) subEl.textContent = `Avg of ${waitTimes.length} completed`;
             } else {
               if (valEl) valEl.textContent = 'N/A';
-              if (subEl) subEl.textContent = 'No timestamp data yet';
+              if (subEl) subEl.textContent = 'No completed visits today';
             }
+
+            // Emergency-specific avg wait (for Emergency Trends spark)
+            const emgWaitTimes = todayVisits
+              .filter(v => (v.emergency === true || v.emg === true) && v.createdAt && (v.completedAt || v.attendedAt))
+              .map(v => {
+                const start = new Date(v.createdAt).getTime();
+                const end = new Date(v.completedAt || v.attendedAt).getTime();
+                return (end - start) / 60000;
+              })
+              .filter(m => m > 0 && m < 300);
+
+            // Also count today's emergency patients from queue (includes in-progress)
+            const emgTotal = (() => {
+              const fromVisits = todayVisits.filter(v => v.emergency === true || v.emg === true).length;
+              const fromQueue = queue.filter(p => p.emg === true || p.emergency === true).length;
+              return Math.max(fromVisits, fromQueue);
+            })();
+
+            const emgTotalEl = document.getElementById('spark-emg-total');
+            const emgSubEl = document.getElementById('spark-emg-sub');
+            if (emgTotalEl) emgTotalEl.textContent = emgTotal > 0 ? emgTotal : '0';
+            if (emgSubEl) emgSubEl.textContent = emgTotal > 0 ? `${emgTotal} today` : 'None today';
           }
 
           // Initial calls that depend on window.allApplications
