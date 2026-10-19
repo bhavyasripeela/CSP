@@ -172,6 +172,12 @@
             color: var(--amber);
         }
 
+        .navbar a:focus-visible {
+            outline: 2px solid var(--amber);
+            outline-offset: 4px;
+            border-radius: 6px;
+        }
+
         .nav-tagline {
             font-size: 11px;
             color: var(--text-2);
@@ -1223,10 +1229,10 @@
     <div class="page">
 
         <nav class="navbar">
-            <div>
+            <a href="index.html" aria-label="SmartHeal — back to home" style="text-decoration:none;color:inherit;display:block;">
                 <div class="nav-brand">Smart<span>Heal</span></div>
                 <div class="nav-tagline">District General Hospital, Visakhapatnam</div>
-            </div>
+            </a>
         </nav>
 
         <main class="login-wrap">
@@ -1604,7 +1610,7 @@
                 sub: 'Access your schedule, patient records, and digital prescriptions.',
                 idLabelText: 'Email or Doctor ID', idPlaceholder: 'Enter ID or Email', idFieldIcon: '🆔',
                 idHint: 'Use your official SmartHeal doctor ID.',
-                btnText: 'Access Portal →',
+                btnText: 'Access Portal',
                 accentBar: 'linear-gradient(90deg, var(--teal), var(--amber))',
                 cornerGlow: 'rgba(14, 124, 123, 0.15)',
                 focusColor: 'rgba(14,124,123,0.5)', focusGlow: 'rgba(14,124,123,0.12)',
